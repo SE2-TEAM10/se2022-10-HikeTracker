@@ -28,7 +28,7 @@ class Database {
     getHikeByAscent = (ascent) => {
         return new Promise((resolve, reject) => {
             //if (isNaN(id)) return reject('UNPROCESSABLE')
-            const sql = 'SELECT * FROM hike WHERE ascent = ?'
+            const sql = 'SELECT * FROM hike WHERE ascent <= ?'
             this.db.all(sql, [ascent], (err, rows) => {
                 if (err) return reject(500)
                 if (rows === undefined) return reject(404)
@@ -49,6 +49,7 @@ class Database {
         })
     }
 
+    /* TO BE FIXED */
     getHikeByTime = (time) => {
         return new Promise((resolve, reject) => {
             //if (isNaN(id)) return reject('UNPROCESSABLE')

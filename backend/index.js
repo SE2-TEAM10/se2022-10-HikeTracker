@@ -113,7 +113,7 @@ app.get('/api/sessions/current', (req, res) => {
 
 
 // GET /api/hike/:difficulty 
-app.get('/api/hike/:difficulty',
+app.get('/api/hike/difficulty/:difficulty',
   /*isLoggedIn,*/
   //[check('id').isInt()],
   async (req, res) => {
@@ -129,7 +129,7 @@ app.get('/api/hike/:difficulty',
   });
 
 // GET /api/hike/:ascent 
-app.get('/api/hike/:ascent',
+app.get('/api/hike/ascent/:ascent',
   /*isLoggedIn,*/
   //[check('id').isInt()],
   async (req, res) => {
@@ -145,7 +145,7 @@ app.get('/api/hike/:ascent',
   });
 
 // GET /api/hike/:length 
-app.get('/api/hike/:length',
+app.get('/api/hike/length/:length',
   /*isLoggedIn,*/
   //[check('id').isInt()],
   async (req, res) => {
@@ -161,7 +161,7 @@ app.get('/api/hike/:length',
   });
 
   // GET /api/hike/:time 
-app.get('/api/hike/:time',
+app.get('/api/hike/time/:time',
 /*isLoggedIn,*/
 //[check('id').isInt()],
 async (req, res) => {
@@ -177,7 +177,7 @@ async (req, res) => {
 });
 
 // GET /api/hike/:area 
-app.get('/api/hike/:area',
+app.get('/api/hike/area/:area',
   /*isLoggedIn,*/
   //[check('id').isInt()],
   async (req, res) => {

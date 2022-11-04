@@ -1,14 +1,14 @@
-### getHikeByDifficulty
-GET http://localhost:3001/api/hike/T
-
 ### getHikeByAscent
-GET http://localhost:3001/api/hike/1000
+GET http://localhost:3001/api/hike/ascent/1000
+
+### getHikeByDifficulty
+GET http://localhost:3001/api/hike/difficulty/T
 
 ### getHikeByLength
-GET http://localhost:3001/api/hike/10/
+GET http://localhost:3001/api/hike/length/10/
 
 ### getHikeByTime
-GET http://localhost:3001/api/hike/5/
+GET http://localhost:3001/api/hike/time/05/
 
 ### getHikeByArea
-GET http://localhost:3001/api/hike/Talucco/
+GET http://localhost:3001/api/hike/area/Talucco/
