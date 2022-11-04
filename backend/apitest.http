@@ -8,7 +8,7 @@ GET http://localhost:3001/api/hike/difficulty/T
 GET http://localhost:3001/api/hike/length/10/
 
 ### getHikeByTime
-GET http://localhost:3001/api/hike/time/05/
+GET http://localhost:3001/api/hike/time/05:15
 
 ### getHikeByArea
 GET http://localhost:3001/api/hike/area/Talucco/

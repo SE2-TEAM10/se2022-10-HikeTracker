@@ -165,7 +165,7 @@ app.get('/api/hike/time/:time',
 /*isLoggedIn,*/
 //[check('id').isInt()],
 async (req, res) => {
-  try {
+    try {
     const result = await db.getHikeByTime(req.params.time);
     if (result.error)
       res.status(404).json(result);

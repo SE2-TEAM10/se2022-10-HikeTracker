@@ -53,7 +53,7 @@ class Database {
     getHikeByTime = (time) => {
         return new Promise((resolve, reject) => {
             //if (isNaN(id)) return reject('UNPROCESSABLE')
-            const sql = 'SELECT * FROM hike WHERE time <= ?'
+            const sql = 'SELECT * FROM hike WHERE expected_time <= ?'
             this.db.all(sql, [time], (err, row) => {
                 if (err) return reject(500)
                 if (row === undefined) return reject(404)
