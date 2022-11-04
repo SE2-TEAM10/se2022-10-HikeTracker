@@ -1,15 +1,16 @@
 'use strict';
 
+//const dayjs = require('dayjs');
 const express = require('express');
 const morgan = require('morgan'); // logging middleware
+const cors = require('cors');
 const Database = require('./database.js')
 const db = new Database('./hiketracker.db')
-const passport = require('passport'); // auth middleware
+/* const passport = require('passport'); // auth middleware
 const LocalStrategy = require('passport-local').Strategy; // username and password for login
 const session = require('express-session'); // enable sessions
-const cors = require('cors');
-const { check, validationResult, body, param } = require('express-validator'); // validation middleware
-const dayjs = require('dayjs');
+const { check, validationResult, body, param } = require('express-validator'); // validation middleware */
+
 
 
 /* // set up the "username and password" login strategy
@@ -45,13 +46,14 @@ const app = express();
 const port = 3001;
 
 // set-up the middlewares
-app.use(morgan('dev'));
+app.use(morgan('common'));
 app.use(express.json());
-const corsOptions = {
+app.use(cors());
+/* const corsOptions = {
   origin: 'http://localhost:8000',
-  //credentials: true,
+  credentials: true,
 };
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); */
 
 /* // custom middleware: check if a given request is coming from an authenticated user
 const isLoggedIn = (req, res, next) => {
