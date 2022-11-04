@@ -2,6 +2,7 @@
 
 ## HT - 1
 It is a GET on the "hike" table (to be created); filters must be implemented on the back-end side (see WA1 labs for references)
+There is also a get on the "hike_rf" table, to analyze the reference points (that may be more than one)
 > _ASK FOR CLARIFICATION: should we put more than one filter or one is enough?_
 
 ## HT - 2
