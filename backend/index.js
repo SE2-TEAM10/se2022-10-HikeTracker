@@ -1,6 +1,6 @@
 'use strict';
 
-//const dayjs = require('dayjs');
+const dayjs = require('dayjs');
 const express = require('express');
 const morgan = require('morgan'); // logging middleware
 const cors = require('cors');
@@ -118,7 +118,7 @@ app.get('/api/hike/:difficulty',
   //[check('id').isInt()],
   async (req, res) => {
     try {
-      const result = await db.getHikeByDifficulty(req.params.difficulty);
+      const result = await db.getHikeByDifficulty();
       if (result.error)
         res.status(404).json(result);
       else

@@ -1,5 +1,5 @@
 ### getHikeByDifficulty
-GET http://localhost:3001/api/hike/T/
+GET http://localhost:3001/api/hike/T
 
 ### getHikeByAscent
 GET http://localhost:3001/api/hike/1000/
