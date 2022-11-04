@@ -2,7 +2,7 @@
 GET http://localhost:3001/api/hike/T
 
 ### getHikeByAscent
-GET http://localhost:3001/api/hike/1000/
+GET http://localhost:3001/api/hike/1000
 
 ### getHikeByLength
 GET http://localhost:3001/api/hike/10/

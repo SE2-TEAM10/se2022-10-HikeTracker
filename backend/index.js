@@ -118,7 +118,7 @@ app.get('/api/hike/:difficulty',
   //[check('id').isInt()],
   async (req, res) => {
     try {
-      const result = await db.getHikeByDifficulty();
+      const result = await db.getHikeByDifficulty(req.params.difficulty);
       if (result.error)
         res.status(404).json(result);
       else

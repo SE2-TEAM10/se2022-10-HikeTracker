@@ -15,33 +15,33 @@ class Database {
 
     getHikeByDifficulty = (difficulty) => {
         return new Promise((resolve, reject) => {
-            if (isNaN(id)) return reject('UNPROCESSABLE')
+            //if (isNaN(id)) return reject('UNPROCESSABLE')
             const sql = 'SELECT * FROM hike WHERE difficulty = ?'
-            this.db.get(sql, [difficulty], (err, row) => {
+            this.db.all(sql, [difficulty], (err, rows) => {
                 if (err) return reject(500)
-                if (row === undefined) return reject(404)
-                return resolve(row)
+                if (rows === undefined) return reject(404)
+                return resolve(rows)
             })
         })
     }
 
     getHikeByAscent = (ascent) => {
         return new Promise((resolve, reject) => {
-            if (isNaN(id)) return reject('UNPROCESSABLE')
-            const sql = 'SELECT * FROM hike WHERE ascent <= ?'
-            this.db.get(sql, [ascent], (err, row) => {
+            //if (isNaN(id)) return reject('UNPROCESSABLE')
+            const sql = 'SELECT * FROM hike WHERE ascent = ?'
+            this.db.all(sql, [ascent], (err, rows) => {
                 if (err) return reject(500)
-                if (row === undefined) return reject(404)
-                return resolve(row)
+                if (rows === undefined) return reject(404)
+                return resolve(rows)
             })
         })
     }
 
     getHikeByLength = (length) => {
         return new Promise((resolve, reject) => {
-            if (isNaN(id)) return reject('UNPROCESSABLE')
+            //if (isNaN(id)) return reject('UNPROCESSABLE')
             const sql = 'SELECT * FROM hike WHERE length <= ?'
-            this.db.get(sql, [length], (err, row) => {
+            this.db.all(sql, [length], (err, row) => {
                 if (err) return reject(500)
                 if (row === undefined) return reject(404)
                 return resolve(row)
@@ -51,9 +51,9 @@ class Database {
 
     getHikeByTime = (time) => {
         return new Promise((resolve, reject) => {
-            if (isNaN(id)) return reject('UNPROCESSABLE')
+            //if (isNaN(id)) return reject('UNPROCESSABLE')
             const sql = 'SELECT * FROM hike WHERE time <= ?'
-            this.db.get(sql, [time], (err, row) => {
+            this.db.all(sql, [time], (err, row) => {
                 if (err) return reject(500)
                 if (row === undefined) return reject(404)
                 return resolve(row)
@@ -63,9 +63,9 @@ class Database {
 
     getHikeByArea = (area) => {
         return new Promise((resolve, reject) => {
-            if (isNaN(id)) return reject('UNPROCESSABLE')
+            //if (isNaN(id)) return reject('UNPROCESSABLE')
             const sql = 'SELECT * FROM hike WHERE start_point = ?'
-            this.db.get(sql, [area], (err, row) => {
+            this.db.all(sql, [area], (err, row) => {
                 if (err) return reject(500)
                 if (row === undefined) return reject(404)
                 return resolve(row)
