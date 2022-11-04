@@ -4,9 +4,11 @@
 It is a GET on the "hike" table (to be created); filters must be implemented on the back-end side (see WA1 labs for references)
 There is also a get on the "hike_rf" table, to analyze the reference points (that may be more than one)
 > _ASK FOR CLARIFICATION: should we put more than one filter or one is enough?_
+> _ASK FOR CLARIFICATION: should we add the period of the year in the table for the availabilty part?_
 
 ## HT - 2
-Implementation of login-logout, adding a "user" table (to be created) with data (with a "false" filter for hut workers, to be implemented later); it is a POST on the "hike" table with all the required data
+Implementation of login-logout, adding a "user" table (to be created) with data (with a "false" filter for hut workers, to be implemented later); it is a PUT/POST on the "hike" table with all the required data
+> _ASK FOR CLARIFICATION: the local guide has to create a new hike or it just has to modify the data in it?_
 
 ## HT - 3
 It is a POST on the "user" table; the visitor can be a local guide or a hiker
