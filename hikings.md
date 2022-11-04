@@ -2,19 +2,19 @@
 
 ## Difficulty - Tourist
 
-1 -
+1 - Monte Tivoli: https://hikerspiemonte.it/sentiero-per-il-monte-tivoli/
 
-2 -
+2 - Rifugio Bertorello: https://hikerspiemonte.it/sentiero-per-il-rifugio-bertorello/
 
-3 -
+3 - Rifugio I Re Magi: https://hikerspiemonte.it/sentiero-per-il-rifugio-re-magi/
 
 ## Difficulty - Hiker
 
-1 - 
+1 - Laghi Del Paione: https://hikerspiemonte.it/sentiero-per-i-laghi-del-paione-2270-m-slm/
 
-2 -
+2 - Monte Cristetto: https://hikerspiemonte.it/sentiero-per-il-monte-cristetto-1611m-slm/
 
-3 -
+3 - Lago Di Afframont: https://hikerspiemonte.it/sentiero-per-il-lago-di-afframont/
 
 ## Difficulty - Professional Hiker
 
