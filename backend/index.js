@@ -112,13 +112,12 @@ app.get('/api/sessions/current', (req, res) => {
 }); */
 
 
-// GET /api/hike/:difficulty 
-app.get('/api/hike/difficulty/:difficulty',
+// EXAMPLE OF URL: http://localhost:3001/api/hike?difficulty=T&start_asc=300
+app.get('/api/hike',
   /*isLoggedIn,*/
-  //[check('id').isInt()],
   async (req, res) => {
     try {
-      const result = await db.getHikeByDifficulty(req.params.difficulty);
+      const result = await db.getHikeWithFilters(req.query);
       if (result.error)
         res.status(404).json(result);
       else
@@ -128,69 +127,6 @@ app.get('/api/hike/difficulty/:difficulty',
     }
   });
 
-// GET /api/hike/:ascent 
-app.get('/api/hike/ascent/:ascent',
-  /*isLoggedIn,*/
-  //[check('id').isInt()],
-  async (req, res) => {
-    try {
-      const result = await db.getHikeByAscent(req.params.ascent);
-      if (result.error)
-        res.status(404).json(result);
-      else
-        res.json(result);
-    } catch (err) {
-      res.status(500).end();
-    }
-  });
-
-// GET /api/hike/:length 
-app.get('/api/hike/length/:length',
-  /*isLoggedIn,*/
-  //[check('id').isInt()],
-  async (req, res) => {
-    try {
-      const result = await db.getHikeByLength(req.params.length);
-      if (result.error)
-        res.status(404).json(result);
-      else
-        res.json(result);
-    } catch (err) {
-      res.status(500).end();
-    }
-  });
-
-  // GET /api/hike/:time 
-app.get('/api/hike/time/:time',
-/*isLoggedIn,*/
-//[check('id').isInt()],
-async (req, res) => {
-    try {
-    const result = await db.getHikeByTime(req.params.time);
-    if (result.error)
-      res.status(404).json(result);
-    else
-      res.json(result);
-  } catch (err) {
-    res.status(500).end();
-  }
-});
-
-// GET /api/hike/:area 
-app.get('/api/hike/area/:area',
-  /*isLoggedIn,*/
-  //[check('id').isInt()],
-  async (req, res) => {
-    try {
-      const result = await db.getHikeByArea(req.params.area);
-      if (result.error)
-        res.status(404).json(result);
-      else
-        res.json(result);
-    } catch (err) {
-      res.status(500).end();
-    }
-  });
 
 // Activate the server
 app.listen(port, () => {

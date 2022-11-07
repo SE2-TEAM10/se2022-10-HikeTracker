@@ -1,14 +1,2 @@
-### getHikeByAscent
-GET http://localhost:3001/api/hike/ascent/1000
-
-### getHikeByDifficulty
-GET http://localhost:3001/api/hike/difficulty/T
-
-### getHikeByLength
-GET http://localhost:3001/api/hike/length/10/
-
-### getHikeByTime
-GET http://localhost:3001/api/hike/time/05:15
-
-### getHikeByArea
-GET http://localhost:3001/api/hike/area/Talucco/
+### getHikeWithFilters
+GET http://localhost:3001/api/hike?difficulty=T&start_asc=300
