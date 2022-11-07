@@ -6,7 +6,7 @@ const dayjs = require('dayjs')
 
 
 class Database {
-    
+
     constructor(dbName) {
         this.db = new sqlite.Database(dbName, (err) => {
             if (err) throw err
@@ -20,43 +20,53 @@ class Database {
     }
 
     getMaxLength = () => {
-		const sql = 'SELECT MAX(length) FROM hike';
-		this.db.get(sql, [], (err,row) => {
-			if(err) console.log("Error");
-			return row;
-		})
-	}
+        const sql = 'SELECT MAX(length) FROM hike';
+        this.db.get(sql, [], (err,row) => {
+            if(err) console.log("Error");
+            return row;
+        })
+    }
 	
-	getMaxAsc = () => {
-		const sql = 'SELECT MAX(ascent) FROM hike';
-		this.db.get(sql, [], (err,row) => {
-			if(err) console.log("Error");
-			return row;
-		})
-	}
+    getMaxAsc = () => {
+        const sql = 'SELECT MAX(ascent) FROM hike';
+        this.db.get(sql, [], (err,row) => {
+            if(err) console.log("Error");
+            return row;
+        })
+    }
 	
-	getMaxTime = () => {
-		const sql = 'SELECT MAX(expected_time) FROM hike';
-		this.db.get(sql, [], (err,row) => {
-			if(err) console.log("Error");
-			return row;
-		})
-	} */
+    getMaxTime = () => {
+        const sql = 'SELECT MAX(expected_time) FROM hike';
+        this.db.get(sql, [], (err,row) => {
+            if(err) console.log("Error");
+            return row;
+        })
+    } */
 
     /* CHECKS MUST BE ADDED */
     getHikeWithFilters = (filters) => {
+        /*const maxLength = getMaxLength();
+        const maxAsc = getMaxAsc();
+        const maxTime = getMaxTime();*/
+        const maxLength = 10000;
+        const maxAsc = 10000;
+        const maxTime = 300;
+        
         return new Promise((resolve, reject) => {
-            let difficulty = filters.difficulty;    //STRING - if empty: ""
-			let start_asc = filters.start_asc;      //INTEGER - if empty: 0
-            let end_asc = filters.end_asc;          //INTEGER - if empty: getMaxAsc()
-			let start_len = filters.start_len;      //INTEGER - if empty: 0
-			let end_len = filters.end_len;          //INTEGER - if empty: getMaxLength()
-			let start_time = filters.start_time;    //STRING  - if empty: "00:00"
-			let end_time = filters.end_time;        //STRING - if empty: getMaxTime()
-			let city = filters.city;                //STRING - if empty: ""
-			let province = filters.province;        //STRING - if empty: ""
-			let latitude = filters.latitude;        //STRING - if empty: ""
-			let longitude = filters.longitude;      //STRING - if empty: ""
+
+
+            let difficulty = filters.difficulty == null || filters.difficulty == undefined ? 0 : filters.difficulty;
+            let start_asc = filters.start_asc == null || filters.start_asc == undefined ? 0 : filters.start_asc;
+            let end_asc = filters.end_asc == null || filters.end_asc == undefined ? maxAsc : filters.end_asc;
+            let start_len = filters.start_len == null || filters.start_len == undefined ? 0 : filters.start_len;
+            let end_len = filters.end_len == null || filters.end_len == undefined ? maxLength : filters.end_len;
+            let start_time = filters.start_time == null || filters.start_time == undefined ? "00:00" : filters.start_time;
+            let end_time = filters.end_time == null || filters.end_time == undefined ? maxTime : filters.end_time;
+            let city = filters.city == null || filters.city == undefined ? "" : filters.city;
+            let province = filters.province == null || filters.province == undefined ? "" : filters.province;
+            let latitude = filters.latitude == null || filters.latitude == undefined ? "" : filters.latitude;
+            let longitude = filters.longitude == null || filters.longitude == undefined ? "" : filters.longitude;
+
             const sql = 'SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID WHERE difficulty = ? AND ascent > ? AND ascent < ? AND length < ? AND length > ? AND expected_time > ? AND expected_time < ? AND city = ? AND province = ? AND latitude = ? AND longitude = ?'
             this.db.all(sql, [difficulty, start_asc, end_asc, start_len, end_len, start_time, end_time, city, province, latitude, longitude], (err, rows) => {
                 if (err) return reject(500)
