@@ -58,41 +58,50 @@ class Database {
 
             let query = 'SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID'
             let query2 = ""
-            let params = []
-            console.log(query)
-            console.log("Filters2: ", filters)
-            if(!(Object.keys(filters) === 0)){
+            if(!(Object.entries(filters) == 0)){
                 query2 = query.concat(' WHERE ')
-                console.log("query1", query2)
-                console.log("Chiavi oggetto:" , Object.entries(filters))
-                for(let entry in Object.entries(filters)) {
-                    console.log(entry[1])
-                    console.log("test")
-                    console.log(typeof entry.key)
-                    if (typeof entry.key === "string" || entry.key instanceof String) {
-                        if (entry.key.length !== 0) {
-                            if(entry.key.equals("start_time")){
-                                query2 = query2.concat(entry.key, " > ", entry.value)
-                            }else if(entry.key.equals("end_time")) {
-                                query2 = query2.concat(entry.key, "<", entry.value)
-                            }else{
-                                console.log("sonoentrato")
-                                query2 = query2.concat(entry.key, "=", entry.value)
-                                console.log(query2)
+                for(let entry of Object.entries(filters)) {
+                    let key = entry[0]
+                    let value = entry[1]
+                    if(key == "start_asc" ||  key == "end_asc"){
+                        value=parseInt(value)
+                    }
+                    if(key == "start_len" || key == "end_len"){
+                        value=parseInt(value)
+                    }
+                    if ((typeof value === "string" || value instanceof String)) {
+                        if (key.length !== 0) {
+                            if(key == "start_time"){
+                                query2 = query2.concat("expected_time", " > ", "'" + value +"'")
+                            }else if(key == "end_time") {
+                                query2 = query2.concat("expected_time", "<", "'" + value +"'")
+                            }else {
+                                query2 = query2.concat(key, "=", "'" + value +"'")
+
                             }
                         }
                     }
-                    else if(typeof entry.key === 'number' || entry.key instanceof Number){
-                        if (entry.key.equals("start_asc") || entry.key.equals("start_len")) {
-                            query2 = query2.concat(entry.key, " > ", entry.value)
-                        } else if (entry.key.equals("end_asc") || entry.key.equals("end_len")) {
-                            query2 = query2.concat(entry.key, " < ", entry.value)
-                        }
+                    else if(typeof value === 'number' || value instanceof Number){
+                            if (key == "start_asc" ) {
+                                query2 = query2.concat("ascent", " > ", value)
+                            } else if (key == "end_asc") {
+                                query2 = query2.concat("ascent", " < ", value)
+                            } else if(key == "start_len") {
+                                query2 = query2.concat("length", " > ", value)
+                            } else if(key == "end_len"){
+                                query2 = query2.concat("length", " < ", value)
+                            }
                     }
-                    params.add(entry.value)
+                    query2 = query2.concat(" AND ")
                 }
+                query2 = query2.slice(0,query2.length - 4)
+                console.log(query2)
+            }else{
+                query2 = query2.concat(query);
+                console.log(query2)
             }
-            this.db.all(query,params , (err, rows) => {
+
+            this.db.all(query2 ,[], (err, rows) => {
                 if (err) return reject(500)
                 if (rows === undefined) return reject(404)
                 return resolve(rows)
