@@ -1,2 +1,2 @@
 ### getHikeWithFilters
-GET http://localhost:3001/api/hike?difficulty=T&start_asc=300
+GET http://localhost:3001/api/hike?difficulty=T&city=Crissolo

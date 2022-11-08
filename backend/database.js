@@ -45,6 +45,8 @@ class Database {
 
     /* CHECKS MUST BE ADDED */
     getHikeWithFilters = (filters) => {
+        console.log(filters)
+        console.log(Object.keys(filters).length)
         /*const maxLength = getMaxLength();
         const maxAsc = getMaxAsc();
         const maxTime = getMaxTime();*/
@@ -54,21 +56,43 @@ class Database {
         
         return new Promise((resolve, reject) => {
 
-
-            let difficulty = filters.difficulty == null || filters.difficulty == undefined ? 0 : filters.difficulty;
-            let start_asc = filters.start_asc == null || filters.start_asc == undefined ? 0 : filters.start_asc;
-            let end_asc = filters.end_asc == null || filters.end_asc == undefined ? maxAsc : filters.end_asc;
-            let start_len = filters.start_len == null || filters.start_len == undefined ? 0 : filters.start_len;
-            let end_len = filters.end_len == null || filters.end_len == undefined ? maxLength : filters.end_len;
-            let start_time = filters.start_time == null || filters.start_time == undefined ? "00:00" : filters.start_time;
-            let end_time = filters.end_time == null || filters.end_time == undefined ? maxTime : filters.end_time;
-            let city = filters.city == null || filters.city == undefined ? "" : filters.city;
-            let province = filters.province == null || filters.province == undefined ? "" : filters.province;
-            let latitude = filters.latitude == null || filters.latitude == undefined ? "" : filters.latitude;
-            let longitude = filters.longitude == null || filters.longitude == undefined ? "" : filters.longitude;
-
-            const sql = 'SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID WHERE difficulty = ? AND ascent > ? AND ascent < ? AND length < ? AND length > ? AND expected_time > ? AND expected_time < ? AND city = ? AND province = ? AND latitude = ? AND longitude = ?'
-            this.db.all(sql, [difficulty, start_asc, end_asc, start_len, end_len, start_time, end_time, city, province, latitude, longitude], (err, rows) => {
+            let query = 'SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID'
+            let query2 = ""
+            let params = []
+            console.log(query)
+            console.log("Filters2: ", filters)
+            if(!(Object.keys(filters) === 0)){
+                query2 = query.concat(' WHERE ')
+                console.log("query1", query2)
+                console.log("Chiavi oggetto:" , Object.entries(filters))
+                for(let entry in Object.entries(filters)) {
+                    console.log(entry[1])
+                    console.log("test")
+                    console.log(typeof entry.key)
+                    if (typeof entry.key === "string" || entry.key instanceof String) {
+                        if (entry.key.length !== 0) {
+                            if(entry.key.equals("start_time")){
+                                query2 = query2.concat(entry.key, " > ", entry.value)
+                            }else if(entry.key.equals("end_time")) {
+                                query2 = query2.concat(entry.key, "<", entry.value)
+                            }else{
+                                console.log("sonoentrato")
+                                query2 = query2.concat(entry.key, "=", entry.value)
+                                console.log(query2)
+                            }
+                        }
+                    }
+                    else if(typeof entry.key === 'number' || entry.key instanceof Number){
+                        if (entry.key.equals("start_asc") || entry.key.equals("start_len")) {
+                            query2 = query2.concat(entry.key, " > ", entry.value)
+                        } else if (entry.key.equals("end_asc") || entry.key.equals("end_len")) {
+                            query2 = query2.concat(entry.key, " < ", entry.value)
+                        }
+                    }
+                    params.add(entry.value)
+                }
+            }
+            this.db.all(query,params , (err, rows) => {
                 if (err) return reject(500)
                 if (rows === undefined) return reject(404)
                 return resolve(rows)
