@@ -6,14 +6,15 @@ const morgan = require('morgan'); // logging middleware
 const cors = require('cors');
 const Database = require('./database.js')
 const db = new Database('./hiketracker.db')
-/* const passport = require('passport'); // auth middleware
+ const passport = require('passport'); // auth middleware
 const LocalStrategy = require('passport-local').Strategy; // username and password for login
 const session = require('express-session'); // enable sessions
 const { check, validationResult, body, param } = require('express-validator'); // validation middleware */
 
 
 
-/* // set up the "username and password" login strategy
+
+ // set up the "username and password" login strategy
 // by setting a function to verify username and password
 passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
@@ -38,8 +39,11 @@ passport.deserializeUser((id, done) => {
   }).catch(err => {
     done(err, null);
   });
-}); */
+});
 
+const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+  return `${location}[${param}]: ${msg}`;
+};
 
 // init express
 const app = express();
@@ -49,13 +53,13 @@ const port = 3001;
 app.use(morgan('common'));
 app.use(express.json());
 app.use(cors());
-/* const corsOptions = {
+ const corsOptions = {
   origin: 'http://localhost:8000',
   credentials: true,
 };
-app.use(cors(corsOptions)); */
+app.use(cors(corsOptions));
 
-/* // custom middleware: check if a given request is coming from an authenticated user
+ // custom middleware: check if a given request is coming from an authenticated user
 const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated())
     return next();
@@ -109,7 +113,7 @@ app.get('/api/sessions/current', (req, res) => {
   }
   else
     res.status(401).json({ error: 'Unauthenticated user!' });;
-}); */
+});
 
 
 // EXAMPLE OF URL: http://localhost:3001/api/hike?difficulty=T&start_asc=300
@@ -126,6 +130,67 @@ app.get('/api/hike',
       res.status(500).end();
     }
   });
+
+
+  app.post('/api/hike',
+    isLoggedIn,
+    [
+       /*
+        check('name').isLength({ min: 1, max: 100 }),
+        check('length').isInt(),
+        check('expected_time').islength({ min: 5, max: 5 }),
+        check('ascent').isInt(),
+        check('difficulty').islength({ min: 1, max: 2 }),
+      */
+        
+        
+    ],
+    async (req, res) => {
+
+       /* const errors = validationResult(req).formatWith(errorFormatter); // format error message
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+        }*/
+
+        try {
+            const result = await db.addNewHikeDescription(req.body)
+            res.status(201).json(result);
+        }
+        catch (err) {
+            console.error(err);
+            res.status(503).json(err);
+
+        }
+
+    });
+
+
+/*
+// POST /api/service
+app.post('/api/hike',
+    isLoggedIn,
+    async (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ error: errors.array().join(", ") });
+        }
+
+        const service = {
+            id: req.body.id,
+            tag_name: req.body.tag_name,
+            service_time: req.body.service_time,
+        };
+
+        try {
+            const result = await db.createService(service);
+            res.json(result);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during the creation of new service: ${err}` });
+        }
+    });
+*/
+
 
 
 // Activate the server
