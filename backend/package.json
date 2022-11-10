@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "apiTest": "mocha test --runInBand--timeout 10000 ",
+    "test": "jest --runInBand --coverage "
   },
   "author": "",
   "license": "ISC",

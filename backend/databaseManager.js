@@ -7,7 +7,7 @@ const sqlite = require('sqlite3');
 class DBManager {
     #db;
     constructor() {
-        this.#db = new sqlite.Database('hiketracker.db', (err) => {
+        this.#db = new sqlite.Database('./hiketracker.db', (err) => {
             if (err) {
                 console.log("Database start error: " + err);
                 throw err;
