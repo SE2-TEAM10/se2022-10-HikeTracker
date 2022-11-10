@@ -114,18 +114,23 @@ app.get('/api/sessions/current', (req, res) => {
 
 // EXAMPLE OF URL: http://localhost:3001/api/hike?difficulty=T&start_asc=300
 app.get('/api/hike',
-  /*isLoggedIn,*/
   async (req, res) => {
-    try {
-      const result = await db.getHikeWithFilters(req.query);
-      if (result.error)
-        res.status(404).json(result);
-      else
-        res.json(result);
-    } catch (err) {
-      res.status(500).end();
-    }
+      await db.getHikeWithFilters(req.query)
+          .then(lists => {
+              lists.map((row) => {
+                  if(row.location !== null && !Array.isArray(row.location))
+                      row.location = [row.location];
+                  return row;
+              })
+              res.json(lists)
+          })
+          .catch((err) => {
+          console.log(err);
+          res.status(500).json({error: `Database error while retrieving courses`}).end()
+      });;
+
   });
+
 
 
 // Activate the server
