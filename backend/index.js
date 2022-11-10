@@ -13,6 +13,7 @@ const { check, validationResult, body, param } = require('express-validator'); /
 
 
 
+
  // set up the "username and password" login strategy
 // by setting a function to verify username and password
 passport.use(
@@ -40,6 +41,9 @@ passport.deserializeUser((id, done) => {
   });
 });
 
+const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+  return `${location}[${param}]: ${msg}`;
+};
 
 // init express
 const app = express();
@@ -126,6 +130,40 @@ app.get('/api/hike',
       res.status(500).end();
     }
   });
+
+
+  app.post('/api/hike',
+    isLoggedIn,
+    [
+       /*
+        check('name').isLength({ min: 1, max: 100 }),
+        check('length').isInt(),
+        check('expected_time').islength({ min: 5, max: 5 }),
+        check('ascent').isInt(),
+        check('difficulty').islength({ min: 1, max: 2 }),
+      */
+        
+        
+    ],
+    async (req, res) => {
+
+       /* const errors = validationResult(req).formatWith(errorFormatter); // format error message
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+        }*/
+
+        try {
+            const result = await db.addNewHikeDescription(req.body)
+            res.status(201).json(result);
+        }
+        catch (err) {
+            console.error(err);
+            res.status(503).json(err);
+
+        }
+
+    });
+
 
 /*
 // POST /api/service
