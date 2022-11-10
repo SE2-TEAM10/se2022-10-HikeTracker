@@ -127,6 +127,33 @@ app.get('/api/hike',
     }
   });
 
+/*
+// POST /api/service
+app.post('/api/hike',
+    isLoggedIn,
+    async (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ error: errors.array().join(", ") });
+        }
+
+        const service = {
+            id: req.body.id,
+            tag_name: req.body.tag_name,
+            service_time: req.body.service_time,
+        };
+
+        try {
+            const result = await db.createService(service);
+            res.json(result);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during the creation of new service: ${err}` });
+        }
+    });
+*/
+
+
 
 // Activate the server
 app.listen(port, () => {
