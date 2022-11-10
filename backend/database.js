@@ -13,50 +13,9 @@ class Database {
         })
     }
 
-    /* isEmpty = (thisstring) => {
-        if(thisstring.length == 0)
-            return true;
-        return false;
-    }
-
-    getMaxLength = () => {
-        const sql = 'SELECT MAX(length) FROM hike';
-        this.db.get(sql, [], (err,row) => {
-            if(err) console.log("Error");
-            return Object.values(row);
-        })
-    }
-	
-    getMaxAsc = () => {
-        const sql = 'SELECT MAX(ascent) FROM hike';
-        this.db.get(sql, [], (err,row) => {
-            if(err) console.log("Error");
-            return Object.values(row);
-        })
-    }
-	
-    getMaxTime = () => {
-        const sql = 'SELECT MAX(expected_time) FROM hike';
-        this.db.get(sql, [], (err,row) => {
-            if(err) console.log("Error");
-            console.log(row);
-            console.log(Object.values(row));
-            return Object.values(row);
-        })
-    }*/
-
-    /* CHECKS MUST BE ADDED */
     getHikeWithFilters = (filters) => {
         console.log(filters)
         console.log(Object.keys(filters).length)
-        /*const maxLength = getMaxLength();
-        const maxAsc = getMaxAsc();
-        const maxTime = getMaxTime();*/
-        const maxLength = 10000;
-        const maxAsc = 10000;
-        const maxTime = "30:00";
-        /* const maxTime = this.getMaxTime();
-        console.log("maxTime: ", maxTime); */
         
         return new Promise((resolve, reject) => {
 
