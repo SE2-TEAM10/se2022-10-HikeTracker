@@ -23,7 +23,7 @@ class Database {
         const sql = 'SELECT MAX(length) FROM hike';
         this.db.get(sql, [], (err,row) => {
             if(err) console.log("Error");
-            return row;
+            return Object.values(row);
         })
     }
 	
@@ -31,7 +31,7 @@ class Database {
         const sql = 'SELECT MAX(ascent) FROM hike';
         this.db.get(sql, [], (err,row) => {
             if(err) console.log("Error");
-            return row;
+            return Object.values(row);
         })
     }
 	
@@ -39,9 +39,11 @@ class Database {
         const sql = 'SELECT MAX(expected_time) FROM hike';
         this.db.get(sql, [], (err,row) => {
             if(err) console.log("Error");
-            return row;
+            console.log(row);
+            console.log(Object.values(row));
+            return Object.values(row);
         })
-    } */
+    }*/
 
     /* CHECKS MUST BE ADDED */
     getHikeWithFilters = (filters) => {
@@ -52,7 +54,9 @@ class Database {
         const maxTime = getMaxTime();*/
         const maxLength = 10000;
         const maxAsc = 10000;
-        const maxTime = 300;
+        const maxTime = "30:00";
+        /* const maxTime = this.getMaxTime();
+        console.log("maxTime: ", maxTime); */
         
         return new Promise((resolve, reject) => {
 
