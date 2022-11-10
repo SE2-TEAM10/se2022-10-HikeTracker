@@ -77,16 +77,6 @@ class Database {
         return new Promise((resolve, reject) => {
             const sql =
                 "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
-            const args = [
-                hike.name,
-                hike.length,
-                hike.expected_time,
-                hike.ascent,
-                hike.difficulty,
-                hike.start_point,
-                hike.end_point,
-                hike.description,
-            ];
             db.run(sql, [hike.name,hike.length,hike.expected_time,hike.ascent,hike.difficulty,hike.start_point,hike.end_point,hike.description], function (err) {
                 if (err) reject(err);
                 else resolve(this.lastID);
