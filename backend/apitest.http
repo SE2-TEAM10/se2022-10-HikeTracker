@@ -1,2 +1,2 @@
 ### getHikeWithFilters
-GET http://localhost:3001/api/hike?difficulty=H&start_len=6&start_asc=200
+GET http://localhost:3001/api/hike?difficulty=T

@@ -2,10 +2,10 @@
 
 /* UNIT TEST FILE FOR HIKE APIS */
 const { expect, assert } = require('chai');
-const HikeController = require('../database');
-const dbManager = require('../databaseManager')
+//const dbManager = require('../databaseManager');
+const Database = require('../database');
 
-const hikeController = new HikeController();
+const hikeController = new Database('./hiketracker.db');
 
 /* beforeEach(async () => {
     await dbManager.deleteAllData()
@@ -19,8 +19,20 @@ describe.only('hikeController Tests', () => {
 
     describe('getAllHikes method test', () => {
         test('successful use of getAllHikes', async () => {
-            const result = await hikeController.getHikeWithFilters();
-            assert.equal(result.length, 0);
+
+            /* to test the real DB, you need to add filters and to make sure that the number of result is the same on the assert equal */
+            let filters = {
+                difficulty : "T",
+                //start_len : 5,
+                //end_len : 15,
+                //start_asc : 500,
+                //end_asc : 2000,
+                //start_time : "00:00",
+                //end_time : "30:00"
+            };
+
+            const result = await hikeController.getHikeWithFilters(filters);
+            assert.equal(result.length, 6);
         })
     })
 

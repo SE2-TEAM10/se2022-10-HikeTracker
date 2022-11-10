@@ -88,10 +88,10 @@ class DBManager {
             //"DELETE FROM SQLITE_SEQUENCE WHERE name='hike'"
         ];
 
-        /* const query2 = 'INSERT INTO hike (ID, name, length, expected_time, ascent, difficulty, start_point, end_point, description) \
+        const query2 = 'INSERT INTO hike (ID, name, length, expected_time, ascent, difficulty, start_point, end_point, description) \
        VALUES  (55,"name1", 10,"05:00", 500, "H", "stPoint", "endPoint", "aDesc")'
-        await this.addP1(query2) */
         await this.deleteP1(queries);
+        await this.addP1(query2)
 
     }
 
