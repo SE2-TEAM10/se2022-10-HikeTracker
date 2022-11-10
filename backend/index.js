@@ -6,14 +6,14 @@ const morgan = require('morgan'); // logging middleware
 const cors = require('cors');
 const Database = require('./database.js')
 const db = new Database('./hiketracker.db')
-/* const passport = require('passport'); // auth middleware
+ const passport = require('passport'); // auth middleware
 const LocalStrategy = require('passport-local').Strategy; // username and password for login
 const session = require('express-session'); // enable sessions
 const { check, validationResult, body, param } = require('express-validator'); // validation middleware */
 
 
 
-/* // set up the "username and password" login strategy
+ // set up the "username and password" login strategy
 // by setting a function to verify username and password
 passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
@@ -38,7 +38,7 @@ passport.deserializeUser((id, done) => {
   }).catch(err => {
     done(err, null);
   });
-}); */
+});
 
 
 // init express
@@ -49,13 +49,13 @@ const port = 3001;
 app.use(morgan('common'));
 app.use(express.json());
 app.use(cors());
-/* const corsOptions = {
+ const corsOptions = {
   origin: 'http://localhost:8000',
   credentials: true,
 };
-app.use(cors(corsOptions)); */
+app.use(cors(corsOptions));
 
-/* // custom middleware: check if a given request is coming from an authenticated user
+ // custom middleware: check if a given request is coming from an authenticated user
 const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated())
     return next();
@@ -109,7 +109,7 @@ app.get('/api/sessions/current', (req, res) => {
   }
   else
     res.status(401).json({ error: 'Unauthenticated user!' });;
-}); */
+});
 
 
 // EXAMPLE OF URL: http://localhost:3001/api/hike?difficulty=T&start_asc=300

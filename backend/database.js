@@ -84,9 +84,26 @@ class Database {
         });
     }
 
-    /* login = (username, password) => {
+    getUserById = (id) => {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM manager WHERE mail = ?`
+            const sql = 'SELECT * FROM user WHERE id = ?';
+            this.db.get(sql, [id], (err, row) => {
+                if (err)
+                    reject(err);
+                else if (row === undefined)
+                    resolve({error: 'User not found.'});
+                else {
+                    // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
+                    const user = {id: row.id, username: row.mail, name: row.name}
+                    resolve(user);
+                }
+            });
+        });
+    };
+
+     login = (username, password) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM user WHERE mail = ?`
             this.db.get(sql, [username], (err, row) => {
                 if (err) {
                     resolve(false)
