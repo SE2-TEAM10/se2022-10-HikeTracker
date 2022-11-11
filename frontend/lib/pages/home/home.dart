@@ -1,8 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/home/filter.dart';
+import 'package:frontend/rest_client.dart';
 import 'package:go_router/go_router.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  const Home({
+    super.key,
+    required this.client,
+  });
+
+  final RestClient client;
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +23,7 @@ class Home extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Welcome to the Hike tracker!!!',
-            ),
+            HomeContent(client: client),
             const SizedBox(
               height: 16,
             ),
@@ -30,5 +37,27 @@ class Home extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class HomeContent extends StatefulWidget {
+  const HomeContent({
+    super.key,
+    required this.client,
+  });
+
+  final RestClient client;
+
+  @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  Filter filter = Filter();
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
   }
 }
