@@ -24,7 +24,7 @@ class Home extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             HomeContent(client: client),
-            const SizedBox(
+            /*const SizedBox(
               height: 16,
             ),
             TextButton(
@@ -33,6 +33,7 @@ class Home extends StatelessWidget {
                 'Go to login',
               ),
             )
+            */
           ],
         ),
       ),
@@ -57,7 +58,11 @@ class _HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Row(
+      children: [
+        FilterTab(),
+        //HikesPage(),
+      ],
+    );
   }
 }
