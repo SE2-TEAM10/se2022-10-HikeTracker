@@ -1,17 +1,19 @@
-'use strict'
+"use strict";
 
-const sqlite = require('sqlite3')
-const crypto = require('crypto')
-const dayjs = require('dayjs')
-
+const sqlite = require("sqlite3");
+const crypto = require("crypto");
+const dayjs = require("dayjs");
 
 class Database {
+  constructor(dbName) {
+    this.db = new sqlite.Database(dbName, (err) => {
+      if (err) throw err;
+    });
+  }
 
-    constructor(dbName) {
-        this.db = new sqlite.Database(dbName, (err) => {
-            if (err) throw err
-        })
-    }
+  getHikeWithFilters = (filters) => {
+    console.log(filters);
+    console.log(Object.keys(filters).length);
 
     getHikeWithFilters = (filters) => {
         console.log(filters)
@@ -64,16 +66,70 @@ class Database {
                 console.log(query2)
             }
 
-            this.db.all(query2, [], (err, rows) => {
-                if (err) return reject(500)
-                if (rows === undefined) return reject(404)
-                return resolve(rows)
-            })
-        })
-    }
+      this.db.all(query2, [], (err, rows) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        const list = rows.map((e) => ({
+          id: e.ID,
+          name: e.name,
+          length: e.length,
+          expected_time: e.expected_time,
+          ascent: e.ascent,
+          difficulty: e.difficulty,
+          start_point: e.start_point,
+          end_point: e.end_point,
+          description: e.description,
+          location_name: e.location_name,
+          latitude: e.latitude,
+          longitude: e.longitude,
+          city: e.city,
+          province: e.province,
+          hike_ID: e.hike_ID,
+        }));
+        console.log(list);
+        let array = [];
+        list.forEach((i) => {
+          if (array.find((a) => a.id === i.id) === undefined) {
+            let temp = list.filter((course) => course.id === i.id);
+            console.log("temp temp temp temp temp", temp);
+            if (temp.length === 1) {
+              array.push(temp[0]);
+            } else {
+              let location = [];
+              temp.map((t) => {
+                location.push({
+                  name: t.location_name,
+                  latitude: t.latitude,
+                  longitude: t.longitude,
+                  city: t.city,
+                  province: t.province,
+                });
+                return t;
+              });
+              array.push({
+                id: temp[0].id,
+                name: temp[0].name,
+                length: temp[0].length,
+                expected_time: temp[0].expected_time,
+                ascent: temp[0].ascent,
+                difficulty: temp[0].difficulty,
+                start_point: temp[0].start_point,
+                end_point: temp[0].end_point,
+                description: temp[0].description,
+                location: location,
+              });
+            }
+          }
+        });
+        return resolve(array);
+      });
+    });
+  };
+}
 
-    async addNewHikeDescription(hike) {
-
+  /* login = (username, password) => {
         return new Promise((resolve, reject) => {
             const sql =
                 "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
@@ -125,3 +181,4 @@ class Database {
 }
 
 module.exports = Database
+
