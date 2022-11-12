@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/home/filter.dart';
 import 'package:frontend/rest_client.dart';
-import 'package:http/http.dart';
 
 class DataTableExample extends StatefulWidget {
-  const DataTableExample(
-      {super.key, required this.filter, required this.client});
+  const DataTableExample({
+    super.key,
+    required this.filter,
+    required this.client,
+  });
 
   final Filter filter;
   final RestClient client;
@@ -21,7 +23,7 @@ class _DataTableExampleState extends State<DataTableExample> {
       future: widget.client.get(api: 'hike', filter: widget.filter),
       builder: (ctx, snapshot) {
         if (snapshot.hasData) {
-          return Text("bela call");
+          return const Text("bela call");
           /*
           final officers = Officers.fromJson(snapshot.data!.body);
 

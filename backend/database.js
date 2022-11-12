@@ -15,10 +15,6 @@ class Database {
     console.log(filters);
     console.log(Object.keys(filters).length);
 
-    getHikeWithFilters = (filters) => {
-      console.log(filters);
-      console.log(Object.keys(filters).length);
-
       return new Promise((resolve, reject) => {
         let query =
           "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID";
@@ -133,7 +129,6 @@ class Database {
         });
       });
     };
-  };
 }
 
 /* login = (username, password) => {

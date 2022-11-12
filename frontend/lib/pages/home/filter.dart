@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,8 +9,8 @@ class Filter {
 
   void toHeader() {
     String r = "";
-    if(start_asc!=null){
-      r="$r"
+    if (start_asc != null) {
+      r = r;
     }
   }
 }
@@ -67,13 +66,13 @@ class _FilterTab extends State<FilterTab> {
 
                 //submit
                 Container(
-                  margin: EdgeInsets.all(25),
+                  margin: const EdgeInsets.all(25),
                   child: ElevatedButton(
-                    child: Text(
+                    onPressed: widget.filterHikes(filter),
+                    child: const Text(
                       'Filter',
                       style: TextStyle(fontSize: 20.0),
                     ),
-                    onPressed: widget.filterHikes(filter),
                   ),
                 ),
               ])),
@@ -87,7 +86,7 @@ class AscentFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [],
+      children: const [],
     );
   }
 }

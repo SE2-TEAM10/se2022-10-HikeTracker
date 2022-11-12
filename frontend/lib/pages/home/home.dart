@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/home/filter.dart';
 import 'package:frontend/pages/home/hike.dart';
 import 'package:frontend/rest_client.dart';
-import 'package:go_router/go_router.dart';
 
 class Home extends StatelessWidget {
   const Home({
@@ -57,7 +54,6 @@ class _HomeContentState extends State<HomeContent> {
   Filter filter = Filter();
   void filterHikes(Filter filter) {
     this.filter = filter;
-    setState(() {});
   }
 
   @override
@@ -65,7 +61,10 @@ class _HomeContentState extends State<HomeContent> {
     return Row(
       children: [
         FilterTab(filterHikes: filterHikes),
-        DataTableExample(client: widget.client, filter: filter),
+        DataTableExample(
+          client: widget.client,
+          filter: filter,
+        ),
       ],
     );
   }
