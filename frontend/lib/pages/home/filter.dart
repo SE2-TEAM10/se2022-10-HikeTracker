@@ -7,12 +7,31 @@ class Filter {
 
   String? start_asc;
   String? end_asc;
+  String? difficulty;
+  String? start_len;
+  String? end_len;
+  String? start_time;
+  String? end_time;
+  String? latitude;
+  String? longitude;
+  String? city;
+  String? province;
 
-  void toHeader() {
-    String r = "";
-    if(start_asc!=null){
-      r="$r"
+  Map<String, dynamic> toQueryParameters() {
+    Map<String, dynamic> query = Map<String, dynamic>();
+    if (start_asc != null) {
+      query['start_asc'] = "$start_asc";
     }
+    if (end_asc != null) {
+      query['end_asc'] = "$end_asc";
+    }
+    if (start_len != null) {
+      query['start_len'] = "$start_len";
+    }
+    if (end_time != null) {
+      query['end_time'] = "$end_time";
+    }
+    return query;
   }
 }
 
@@ -41,6 +60,7 @@ class _FilterTab extends State<FilterTab> {
                 //AscentFormField
                 Row(
                   children: <Widget>[
+                    Text('Ascent: '),
                     SizedBox(
                         width: 50,
                         child: TextField(
@@ -51,7 +71,7 @@ class _FilterTab extends State<FilterTab> {
                           onChanged: (value) =>
                               setState(() => filter.start_asc = value),
                         )),
-                    const Text("to"),
+                    const Text("to "),
                     SizedBox(
                         width: 50,
                         child: TextField(
@@ -65,6 +85,34 @@ class _FilterTab extends State<FilterTab> {
                   ],
                 ),
 
+                //LengthFormField
+                Row(
+                  children: <Widget>[
+                    Text('Length: '),
+                    SizedBox(
+                        width: 50,
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ], // Only numbers can be entered
+                          onChanged: (value) =>
+                              setState(() => filter.start_len = value),
+                        )),
+                    const Text("to"),
+                    SizedBox(
+                        width: 50,
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ], // Only numbers can be entered
+                          onChanged: (value) =>
+                              setState(() => filter.end_len = value),
+                        ))
+                  ],
+                ),
+
                 //submit
                 Container(
                   margin: EdgeInsets.all(25),
@@ -73,7 +121,9 @@ class _FilterTab extends State<FilterTab> {
                       'Filter',
                       style: TextStyle(fontSize: 20.0),
                     ),
-                    onPressed: widget.filterHikes(filter),
+                    onPressed: () {
+                      widget.filterHikes(filter);
+                    },
                   ),
                 ),
               ])),
