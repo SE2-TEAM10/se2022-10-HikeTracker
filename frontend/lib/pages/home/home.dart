@@ -22,7 +22,6 @@ class Home extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             HomeContent(client: client),
             /*const SizedBox(
@@ -55,14 +54,18 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  Filter filter = Filter();  
+  Filter filter = Filter();
+  void filterHikes(Filter filter) {
+    this.filter = filter;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        FilterTab(),
-        _DataTableExample(),
+        FilterTab(filterHikes: filterHikes),
+        DataTableExample(client: widget.client, filter: filter),
       ],
     );
   }

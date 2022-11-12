@@ -7,16 +7,24 @@ class Filter {
 
   String? start_asc;
   String? end_asc;
+
+  void toHeader() {
+    String r = "";
+    if(start_asc!=null){
+      r="$r"
+    }
+  }
 }
 
 class FilterTab extends StatefulWidget {
-  const FilterTab({super.key});
+  const FilterTab({super.key, required this.filterHikes});
 
+  final Function filterHikes;
   @override
   State<StatefulWidget> createState() => _FilterTab();
 }
 
-class _FilterTab extends State<StatefulWidget> {
+class _FilterTab extends State<FilterTab> {
   final _formKey = GlobalKey<FormState>();
   Filter filter = Filter();
 
@@ -65,7 +73,7 @@ class _FilterTab extends State<StatefulWidget> {
                       'Filter',
                       style: TextStyle(fontSize: 20.0),
                     ),
-                    onPressed: () {},
+                    onPressed: widget.filterHikes(filter),
                   ),
                 ),
               ])),

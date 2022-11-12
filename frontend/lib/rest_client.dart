@@ -1,17 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/pages/home/filter.dart';
 import 'package:http/http.dart';
 import 'package:requests/requests.dart';
 
 class RestClient {
   RestClient();
 
-  Future<Response> get({
-    required String api,
-    String? endpoint,
-    Map<String, String>? headers,
-  }) async {
+  Future<Response> get(
+      {required String api,
+      String? endpoint,
+      Map<String, String>? headers,
+      required Filter filter}) async {
     final e = endpoint ?? dotenv.env['ENDPOINT'];
 
     return Requests.get(
