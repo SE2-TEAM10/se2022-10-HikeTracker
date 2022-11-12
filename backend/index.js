@@ -50,9 +50,8 @@ const port = 3001;
 // set-up the middlewares
 app.use(morgan("common"));
 app.use(express.json());
-app.use(cors());
 const corsOptions = {
-  origin: "http://localhost:8000",
+  origin: 'http://localhost:8000',
   credentials: true,
 };
 app.use(cors(corsOptions));

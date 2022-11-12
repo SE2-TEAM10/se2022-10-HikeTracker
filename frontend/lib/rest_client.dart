@@ -12,7 +12,7 @@ class RestClient {
       {required String api,
       String? endpoint,
       Map<String, String>? headers,
-      required Filter filter}) async {
+      Filter? filter}) async {
     final e = endpoint ?? dotenv.env['ENDPOINT'];
 
     return Requests.get(

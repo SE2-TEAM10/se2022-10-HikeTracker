@@ -93,6 +93,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  gap:
+    dependency: transitive
+    description:
+      name: gap
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   go_router:
     dependency: "direct main"
     description:
@@ -128,6 +135,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.4"
+  layout:
+    dependency: "direct main"
+    description:
+      name: layout
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   lints:
     dependency: transitive
     description:

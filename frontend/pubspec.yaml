@@ -41,6 +41,7 @@ dependencies:
   equatable: ^2.0.5
   requests: ^4.8.0-alpha.0
   go_router: ^5.1.5
+  layout: ^1.0.3
 
 dev_dependencies:
   flutter_test:
