@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/home/filter.dart';
+import 'package:frontend/pages/home/hike.dart';
 import 'package:frontend/rest_client.dart';
 import 'package:go_router/go_router.dart';
 
@@ -54,14 +55,14 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  Filter filter = Filter();
+  Filter filter = Filter();  
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         FilterTab(),
-        //HikesPage(),
+        _DataTableExample(),
       ],
     );
   }
