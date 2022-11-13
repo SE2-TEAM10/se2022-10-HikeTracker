@@ -7,15 +7,12 @@ class Filter {
 
   String? start_asc;
   String? end_asc;
-  String? difficulty;
+  String? difficulty = 'ALL';
   String? start_len;
   String? end_len;
-  String? start_time;
-  String? end_time;
-  String? latitude;
-  String? longitude;
   String? city;
   String? province;
+  static List<String> list = <String>['ALL', 'PH', 'H', 'T'];
 
   Map<String, dynamic> toQueryParameters() {
     Map<String, dynamic> query = Map<String, dynamic>();
@@ -28,8 +25,17 @@ class Filter {
     if (start_len != null) {
       query['start_len'] = "$start_len";
     }
-    if (end_time != null) {
-      query['end_time'] = "$end_time";
+    if (end_len != null) {
+      query['end_len'] = "$end_len";
+    }
+    if (difficulty != null && difficulty != 'ALL') {
+      query['difficulty'] = "$difficulty";
+    }
+    if (city != null && city != '') {
+      query['city'] = "$city";
+    }
+    if (province != null && province != '') {
+      query['province'] = "$province";
     }
     return query;
   }
@@ -113,6 +119,61 @@ class _FilterTab extends State<FilterTab> {
                   ],
                 ),
 
+                Row(
+                  children: <Widget>[
+                    Text('Difficulty: '),
+                    SizedBox(
+                        width: 50,
+                        child: DropdownButton<String>(
+                          value: filter.difficulty,
+                          icon: const Icon(Icons.arrow_downward),
+                          elevation: 16,
+                          style: const TextStyle(color: Colors.deepPurple),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          onChanged: (String? value) {
+                            // This is called when the user selects an item.
+                            setState(() {
+                              filter.difficulty = value!;
+                            });
+                          },
+                          items: Filter.list
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        )),
+                  ],
+                ),
+
+                Row(
+                  children: <Widget>[
+                    Text('City: '),
+                    SizedBox(
+                        width: 100,
+                        child: TextField(
+                          onChanged: (value) =>
+                              setState(() => filter.city = value),
+                        )),
+                  ],
+                ),
+
+                Row(
+                  children: <Widget>[
+                    Text('Province: '),
+                    SizedBox(
+                        width: 100,
+                        child: TextField(
+                          onChanged: (value) =>
+                              setState(() => filter.province = value),
+                        )),
+                  ],
+                ),
+
                 //submit
                 Container(
                   margin: EdgeInsets.all(25),
@@ -129,15 +190,6 @@ class _FilterTab extends State<FilterTab> {
               ])),
         ],
       ),
-    );
-  }
-}
-
-class AscentFormField extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [],
     );
   }
 }
