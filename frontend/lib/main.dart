@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
           isLogged: isLogged,
           onLogged: (val) => setState(() => isLogged = val),
         ),
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,

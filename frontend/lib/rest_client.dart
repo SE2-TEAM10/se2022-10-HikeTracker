@@ -15,12 +15,11 @@ class RestClient {
       Filter? filter}) async {
     final e = endpoint ?? dotenv.env['ENDPOINT'];
 
-    return Requests.get(
-      '$e$api',
-      withCredentials: true,
-      verify: false,
-      persistCookies: false,
-    );
+    return Requests.get('$e$api',
+        withCredentials: false,
+        verify: false,
+        persistCookies: false,
+        queryParameters: filter.toQueryParameters());
   }
 
   Future<Response> post({
