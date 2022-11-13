@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/rest_client.dart';
 import 'package:frontend/router.dart';
+import 'package:layout/layout.dart';
 
 void main() async {
   await dotenv.load(fileName: "../.env");
@@ -21,11 +22,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: getRouter(client),
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return Layout(
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: getRouter(client),
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
       ),
     );
   }
