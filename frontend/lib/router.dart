@@ -52,9 +52,9 @@ GoRouter getRouter({
     redirect: (context, state) {
       if (showSplash) {
         return '/loading';
-      } else if (!showSplash && !isLogged) {
-        return '/login';
       } else if (!showSplash && isLogged && state.location == '/login') {
+        return '/';
+      } else if (!showSplash && state.location == '/loading') {
         return '/';
       } else {
         return null;
