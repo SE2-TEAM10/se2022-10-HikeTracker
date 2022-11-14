@@ -1,32 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-class Filter {
-  Filter();
-
-  String? startAsc;
-  String? endAsc;
-  String? difficulty = 'ALL';
-  String? startLen;
-  String? endLen;
-  String? city;
-  String? province;
-  static List<String> list = <String>['ALL', 'PH', 'H', 'T'];
-
-  Map<String, dynamic> toQueryParameters() {
-    Map<String, dynamic> query = {
-      if (startAsc?.isNotEmpty ?? false) 'start_asc': "$startAsc",
-      if (endAsc?.isNotEmpty ?? false) 'end_asc': "$endAsc",
-      if (startLen?.isNotEmpty ?? false) 'start_len': "$startLen",
-      if (endLen?.isNotEmpty ?? false) 'end_len': "$endLen",
-      if ((difficulty?.isNotEmpty ?? false) && difficulty != 'ALL')
-        'difficulty': "$difficulty",
-      if (city?.isNotEmpty ?? false) 'city': "$city",
-      if (province?.isNotEmpty ?? false) 'province': "$province",
-    };
-    return query;
-  }
-}
+import 'package:frontend/pages/home/models/filter.dart';
 
 class FilterTab extends StatefulWidget {
   const FilterTab({
@@ -46,7 +20,15 @@ class _FilterTab extends State<FilterTab> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Card(
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            16.0,
+          ),
+        ),
+      ),
       child: Form(
         key: _formKey,
         child: Column(
@@ -57,6 +39,7 @@ class _FilterTab extends State<FilterTab> {
                 child: Column(children: [
                   //AscentFormField
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       const Text('Ascent: '),
                       SizedBox(
@@ -85,6 +68,7 @@ class _FilterTab extends State<FilterTab> {
 
                   //LengthFormField
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       const Text('Length: '),
                       SizedBox(
@@ -112,6 +96,7 @@ class _FilterTab extends State<FilterTab> {
                   ),
 
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text('Difficulty: '),
                       SizedBox(
@@ -143,6 +128,7 @@ class _FilterTab extends State<FilterTab> {
                   ),
 
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text('City: '),
                       SizedBox(
@@ -155,6 +141,7 @@ class _FilterTab extends State<FilterTab> {
                   ),
 
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text('Province: '),
                       SizedBox(

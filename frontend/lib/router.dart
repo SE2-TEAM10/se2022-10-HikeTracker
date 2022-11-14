@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/constant.dart';
 import 'package:frontend/rest_client.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,10 +14,10 @@ GoRouter getRouter({
   required Function onLogged,
 }) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: HOME,
     routes: <GoRoute>[
       GoRoute(
-        path: '/',
+        path: HOME,
         builder: (BuildContext context, GoRouterState state) {
           return Home(
             client: client,
@@ -24,7 +25,7 @@ GoRouter getRouter({
         },
       ),
       GoRoute(
-        path: '/login',
+        path: LOGIN,
         builder: (BuildContext context, GoRouterState state) {
           return Login(
             client: client,
@@ -33,7 +34,7 @@ GoRouter getRouter({
         },
       ),
       GoRoute(
-        path: '/loading',
+        path: LOADING,
         builder: (BuildContext context, GoRouterState state) {
           return const Scaffold(
             body: Center(
@@ -43,19 +44,13 @@ GoRouter getRouter({
         },
       ),
     ],
-    errorBuilder: (context, state) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        //router.go('/');
-      });
-      return const SizedBox.shrink();
-    },
     redirect: (context, state) {
       if (showSplash) {
-        return '/loading';
+        return LOADING;
       } else if (!showSplash && isLogged && state.location == '/login') {
-        return '/';
+        return HOME;
       } else if (!showSplash && state.location == '/loading') {
-        return '/';
+        return HOME;
       } else {
         return null;
       }

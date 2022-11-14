@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/pages/home/filter.dart';
+import 'package:frontend/pages/home/models/filter.dart';
 import 'package:http/http.dart';
 import 'package:requests/requests.dart';
 
