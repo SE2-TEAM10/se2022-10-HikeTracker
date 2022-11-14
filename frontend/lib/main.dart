@@ -7,7 +7,7 @@ import 'package:frontend/router.dart';
 import 'package:layout/layout.dart';
 
 void main() async {
-  await dotenv.load(fileName: "../.env");
+  await dotenv.load(fileName: ".env");
   final client = RestClient();
 
   runApp(
