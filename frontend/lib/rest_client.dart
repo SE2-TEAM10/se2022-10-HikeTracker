@@ -16,10 +16,10 @@ class RestClient {
     final e = endpoint ?? dotenv.env['ENDPOINT'];
 
     return Requests.get('$e$api',
-        withCredentials: false,
+        withCredentials: true,
         verify: false,
         persistCookies: false,
-        queryParameters: filter.toQueryParameters());
+        queryParameters: filter?.toQueryParameters());
   }
 
   Future<Response> post({
@@ -66,6 +66,7 @@ class RestClient {
     return Requests.put(
       '$e$api',
       json: true,
+      withCredentials: true,
       body: jsonEncode(body),
     );
   }

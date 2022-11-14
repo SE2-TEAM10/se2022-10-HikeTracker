@@ -35,9 +35,9 @@ class _MyAppState extends State<MyApp> {
     widget.client.get(api: 'sessions/current').then((value) {
       setState(() {
         isLogged = json.decode(value.body)['error'] != null ? false : true;
+        showSplash = false;
       });
     });
-    showSplash = false;
     super.initState();
   }
 
