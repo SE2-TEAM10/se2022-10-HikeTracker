@@ -11,11 +11,8 @@ class Hike {
     required this.startPoint,
     required this.endPoint,
     required this.description,
-    required this.locationName,
-    required this.latitude,
-    required this.longitude,
-    required this.city,
-    required this.province,
+    required this.startLocation,
+    required this.endLocation,
     required this.hikeID,
   });
 
@@ -28,17 +25,24 @@ class Hike {
   final String startPoint;
   final String endPoint;
   final String description;
-  final String locationName;
-  final String latitude;
-  final String longitude;
-  final String city;
-  final String province;
+  final Location startLocation;
+  final Location endLocation;
   final int hikeID;
 
   static Hike fromJson(String jsonString) {
     final res = jsonDecode(jsonString);
 
-    return Hike(
+    final ls = List<Location>.from(res['location']
+        .map((e) => Location(
+              name: e['name'] ?? 'NA',
+              latitude: e['latitude'] ?? 'NA',
+              longitude: e['longitude'] ?? 'NA',
+              city: e['city'] ?? 'NA',
+              province: e['province'] ?? 'NA',
+            ))
+        .toList());
+
+    final h = Hike(
       id: res['id'] ?? 0,
       name: res['name'] ?? 'NA',
       length: res['length'] ?? 0,
@@ -48,13 +52,12 @@ class Hike {
       startPoint: res['start_point'] ?? 'NA',
       endPoint: res['end_point'] ?? 'NA',
       description: res['description'] ?? 'NA',
-      locationName: res['location_name'] ?? 'NA',
-      latitude: res['latitude'] ?? 'NA',
-      longitude: res['longitude'] ?? 'NA',
-      city: res['city'] ?? 'NA',
-      province: res['province'] ?? 'NA',
       hikeID: res['hike_ID'] ?? 0,
+      endLocation: ls.firstWhere((e) => e.name == res['end_point']),
+      startLocation: ls.firstWhere((e) => e.name == res['start_point']),
     );
+
+    return h;
   }
 }
 
@@ -69,12 +72,42 @@ class Hikes {
     final res = jsonDecode(jsonString);
     final results = res as List<dynamic>;
 
-    return Hikes(
+    final result = Hikes(
       results: results.map((p) {
         return Hike.fromJson(
           json.encode(p),
         );
       }).toList(),
+    );
+
+    return result;
+  }
+}
+
+class Location {
+  Location({
+    required this.name,
+    required this.latitude,
+    required this.longitude,
+    required this.city,
+    required this.province,
+  });
+
+  String name;
+  String latitude;
+  String longitude;
+  String city;
+  String province;
+
+  static Location fromJson(String jsonString) {
+    final res = jsonDecode(jsonString);
+
+    return Location(
+      name: res['name'] ?? 'NA',
+      latitude: res['latitude'] ?? 'NA',
+      longitude: res['longitude'] ?? 'NA',
+      city: res['city'] ?? 'NA',
+      province: res['province'] ?? 'NA',
     );
   }
 }
