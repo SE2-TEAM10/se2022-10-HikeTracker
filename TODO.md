@@ -103,6 +103,16 @@
 
 -----
 
+## HT-33 - Define reference points
+### BACK-END
+> 
+> -
+### FRONT-END
+>
+> -
+
+-----
+
 ## HT-10 - Set profile
 ### BACK-END
 > 
@@ -114,6 +124,26 @@
 -----
 
 ## HT-11 - Filter hikes
+### BACK-END
+> 
+> -
+### FRONT-END
+>
+> -
+
+-----
+
+## HT-31 - Register local guide 
+### BACK-END
+> 
+> -
+### FRONT-END
+>
+> -
+
+-----
+
+## HT-32 - Validate local guide 
 ### BACK-END
 > 
 > -
@@ -144,6 +174,16 @@
 -----
 
 ## HT-14 - Update hike condition
+### BACK-END
+> 
+> -
+### FRONT-END
+>
+> -
+
+-----
+
+## HT-30 - Modify hike description
 ### BACK-END
 > 
 > -
@@ -233,7 +273,7 @@
 
 -----
 
-## HT-23 - 
+## HT-23 - Plan hike
 ### BACK-END
 > 
 > -
@@ -243,7 +283,7 @@
 
 -----
 
-## HT-24 - 
+## HT-24 - Add group
 ### BACK-END
 > 
 > -
@@ -253,7 +293,7 @@
 
 -----
 
-## HT-25 - 
+## HT-25 - Confirm group
 ### BACK-END
 > 
 > -
@@ -263,7 +303,7 @@
 
 -----
 
-## HT-26 - 
+## HT-26 - Confirm buddy end
 ### BACK-END
 > 
 > -
@@ -273,7 +313,7 @@
 
 -----
 
-## HT-27 - 
+## HT-27 - New weather alert
 ### BACK-END
 > 
 > -
@@ -283,7 +323,7 @@
 
 -----
 
-## HT-28 - 
+## HT-28 - Notify buddy late
 ### BACK-END
 > 
 > -
@@ -293,7 +333,7 @@
 
 -----
 
-## HT-29 - 
+## HT-29 - Weather alert notification
 ### BACK-END
 > 
 > -
