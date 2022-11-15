@@ -18,6 +18,10 @@
 > - [ ] Add login form
 > - [ ] Add creation of a new hike form
 
+> **fix ERRORS**
+> - [ ] Add "Clear" button on filters
+> - [ ] Fix UI with less details for each hike **[ISSUE 1]**
+
 ----
 
 ## HT-3 - Registration
