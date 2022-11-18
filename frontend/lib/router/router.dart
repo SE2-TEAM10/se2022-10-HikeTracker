@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/constant.dart';
-import 'package:frontend/rest_client.dart';
+import 'package:frontend/common/main_scaffold.dart';
+import 'package:frontend/common/sub_scaffold.dart';
+import 'package:frontend/router/constants.dart';
+import 'package:frontend/utils/rest_client.dart';
 import 'package:go_router/go_router.dart';
 
-import 'pages/pages.dart';
-
-//COMMENTO
+import '../pages/pages.dart';
 
 GoRouter getRouter({
   required RestClient client,
@@ -19,17 +19,22 @@ GoRouter getRouter({
       GoRoute(
         path: HOME,
         builder: (BuildContext context, GoRouterState state) {
-          return Home(
-            client: client,
+          return MainScaffold(
+            currentPath: state.path!,
+            child: Home(
+              client: client,
+            ),
           );
         },
       ),
       GoRoute(
         path: LOGIN,
         builder: (BuildContext context, GoRouterState state) {
-          return Login(
-            client: client,
-            onLogged: onLogged,
+          return SubScaffold(
+            child: Login(
+              client: client,
+              onLogged: onLogged,
+            ),
           );
         },
       ),
@@ -39,6 +44,16 @@ GoRouter getRouter({
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: HIKE_DETAIL,
+        builder: (BuildContext context, GoRouterState state) {
+          return SubScaffold(
+            child: Center(
+              child: Text('DETAIL PAGE FOR HIKE: ${state.params['hikeID']}'),
             ),
           );
         },

@@ -1,175 +1,339 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:frontend/pages/home/models/filter.dart';
+import 'package:frontend/pages/home/models/hike.dart';
+import 'package:frontend/utils/rest_client.dart';
 
 class FilterTab extends StatefulWidget {
   const FilterTab({
-    super.key,
     required this.filterHikes,
+    required this.client,
+    this.currentFilter,
+    super.key,
   });
 
   final Function filterHikes;
+  final Filter? currentFilter;
+  final RestClient client;
+
   @override
   State<StatefulWidget> createState() => _FilterTab();
 }
 
 class _FilterTab extends State<FilterTab> {
-  final _formKey = GlobalKey<FormState>();
-  Filter filter = Filter();
+  late GlobalKey<FormState> _formKey;
+  late Filter filter;
+
+  @override
+  void initState() {
+    _formKey = GlobalKey<FormState>();
+    filter = widget.currentFilter ?? Filter();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(
-            16.0,
-          ),
-        ),
+    return FutureBuilder(
+      future: widget.client.get(
+        api: 'hike',
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-                padding: const EdgeInsets.all(40.0),
-                child: Column(children: [
-                  //AscentFormField
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const Text('Ascent: '),
-                      SizedBox(
-                          width: 50,
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ], // Only numbers can be entered
-                            onChanged: (value) =>
-                                setState(() => filter.startAsc = value),
-                          )),
-                      const Text("to "),
-                      SizedBox(
-                          width: 50,
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ], // Only numbers can be entered
-                            onChanged: (value) =>
-                                setState(() => filter.endAsc = value),
-                          ))
-                    ],
-                  ),
+      builder: ((context, snapshot) {
+        if (snapshot.hasData) {
+          final hikes = Hikes.fromJson(snapshot.data!.body).results;
+          final minAsc =
+              hikes!.map((e) => e.ascent).toList().reduce(min).toDouble();
+          final maxAsc =
+              hikes.map((e) => e.ascent).toList().reduce(max).toDouble();
+          final minLength =
+              hikes.map((e) => e.length).toList().reduce(min).toDouble();
+          final maxLength =
+              hikes.map((e) => e.length).toList().reduce(max).toDouble();
+          final difficulties = [
+            'ALL',
+            ...hikes.map((e) => e.difficulty).toSet().toList()
+          ];
+          final cities = hikes
+              .map((e) => [e.startLocation?.city, e.endLocation?.city])
+              .expand((e) => e)
+              .whereType<String>()
+              .toSet()
+              .toList();
+          final provinces = hikes
+              .map((e) => [e.startLocation?.province, e.endLocation?.province])
+              .expand((e) => e)
+              .whereType<String>()
+              .toSet()
+              .toList();
 
-                  //LengthFormField
+          return Form(
+            key: _formKey,
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const Text('Length: '),
-                      SizedBox(
-                          width: 50,
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ], // Only numbers can be entered
-                            onChanged: (value) =>
-                                setState(() => filter.startLen = value),
-                          )),
-                      const Text("to"),
-                      SizedBox(
-                          width: 50,
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ], // Only numbers can be entered
-                            onChanged: (value) =>
-                                setState(() => filter.endLen = value),
-                          ))
-                    ],
-                  ),
-
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Difficulty: '),
-                      SizedBox(
-                          width: 50,
-                          child: DropdownButton<String>(
+                      Expanded(
+                        child: Text(
+                          'Ascent: ',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'from ${filter.startAsc ?? minAsc}m to ${filter.endAsc ?? maxAsc}m',
+                      ),
+                    ],
+                  ),
+                  RangeSlider(
+                    min: minAsc,
+                    max: maxAsc,
+                    values: RangeValues(
+                      double.tryParse(filter.startAsc ?? '') ?? minAsc,
+                      double.tryParse(filter.endAsc ?? '') ?? maxAsc,
+                    ),
+                    onChanged: (value) => setState(
+                      () {
+                        filter.startAsc = value.start.floor().toString();
+                        filter.endAsc = value.end.floor().toString();
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Length: ',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'from ${filter.startLen ?? minLength}km to ${filter.endLen ?? maxLength}km',
+                      ),
+                    ],
+                  ),
+                  RangeSlider(
+                    min: minLength,
+                    max: maxLength,
+                    values: RangeValues(
+                      double.tryParse(filter.startLen ?? '') ?? minLength,
+                      double.tryParse(filter.endLen ?? '') ?? maxLength,
+                    ),
+                    onChanged: (value) => setState(
+                      () {
+                        filter.startLen = value.start.floor().toString();
+                        filter.endLen = value.end.floor().toString();
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Diff.: ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1.0,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8.0),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButton(
                             value: filter.difficulty,
-                            icon: const Icon(Icons.arrow_downward),
+                            icon: const Icon(Icons.arrow_drop_down),
                             elevation: 16,
-                            style: const TextStyle(color: Colors.deepPurple),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.deepPurpleAccent,
+                            underline: SizedBox(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
                             onChanged: (String? value) {
-                              // This is called when the user selects an item.
                               setState(() {
                                 filter.difficulty = value!;
                               });
                             },
-                            items: Filter.list
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          )),
-                    ],
-                  ),
-
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('City: '),
-                      SizedBox(
-                          width: 100,
-                          child: TextField(
-                            onChanged: (value) =>
-                                setState(() => filter.city = value),
-                          )),
-                    ],
-                  ),
-
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Province: '),
-                      SizedBox(
-                          width: 100,
-                          child: TextField(
-                            onChanged: (value) =>
-                                setState(() => filter.province = value),
-                          )),
-                    ],
-                  ),
-
-                  //submit
-                  Container(
-                    margin: const EdgeInsets.all(25),
-                    child: ElevatedButton(
-                      child: const Text(
-                        'Filter',
-                        style: TextStyle(fontSize: 20.0),
+                            items: difficulties
+                                .map(
+                                  (String value) => DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
                       ),
-                      onPressed: () {
-                        widget.filterHikes(filter);
-                      },
-                    ),
+                    ],
                   ),
-                ])),
-          ],
-        ),
-      ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'City: ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1.0,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8.0),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButton(
+                            value: filter.city,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            elevation: 16,
+                            underline: SizedBox(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            onChanged: (String? value) {
+                              setState(() {
+                                filter.city = value!;
+                              });
+                            },
+                            items: cities
+                                .map(
+                                  (String value) => DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Prov.: ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1.0,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8.0),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButton(
+                            value: filter.province,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            elevation: 16,
+                            underline: SizedBox(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            onChanged: (String? value) {
+                              setState(() {
+                                filter.province = value!;
+                              });
+                            },
+                            items: provinces
+                                .map(
+                                  (String value) => DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      if (!filter.isEmpty())
+                        TextButton(
+                          child: const Text(
+                            'Clear',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                            ),
+                          ),
+                          onPressed: () => setState(() {
+                            filter = Filter();
+                            widget.filterHikes(filter);
+                          }),
+                        ),
+                      TextButton(
+                        child: const Text(
+                          'Filter',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        onPressed: () => widget.filterHikes(filter),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              snapshot.error.toString(),
+            ),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      }),
     );
   }
 }

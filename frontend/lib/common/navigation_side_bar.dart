@@ -1,44 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/constant.dart';
+import 'package:frontend/router/constants.dart';
 import 'package:go_router/go_router.dart';
 
 class NavigationSideBar extends StatelessWidget {
   const NavigationSideBar({
+    required this.currentPath,
     Key? key,
   }) : super(key: key);
+
+  final String currentPath;
 
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
-      onDestinationSelected: (value) {
-        switch (value) {
-          case 0:
-            GoRouter.of(context).go(HOME);
-            break;
-          case 1:
-            GoRouter.of(context).go(LOGIN);
-            break;
-          default:
-            GoRouter.of(context).go(HOME);
-        }
-      },
+      onDestinationSelected: (value) =>
+          currentPath != NAVIGATION_BAR_ROUTES[value].path
+              ? GoRouter.of(context).push(NAVIGATION_BAR_ROUTES[value].path)
+              : null,
       labelType: NavigationRailLabelType.all,
       groupAlignment: 0.0,
-      destinations: [
-        NavigationRailDestination(
-          icon: Icon(Icons.home),
-          label: Text(
-            'home',
-          ),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.login),
-          label: Text(
-            'login',
-          ),
-        ),
-      ],
-      selectedIndex: 0,
+      destinations: NAVIGATION_BAR_ROUTES
+          .map(
+            (e) => NavigationRailDestination(
+              icon: Icon(e.icon),
+              label: Text(e.label),
+            ),
+          )
+          .toList(),
+      selectedIndex:
+          NAVIGATION_BAR_ROUTES.firstWhere((r) => r.path == currentPath).index,
     );
   }
 }

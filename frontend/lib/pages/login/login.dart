@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/login/widget/login_banner.dart';
 import 'package:frontend/pages/login/widget/login_form.dart';
-import 'package:frontend/rest_client.dart';
+import 'package:frontend/utils/rest_client.dart';
 import 'package:layout/layout.dart';
 
 class Login extends StatefulWidget {
@@ -23,25 +23,23 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Row(
-              children: [
-                if (context.breakpoint >= LayoutBreakpoint.md)
-                  const LoginBanner(),
-                LoginForm(
-                  onSubmit: (email, password) => onSubmit(
-                    email: email,
-                    password: password,
-                  ),
-                  isSmall: context.breakpoint <= LayoutBreakpoint.xs,
+    return isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Row(
+            children: [
+              if (context.breakpoint >= LayoutBreakpoint.md)
+                const LoginBanner(),
+              LoginForm(
+                onSubmit: (email, password) => onSubmit(
+                  email: email,
+                  password: password,
                 ),
-              ],
-            ),
-    );
+                isSmall: context.breakpoint <= LayoutBreakpoint.xs,
+              ),
+            ],
+          );
   }
 
   onSubmit({

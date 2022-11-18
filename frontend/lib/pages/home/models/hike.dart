@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 class Hike {
   Hike({
     required this.id,
@@ -11,9 +13,9 @@ class Hike {
     required this.startPoint,
     required this.endPoint,
     required this.description,
-    required this.startLocation,
-    required this.endLocation,
     required this.hikeID,
+    this.startLocation,
+    this.endLocation,
   });
 
   final int id;
@@ -25,22 +27,25 @@ class Hike {
   final String startPoint;
   final String endPoint;
   final String description;
-  final Location startLocation;
-  final Location endLocation;
+  final Location? startLocation;
+  final Location? endLocation;
   final int hikeID;
 
   static Hike fromJson(String jsonString) {
     final res = jsonDecode(jsonString);
 
     final ls = List<Location>.from(res['location']
-        .map((e) => Location(
-              name: e['name'] ?? 'NA',
-              latitude: e['latitude'] ?? 'NA',
-              longitude: e['longitude'] ?? 'NA',
-              city: e['city'] ?? 'NA',
-              province: e['province'] ?? 'NA',
-            ))
-        .toList());
+        .map((e) => e != null
+            ? Location(
+                name: e['name'] ?? 'NA',
+                latitude: e['latitude'] ?? 'NA',
+                longitude: e['longitude'] ?? 'NA',
+                city: e['city'] ?? 'NA',
+                province: e['province'] ?? 'NA',
+              )
+            : null)
+        .toList()
+        .whereType<Location>());
 
     final h = Hike(
       id: res['id'] ?? 0,
@@ -53,11 +58,59 @@ class Hike {
       endPoint: res['end_point'] ?? 'NA',
       description: res['description'] ?? 'NA',
       hikeID: res['hike_ID'] ?? 0,
-      endLocation: ls.firstWhere((e) => e.name == res['end_point']),
-      startLocation: ls.firstWhere((e) => e.name == res['start_point']),
+      endLocation: ls.isNotEmpty
+          ? ls.firstWhere((e) => e.name == res['end_point'])
+          : null,
+      startLocation: ls.isNotEmpty
+          ? ls.firstWhere((e) => e.name == res['start_point'])
+          : null,
     );
 
     return h;
+  }
+
+  String formatTime() {
+    final parts = expectedTime.split(':');
+    return '${parts[0]}h ${parts[1]}m';
+  }
+
+  String formatDifficulty() {
+    switch (difficulty) {
+      case 'T':
+        return 'Turistic';
+      case 'H':
+        return 'Hiking';
+      case 'PH':
+        return 'Professional';
+      default:
+        return 'Turistic';
+    }
+  }
+
+  Color difficultyColor(BuildContext context) {
+    switch (difficulty) {
+      case 'T':
+        return Theme.of(context).colorScheme.primaryContainer;
+      case 'H':
+        return Theme.of(context).colorScheme.tertiaryContainer;
+      case 'PH':
+        return Theme.of(context).colorScheme.errorContainer;
+      default:
+        return Theme.of(context).colorScheme.primaryContainer;
+    }
+  }
+
+  Color difficultyTextColor(BuildContext context) {
+    switch (difficulty) {
+      case 'T':
+        return Theme.of(context).colorScheme.onPrimaryContainer;
+      case 'H':
+        return Theme.of(context).colorScheme.onTertiaryContainer;
+      case 'PH':
+        return Theme.of(context).colorScheme.onErrorContainer;
+      default:
+        return Theme.of(context).colorScheme.onPrimaryContainer;
+    }
   }
 }
 

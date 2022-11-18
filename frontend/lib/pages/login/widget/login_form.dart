@@ -22,8 +22,6 @@ class _LoginFormState extends State<LoginForm> {
   void initState() {
     emailController = TextEditingController(text: 'john.doe@hike.it');
     passwordController = TextEditingController(text: 'localguide1');
-    // emailController = TextEditingController();
-    // passwordController = TextEditingController();
     super.initState();
   }
 
@@ -33,7 +31,7 @@ class _LoginFormState extends State<LoginForm> {
       flex: 3,
       child: Padding(
         padding: EdgeInsets.symmetric(
-          vertical: 64,
+          vertical: 16,
           horizontal: widget.isSmall ? 16 : 128,
         ),
         child: Column(
@@ -64,7 +62,7 @@ class _LoginFormState extends State<LoginForm> {
                       'Email',
                       style: TextStyle(
                         fontSize: 16.0,
-                        color: Colors.black.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.outline,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -75,7 +73,7 @@ class _LoginFormState extends State<LoginForm> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           width: 1.0,
-                          color: Colors.black.withOpacity(0.6),
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                         borderRadius: const BorderRadius.all(
                           Radius.circular(8.0),
@@ -103,7 +101,7 @@ class _LoginFormState extends State<LoginForm> {
                       'Password',
                       style: TextStyle(
                         fontSize: 16.0,
-                        color: Colors.black.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.outline,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -114,7 +112,7 @@ class _LoginFormState extends State<LoginForm> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           width: 1.0,
-                          color: Colors.black.withOpacity(0.6),
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                         borderRadius: const BorderRadius.all(
                           Radius.circular(8.0),

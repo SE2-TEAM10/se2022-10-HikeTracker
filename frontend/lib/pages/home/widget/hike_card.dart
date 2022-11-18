@@ -1,92 +1,158 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/home/models/hike.dart';
+import 'package:frontend/utils/constants.dart';
 
 class HikeCard extends StatelessWidget {
   const HikeCard({
-    Key? key,
     required this.hike,
+    required this.onTap,
+    Key? key,
   }) : super(key: key);
 
   final Hike hike;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          color: Colors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            16.0,
+          ),
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => onTap(),
           borderRadius: BorderRadius.all(
             Radius.circular(
               16.0,
             ),
-          )),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  hike.name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+          ),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          image: const DecorationImage(
+                            image: NetworkImage(
+                              LOGIN_BANNER_IMAGE,
+                              scale: 0.5,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(
+                              16.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              hike.name,
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Distance: ',
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                '${hike.length} Km',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSecondaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Text(
+                              'Duration: ',
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                hike.formatTime(),
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSecondaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              Positioned(
+                top: 24,
+                right: 24,
+                child: Chip(
+                  backgroundColor: hike.difficultyColor(
+                    context,
+                  ),
+                  label: Text(
+                    hike.formatDifficulty(),
+                    style: TextStyle(
+                        color: hike.difficultyTextColor(
+                      context,
+                    )),
                   ),
                 ),
-                Text(
-                  hike.difficulty,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${hike.length} Km'),
-                Text('${hike.expectedTime} h'),
-                Text('${hike.ascent} m'),
-              ],
-            ),
-            const Divider(),
-            Text('Start: ${hike.startPoint}'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(hike.startLocation.city),
-                Text(hike.startLocation.province),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Lat: ${hike.startLocation.latitude}'),
-                Text('Lon: ${hike.startLocation.longitude}'),
-              ],
-            ),
-            const Divider(),
-            Text('Arrival: ${hike.endPoint}'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(hike.endLocation.city),
-                Text(hike.endLocation.province),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Lat: ${hike.endLocation.latitude}'),
-                Text('Lon: ${hike.endLocation.longitude}'),
-              ],
-            ),
-            const Divider(),
-            Text(hike.description),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

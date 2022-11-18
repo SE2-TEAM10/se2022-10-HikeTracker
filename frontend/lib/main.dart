@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/rest_client.dart';
-import 'package:frontend/router.dart';
+import 'package:frontend/router/router.dart';
+import 'package:frontend/theme/theme.dart';
+import 'package:frontend/utils/rest_client.dart';
 import 'package:layout/layout.dart';
 
 void main() async {
@@ -53,8 +54,14 @@ class _MyAppState extends State<MyApp> {
         ),
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
+        themeMode: ThemeMode.light,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          useMaterial3: true,
+          colorScheme: lightColorScheme,
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: darkColorScheme,
         ),
       ),
     );

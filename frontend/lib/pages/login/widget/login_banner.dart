@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/constants.dart';
 
 class LoginBanner extends StatelessWidget {
   const LoginBanner({
@@ -13,9 +14,12 @@ class LoginBanner extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.primary,
             image: const DecorationImage(
-              image: AssetImage("assets/images/hike_01.jpeg"),
+              image: NetworkImage(
+                LOGIN_BANNER_IMAGE,
+                scale: 0.5,
+              ),
               fit: BoxFit.cover,
             ),
             borderRadius: const BorderRadius.all(
@@ -31,30 +35,14 @@ class LoginBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 64.0,
-                  ),
-                  child: Text(
-                    'Hike Tracker',
-                    style: TextStyle(
-                      fontSize: 22.0,
-                      color: Colors.white,
-                      shadows: [
-                        BoxShadow(
-                          blurRadius: 1,
-                          spreadRadius: 1,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                 const SizedBox(
                   height: 128,
                 ),
                 Container(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withOpacity(0.5),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -67,12 +55,14 @@ class LoginBanner extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
-                              children: const [
+                              children: [
                                 Text(
                                   'Always right\non track with us.',
                                   style: TextStyle(
                                     fontSize: 46.0,
-                                    color: Colors.white,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceVariant,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -83,7 +73,9 @@ class LoginBanner extends StatelessWidget {
                                   'Discover Italy most beautiful hike tracks.\nKeep records of your experiences and share with others.',
                                   style: TextStyle(
                                     fontSize: 20.0,
-                                    color: Colors.white,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceVariant,
                                     fontStyle: FontStyle.italic,
                                   ),
                                 ),
