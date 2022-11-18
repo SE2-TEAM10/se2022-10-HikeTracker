@@ -137,6 +137,24 @@ class Database {
     });
   }
 
+  linkHikeUser = (userID) => {
+    return new Promise((resolve, reject) => {
+      const sql1 = 'SELECT MAX(ID) FROM hikes';
+      this.db.get(sql1, [], (err, hikeID) => {
+        if (err) {
+          reject(err)
+        } else {
+          const sql =
+            "INSERT INTO hike_user(hike_id, user_id) VALUES(?,?)";
+          db.run(sql, [hikeID, userID], function (err) {
+            if (err) reject(err);
+            else resolve(true);
+          });
+        }
+      })
+    });
+  }
+
   addNewLocation = (loc) => {
     return new Promise((resolve, reject) => {
       const sql1 = 'SELECT MAX(ID) FROM hikes';
@@ -152,6 +170,17 @@ class Database {
           });
         }
       })
+    });
+  }
+
+  addNewHikeGPX = (hike) => {
+    return new Promise((resolve, reject) => {
+      const sql =
+        "INSERT INTO hike_gpx(ID,gpx,hike_id) VALUES(?,?,?)";
+      db.run(sql, [hike.gpx, hike.id], function (err) {
+        if (err) reject(err);
+        else resolve(this.lastID);  /* CHECK IF GPX'S ID IS AUTOINCREMENTAL OR NOT */
+      });
     });
   }
 

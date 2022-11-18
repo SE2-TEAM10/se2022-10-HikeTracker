@@ -154,6 +154,7 @@ app.post(
       const result1 = await db.addNewHike(req.body.hike);
       const result2 = await db.addNewLocation(req.body.startp);
       const result3 = await db.addNewLocation(req.body.endp);
+      const result4 = await db.linkHikeUser(req.user.id);
       res.status(201).json(result1);
     } catch (err) {
       console.error(err);
@@ -162,31 +163,33 @@ app.post(
   }
 );
 
-/*
-// POST /api/service
-app.post('/api/hike',
-    isLoggedIn,
-    async (req, res) => {
-
-        const errors = validationResult(req);
+app.post(
+  "/api/hike/gpx",
+  isLoggedIn,
+  [
+    /*
+        check('name').isLength({ min: 1, max: 100 }),
+        check('length').isInt(),
+        check('expected_time').islength({ min: 5, max: 5 }),
+        check('ascent').isInt(),
+        check('difficulty').islength({ min: 1, max: 2 }),
+      */
+  ],
+  async (req, res) => {
+    /* const errors = validationResult(req).formatWith(errorFormatter); // format error message
         if (!errors.isEmpty()) {
-            return res.status(422).json({ error: errors.array().join(", ") });
-        }
+            return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+        }*/
 
-        const service = {
-            id: req.body.id,
-            tag_name: req.body.tag_name,
-            service_time: req.body.service_time,
-        };
-
-        try {
-            const result = await db.createService(service);
-            res.json(result);
-        } catch (err) {
-            res.status(503).json({ error: `Database error during the creation of new service: ${err}` });
-        }
-    });
-*/
+    try {
+      const result1 = await db.addNewHikeGPX(req.body);
+      res.status(201).json(result1);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  }
+);
 
 // Activate the server
 app.listen(port, () => {
