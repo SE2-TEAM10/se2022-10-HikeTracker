@@ -130,47 +130,33 @@ class Database {
     return new Promise((resolve, reject) => {
       const sql =
         "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
-      db.run(sql, [hike.name, hike.length, hike.expected_time, hike.ascent, hike.difficulty, hike.start_point, hike.end_point, hike.description], function (err) {
+      this.db.run(sql, [hike.name, hike.length, hike.expected_time, hike.ascent, hike.difficulty, hike.start_point, hike.end_point, hike.description], function (err) {
         if (err) reject(err);
         else resolve(this.lastID);
       });
     });
   }
 
-  linkHikeUser = (userID) => {
+  linkHikeUser = (hikeID,userID) => {
     return new Promise((resolve, reject) => {
-      const sql1 = 'SELECT MAX(ID) FROM hikes';
-      this.db.get(sql1, [], (err, hikeID) => {
-        if (err) {
-          reject(err)
-        } else {
           const sql =
             "INSERT INTO hike_user(hike_id, user_id) VALUES(?,?)";
           db.run(sql, [hikeID, userID], function (err) {
             if (err) reject(err);
             else resolve(true);
           });
-        }
-      })
-    });
+        })
   }
 
-  addNewLocation = (loc) => {
+  addNewLocation = (loc,id) => {
     return new Promise((resolve, reject) => {
-      const sql1 = 'SELECT MAX(ID) FROM hikes';
-      this.db.get(sql1, [], (err, hikeID) => {
-        if (err) {
-          reject(err)
-        } else {
           const sql =
             "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
-          db.run(sql, [loc.location_name, loc.latitude, loc.longitude, loc.city, loc.province, hikeID], function (err) {
+          this.db.run(sql, [loc.location_name, loc.latitude, loc.longitude, loc.city, loc.province, id], function (err) {
             if (err) reject(err);
             else resolve(true);
           });
-        }
-      })
-    });
+        })
   }
 
   /* CHECK IF GPX FILE STRING HAS TO BE PARSED OR IT IS CORRECT */
@@ -178,7 +164,7 @@ class Database {
     return new Promise((resolve, reject) => {
       const sql =
         "INSERT INTO hike_gpx(ID,gpx,hike_id) VALUES(?,?,?)";
-      db.run(sql, [hike.gpx, hike.id], function (err) {
+      this.db.run(sql, [hike.gpx, hike.id], function (err) {
         if (err) reject(err);
         else resolve(this.lastID);  /* CHECK IF GPX'S ID IS AUTOINCREMENTAL OR NOT */
       });

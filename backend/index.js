@@ -134,7 +134,7 @@ app.get("/api/hike", async (req, res) => {
 
 app.post(
   "/api/hike",
-  isLoggedIn,
+  //isLoggedIn,
   [
     /*
         check('name').isLength({ min: 1, max: 100 }),
@@ -152,9 +152,9 @@ app.post(
 
     try {
       const result1 = await db.addNewHike(req.body.hike);
-      const result2 = await db.addNewLocation(req.body.startp);
-      const result3 = await db.addNewLocation(req.body.endp);
-      const result4 = await db.linkHikeUser(req.user.id);
+      const result2 = await db.addNewLocation(req.body.startp,result1);
+      const result3 = await db.addNewLocation(req.body.endp,result1);
+      //const result4 = await db.linkHikeUser(req.user.id,result1);
       res.status(201).json(result1);
     } catch (err) {
       console.error(err);
