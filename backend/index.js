@@ -151,8 +151,10 @@ app.post(
         }*/
 
     try {
-      const result = await db.addNewHikeDescription(req.body);
-      res.status(201).json(result);
+      const result1 = await db.addNewHike(req.body.hike);
+      const result2 = await db.addNewLocation(req.body.startp);
+      const result3 = await db.addNewLocation(req.body.endp);
+      res.status(201).json(result1);
     } catch (err) {
       console.error(err);
       res.status(503).json(err);

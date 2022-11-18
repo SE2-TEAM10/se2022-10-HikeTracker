@@ -125,17 +125,35 @@ class Database {
       });
     });
   };
-  
-   addNewHikeDescription = (hike) => {
-        return new Promise((resolve, reject) => {
-            const sql =
-                "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
-            db.run(sql, [hike.name,hike.length,hike.expected_time,hike.ascent,hike.difficulty,hike.start_point,hike.end_point,hike.description], function (err) {
-                if (err) reject(err);
-                else resolve(this.lastID);
-            });
-        });
-    }
+
+  addNewHike = (hike) => {
+    return new Promise((resolve, reject) => {
+      const sql =
+        "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
+      db.run(sql, [hike.name, hike.length, hike.expected_time, hike.ascent, hike.difficulty, hike.start_point, hike.end_point, hike.description], function (err) {
+        if (err) reject(err);
+        else resolve(this.lastID);
+      });
+    });
+  }
+
+  addNewLocation = (loc) => {
+    return new Promise((resolve, reject) => {
+      const sql1 = 'SELECT MAX(ID) FROM hikes';
+      this.db.get(sql1, [], (err, hikeID) => {
+        if (err) {
+          reject(err)
+        } else {
+          const sql =
+            "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
+          db.run(sql, [loc.location_name, loc.latitude, loc.longitude, loc.city, loc.province, hikeID], function (err) {
+            if (err) reject(err);
+            else resolve(true);
+          });
+        }
+      })
+    });
+  }
 
   /* login = (username, password) => {
         return new Promise((resolve, reject) => {
@@ -148,22 +166,22 @@ class Database {
         });
     }*/
 
-    getUserById = (id) => {
-        return new Promise((resolve, reject) => {
-            const sql = 'SELECT * FROM user WHERE id = ?';
-            this.db.get(sql, [id], (err, row) => {
-                if (err)
-                    reject(err);
-                else if (row === undefined)
-                    resolve({error: 'User not found.'});
-                else {
-                    // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
-                    const user = {id: row.id, username: row.mail, name: row.name}
-                    resolve(user);
-                }
-            });
-        });
-    };
+  getUserById = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM user WHERE id = ?';
+      this.db.get(sql, [id], (err, row) => {
+        if (err)
+          reject(err);
+        else if (row === undefined)
+          resolve({ error: 'User not found.' });
+        else {
+          // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
+          const user = { id: row.id, username: row.mail, name: row.name }
+          resolve(user);
+        }
+      });
+    });
+  };
 
   login = (username, password) => {
     return new Promise((resolve, reject) => {
