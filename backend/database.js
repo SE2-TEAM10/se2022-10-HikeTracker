@@ -173,6 +173,7 @@ class Database {
     });
   }
 
+  /* CHECK IF GPX FILE STRING HAS TO BE PARSED OR IT IS CORRECT */
   addNewHikeGPX = (hike) => {
     return new Promise((resolve, reject) => {
       const sql =
@@ -183,17 +184,6 @@ class Database {
       });
     });
   }
-
-  /* login = (username, password) => {
-        return new Promise((resolve, reject) => {
-            const sql =
-                "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
-            db.run(sql, [hike.name,hike.length,hike.expected_time,hike.ascent,hike.difficulty,hike.start_point,hike.end_point,hike.description], function (err) {
-                if (err) reject(err);
-                else resolve(this.lastID);
-            });
-        });
-    }*/
 
   getUserById = (id) => {
     return new Promise((resolve, reject) => {
