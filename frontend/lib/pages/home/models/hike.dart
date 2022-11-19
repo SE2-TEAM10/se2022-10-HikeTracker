@@ -35,19 +35,11 @@ class Hike {
     final res = jsonDecode(jsonString);
 
     final ls = List<Location>.from(res['location']
-        .map((e) => e != null
-            ? Location(
-                name: e['name'] ?? 'NA',
-                latitude: e['latitude'] ?? 'NA',
-                longitude: e['longitude'] ?? 'NA',
-                city: e['city'] ?? 'NA',
-                province: e['province'] ?? 'NA',
-              )
-            : null)
+        .map((e) => e != null ? Location.fromJson(json.encode(e)) : null)
         .toList()
         .whereType<Location>());
 
-    final h = Hike(
+    return Hike(
       id: res['id'] ?? 0,
       name: res['name'] ?? 'NA',
       length: res['length'] ?? 0,
@@ -59,14 +51,14 @@ class Hike {
       description: res['description'] ?? 'NA',
       hikeID: res['hike_ID'] ?? 0,
       endLocation: ls.isNotEmpty
-          ? ls.firstWhere((e) => e.name == res['end_point'])
+          ? ls.firstWhere((e) => e.name == res['end_point'],
+              orElse: () => Location())
           : null,
       startLocation: ls.isNotEmpty
-          ? ls.firstWhere((e) => e.name == res['start_point'])
+          ? ls.firstWhere((e) => e.name == res['start_point'],
+              orElse: () => Location())
           : null,
     );
-
-    return h;
   }
 
   String formatTime() {
@@ -139,11 +131,11 @@ class Hikes {
 
 class Location {
   Location({
-    required this.name,
-    required this.latitude,
-    required this.longitude,
-    required this.city,
-    required this.province,
+    this.name = 'Undefined',
+    this.latitude = 'NA',
+    this.longitude = 'NA',
+    this.city = 'NA',
+    this.province = 'NA',
   });
 
   String name;
@@ -156,11 +148,11 @@ class Location {
     final res = jsonDecode(jsonString);
 
     return Location(
-      name: res['name'] ?? 'NA',
-      latitude: res['latitude'] ?? 'NA',
-      longitude: res['longitude'] ?? 'NA',
-      city: res['city'] ?? 'NA',
-      province: res['province'] ?? 'NA',
+      name: res['name'],
+      latitude: res['latitude'],
+      longitude: res['longitude'],
+      city: res['city'],
+      province: res['province'],
     );
   }
 }
