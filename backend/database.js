@@ -160,11 +160,11 @@ class Database {
   }
 
   /* CHECK IF GPX FILE STRING HAS TO BE PARSED OR IT IS CORRECT */
-  addNewHikeGPX = (hike) => {
+  addNewHikeGPX = (gpx, hikeID) => {
     return new Promise((resolve, reject) => {
       const sql =
         "INSERT INTO hike_gpx(ID,gpx,hike_id) VALUES(?,?,?)";
-      this.db.run(sql, [hike.gpx, hike.id], function (err) {
+      this.db.run(sql, [gpx,hikeID], function (err) {
         if (err) reject(err);
         else resolve(this.lastID);  /* CHECK IF GPX'S ID IS AUTOINCREMENTAL OR NOT */
       });
