@@ -227,6 +227,35 @@ class Database {
     });
   };
 
+  addUser = (user) => {
+    return new Promise((resolve, reject) => {
+      let hashPassword = '';
+      const salt = crypto.randomBytes(16);
+      crypto.scrypt(user.password, salt, 32, function (err, hashedPassword) {
+
+        Buffer.from(hashPassword, "hex"),
+            hashedPassword
+      });
+      const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
+      this.db.run(
+          sql,
+          [
+            user.name,
+            user.surname,
+            user.mail,
+            hashPassword,
+            salt,
+            user.role,
+            0,
+          ], (err) => {
+            if (err) reject(err);
+            else {
+              resolve(this.lastID);
+            }
+          });
+    });
+  };
+
   getUserById = (id) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM user WHERE id = ?";
