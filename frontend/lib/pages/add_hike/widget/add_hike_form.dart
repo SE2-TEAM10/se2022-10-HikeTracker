@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gpx/gpx.dart';
 
 class AddHikeForm extends StatefulWidget {
   const AddHikeForm({
@@ -20,11 +24,13 @@ class _AddHikeFormState extends State<AddHikeForm> {
   late TextEditingController lengthController;
   late TimeOfDay time;
 
+  String? gpxContent;
+
   @override
   void initState() {
     nameController = TextEditingController(text: 'Prova');
     lengthController = TextEditingController(text: '5');
-    time = TimeOfDay(hour: 7, minute: 15);
+    time = const TimeOfDay(hour: 7, minute: 15);
     super.initState();
   }
 
@@ -162,25 +168,84 @@ class _AddHikeFormState extends State<AddHikeForm> {
                         ),
                       ),
                       child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: ElevatedButton(
-                              child: Text('${time.hour}:${time.minute}'),
-                              onPressed: () async {
-                                final TimeOfDay? newTime = await showTimePicker(
-                                  context: context,
-                                  initialTime: time,
-                                );
-                                if (newTime != null) {
-                                  setState(() {
-                                    time = newTime;
-                                  });
-                                }
-                              })),
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ElevatedButton(
+                          child: Text('${time.hour}:${time.minute}'),
+                          onPressed: () async {
+                            final newTime = await showTimePicker(
+                              context: context,
+                              initialTime: time,
+                            );
+                            if (newTime != null) {
+                              setState(() {
+                                time = newTime;
+                              });
+                            }
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(
                   height: 32,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'GPX file',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Theme.of(context).colorScheme.outline,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: TextButton(
+                          child: const Text('Upload'),
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['gpx'],
+                            );
+                            if (result != null) {
+                              final platformFile = result.files.single;
+                              final uploadfile = platformFile.bytes!;
+                              gpxContent = utf8.decode(uploadfile);
+                              final xmlGpx =
+                                  GpxReader().fromString(gpxContent!);
+
+                              print(xmlGpx.creator);
+                              print(xmlGpx.extensions);
+                              print(xmlGpx.metadata);
+                              print(xmlGpx.rtes);
+                              print(xmlGpx.trks);
+                              print(xmlGpx.wpts);
+                            } else {
+                              // User canceled the picker
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 8.0,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,

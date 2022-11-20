@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/add_hike/widget/add_hike_form.dart';
-import 'package:frontend/pages/login/widget/login_banner.dart';
+import 'package:frontend/pages/add_hike/widget/map_banner.dart';
 import 'package:frontend/utils/rest_client.dart';
 import 'package:layout/layout.dart';
 
@@ -27,8 +27,7 @@ class _AddHikeState extends State<AddHike> {
           )
         : Row(
             children: [
-              if (context.breakpoint >= LayoutBreakpoint.md)
-                const LoginBanner(),
+              const MapBanner(),
               AddHikeForm(
                 onSubmit: (email, password) => onSubmit(
                   email: email,
