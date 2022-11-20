@@ -7,6 +7,7 @@ const LOGIN = '/login';
 const LOADING = '/loading';
 const HIKE_DETAIL = '/hike/:hikeID';
 const PROFILE = '/profile';
+const HIKE_ADD = '/add';
 
 class Route {
   Route({
@@ -64,5 +65,11 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
     label: 'Profile',
     path: PROFILE,
     icon: Icons.person_outline,
+  ),
+  Route(
+    index: 2,
+    label: 'Add Hike',
+    path: HIKE_ADD,
+    icon: Icons.add,
   ),
 ];
