@@ -31,8 +31,11 @@ describe.only('hikeController Tests', () => {
                 //end_time : "30:00"
             };
 
+            await hikeController.deleteHikeByID(26);
+            await hikeController.deleteLocationByHikeID(26);
+            await hikeController.deleteLinkHikeUser(26, 111);
             const result = await hikeController.getHikeWithFilters(filters);
-            assert.equal(result.length, 26);
+            assert.equal(result.length, 25);
         })
     })
 
@@ -42,7 +45,7 @@ describe.only('hikeController Tests', () => {
             let reqbody = {
                 
                 "hike": {
-                    "name": "Test1",
+                    "name": "Test3",
                     "length": 1,
                     "expected_time": "01:00",
                     "ascent": 111,
@@ -53,15 +56,15 @@ describe.only('hikeController Tests', () => {
                 },
                 "startp": {
                     "location_name": "Testing start1",
-                    "latitude": "45°52'48.7",
-                    "longitude": "46°53'49.7",
+                    "latitude": "45.52487",
+                    "longitude": "46.53497",
                     "city": "City1",
                     "province": "Province1"
                 },
                 "endp": {
                     "location_name": "Testing end1",
-                    "latitude": "47°54'49.7",
-                    "longitude": "48°55'50.7",
+                    "latitude": "47.54497",
+                    "longitude": "48.55507",
                     "city": "City2",
                     "province": "Province2"
                 },
@@ -77,95 +80,36 @@ describe.only('hikeController Tests', () => {
 
             const result1 = await hikeController.getHikeById(hike_id);
 
-            expect(result1[0].name).toStrictEqual(reqbody.hike.name);
-            expect(result1[0].length).toStrictEqual(reqbody.hike.length);
-            expect(result1[0].expected_time).toStrictEqual(reqbody.hike.expected_time);
-            expect(result1[0].ascent).toStrictEqual(reqbody.hike.ascent);
-            expect(result1[0].difficulty).toStrictEqual(reqbody.hike.difficulty);
-            expect(result1[0].start_point).toStrictEqual(reqbody.hike.start_point);
-            expect(result1[0].end_point).toStrictEqual(reqbody.hike.end_point);
-            expect(result1[0].description).toStrictEqual(reqbody.hike.description);
+            assert.equal(result1.name, reqbody.hike.name);
+            assert.equal(result1.length, reqbody.hike.length);
+            assert.equal(result1.expected_time, reqbody.hike.expected_time);
+            assert.equal(result1.ascent, reqbody.hike.ascent);
+            assert.equal(result1.difficulty, reqbody.hike.difficulty);
+            assert.equal(result1.start_point, reqbody.hike.start_point);
+            assert.equal(result1.end_point, reqbody.hike.end_point);
+            assert.equal(result1.description, reqbody.hike.description);
 
             const result2 = await hikeController.getLocationByHikeId(hike_id);
-            assert.equal(result2.length,2);
-            expect(result2[0].location_name).toStrictEqual(reqbody.startp.location_name);
-            expect(result2[0].latitude).toStrictEqual(reqbody.startp.latitude);
-            expect(result2[0].longitude).toStrictEqual(reqbody.startp.longitude);
-            expect(result2[0].city).toStrictEqual(reqbody.startp.city);
-            expect(result2[0].province).toStrictEqual(reqbody.startp.province);
-            expect(result2[1].location_name).toStrictEqual(reqbody.endp.location_name);
-            expect(result2[1].latitude).toStrictEqual(reqbody.endp.latitude);
-            expect(result2[1].latitude).toStrictEqual(reqbody.endp.latitude);
-            expect(result2[1].city).toStrictEqual(reqbody.endp.city);
-            expect(result2[1].province).toStrictEqual(reqbody.endp.province);
 
-            const result3= await hikeController.getLinkUser(hike_id,111);
+            assert.equal(result2.length, 2);
+            
+            assert.equal(result2[0].location_name, reqbody.startp.location_name);
+            assert.equal(result2[0].latitude, reqbody.startp.latitude);
+            assert.equal(result2[0].longitude, reqbody.startp.longitude);
+            assert.equal(result2[0].city, reqbody.startp.city);
+            assert.equal(result2[0].province, reqbody.startp.province);
+            assert.equal(result2[1].location_name, reqbody.endp.location_name);
+            assert.equal(result2[1].latitude, reqbody.endp.latitude);
+            assert.equal(result2[1].longitude, reqbody.endp.longitude);
+            assert.equal(result2[1].city, reqbody.endp.city);
+            assert.equal(result2[1].province, reqbody.endp.province);
+            
+            
+            const result3 = await hikeController.getLinkUser(hike_id,111);
             assert.equal(result3.length,1);
 
         })
     })
 
-
-
-
-    /* describe('getHike method test', () => {
-        let errorValue;
-        test('successful use of getHike', async () => {
-            const sqlInstruction = `INSERT INTO hike (ID, name, length, expected_time, ascent, difficulty, start_point, end_point, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
-
-            await dbManager.genericSqlRun(sqlInstruction, 55, "name1", 10,"05:00", 500, "H", "stPoint", "endPoint", "aDesc")
-                .catch(() => { throw error });
-            await dbManager.genericSqlRun(sqlInstruction, 100, 50, 10.99, "notes", "first sku", 50)
-                .catch(() => { throw error });
-
-            await hikeController.createHike(
-                {
-                    ID: 65,
-                    name: "name65",
-                    length: 10,
-                    expected_time: "02:00",
-                    ascent: 500,
-                    difficulty: "T",
-                    start_point: "stPoint65",
-                    end_point: "endPoint65",
-                    description: "Desc65",
-                }
-            )
-            await hikeController.createHike(
-                {
-                    ID: 66,
-                    name: "name66",
-                    length: 10,
-                    expected_time: "02:00",
-                    ascent: 500,
-                    difficulty: "T",
-                    start_point: "stPoint66",
-                    end_point: "endPoint66",
-                    description: "Desc66",
-                }
-            )
-
-            const result = await hikeController.getHike(2);
-            assert.equal(result.id, 2)
-        })
-
-        test('attempt of getItem with undefined id', async () => {
-            await itemController.getItem(undefined, 5).catch(err => errorValue = err);
-            assert.equal(errorValue.code, 422)
-        })
-
-        test('attempt of getItem with invalid id', async () => {
-            await itemController.getItem("hello", 5).catch(err => errorValue = err);
-            assert.equal(errorValue.code, 422)
-        })
-
-        test('attempt of getItem with non-existant item', async () => {
-            await itemController.getItem(1, 5).catch(err => errorValue = err);
-            assert.equal(errorValue.code, 404)
-        })
-
-
-
-    }) */
 
 })
