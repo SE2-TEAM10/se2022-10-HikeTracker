@@ -91,8 +91,8 @@ class _LoginFormState extends State<LoginForm> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 32,
+          SizedBox(
+            height: widget.isSmall ? 8 : 32,
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
@@ -133,8 +133,8 @@ class _LoginFormState extends State<LoginForm> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 32,
+          SizedBox(
+            height: widget.isSmall ? 8 : 32,
           ),
           TextButton.icon(
             onPressed: () => widget.onSubmit(

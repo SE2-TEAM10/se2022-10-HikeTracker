@@ -56,6 +56,7 @@ class _LoginFormState extends State<SignupForm> {
           ),
           const Text(
             'Insert your data and start using HikeTracker.',
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18.0,
             ),
@@ -101,8 +102,8 @@ class _LoginFormState extends State<SignupForm> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 32,
+          SizedBox(
+            height: widget.isSmall ? 8 : 32,
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
@@ -143,8 +144,8 @@ class _LoginFormState extends State<SignupForm> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 32,
+          SizedBox(
+            height: widget.isSmall ? 8 : 32,
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
@@ -185,8 +186,8 @@ class _LoginFormState extends State<SignupForm> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 32,
+          SizedBox(
+            height: widget.isSmall ? 8 : 32,
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
@@ -232,8 +233,8 @@ class _LoginFormState extends State<SignupForm> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 32,
+          SizedBox(
+            height: widget.isSmall ? 8 : 32,
           ),
           TextButton.icon(
             onPressed: () => widget.onSubmit(

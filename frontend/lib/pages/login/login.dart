@@ -99,10 +99,12 @@ class _LoginState extends State<Login> {
                         ],
                       ),
                     ),
-                    PageViewIndicators(
-                      showControls: showControls,
-                      position: position,
-                    )
+                    context.breakpoint > LayoutBreakpoint.xs
+                        ? PageViewIndicators(
+                            showControls: showControls,
+                            position: position,
+                          )
+                        : Container()
                   ],
                 ),
               ),
