@@ -86,7 +86,7 @@ describe.only('hikeController Tests', () => {
             expect(result1[0].end_point).toStrictEqual(reqbody.hike.end_point);
             expect(result1[0].description).toStrictEqual(reqbody.hike.description);
 
-            const result2 = await hikeController.getHikeById(hike_id);
+            const result2 = await hikeController.getLocationByHikeId(hike_id);
             assert.equal(result2.length,2);
             expect(result2[0].location_name).toStrictEqual(reqbody.startp.location_name);
             expect(result2[0].latitude).toStrictEqual(reqbody.startp.latitude);
