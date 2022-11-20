@@ -184,7 +184,7 @@ class Database {
   linkHikeUser = (hikeID, userID) => {
     return new Promise((resolve, reject) => {
       const sql = "INSERT INTO hike_user(hike_id, user_id) VALUES(?,?)";
-      db.run(sql, [hikeID, userID], function (err) {
+      this.db.run(sql, [hikeID, userID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });

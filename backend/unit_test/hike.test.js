@@ -22,7 +22,7 @@ describe.only('hikeController Tests', () => {
 
             /* to test the real DB, you need to add filters and to make sure that the number of result is the same on the assert equal */
             let filters = {
-                difficulty: "T",
+                //difficulty: "T",
                 //start_len : 5,
                 //end_len : 15,
                 //start_asc : 500,
@@ -32,7 +32,7 @@ describe.only('hikeController Tests', () => {
             };
 
             const result = await hikeController.getHikeWithFilters(filters);
-            assert.equal(result.length, 6);
+            assert.equal(result.length, 26);
         })
     })
 
