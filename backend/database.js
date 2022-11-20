@@ -126,6 +126,40 @@ class Database {
     });
   };
 
+  /*For testing*/
+  getHikeById = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql =
+        "SELECT * FROM hike WHERE ID = ?";
+      this.db.run(sql, [id], function (err,rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  }
+
+  getLocationByHikeId = (hikeId) => {
+    return new Promise((resolve, reject) => {
+      const sql =
+        "SELECT * FROM location WHERE hike_ID = ?";
+      this.db.run(sql, [hikeId], function (err,rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  }
+
+  getLinkUser = (hikeId,userID) => {
+    return new Promise((resolve, reject) => {
+      const sql =
+        "SELECT * FROM hike_user WHERE hike_id=? AND user_id=?";
+      this.db.run(sql, [hikeId,userID], function (err,rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  }
+
   addNewHike = (hike) => {
     return new Promise((resolve, reject) => {
       const sql =
