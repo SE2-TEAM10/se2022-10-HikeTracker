@@ -1,29 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/user.dart';
 
-class LoginForm extends StatefulWidget {
-  const LoginForm({
+class SignupForm extends StatefulWidget {
+  const SignupForm({
     required this.onSubmit,
-    required this.onSignupTap,
+    required this.onLoginTap,
     this.isSmall = false,
     super.key,
   });
 
   final bool isSmall;
-  final Function(String, String) onSubmit;
-  final Function onSignupTap;
+  final Function(
+    String,
+    String,
+    String,
+    UserRole,
+  ) onSubmit;
+  final Function onLoginTap;
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  State<SignupForm> createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginFormState extends State<SignupForm> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
+  late TextEditingController confirmPasswordController;
+  late UserRole role;
 
   @override
   void initState() {
-    emailController = TextEditingController(text: 'john.doe@hike.it');
-    passwordController = TextEditingController(text: 'localguide1');
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
+    role = UserRole.LocalGuide; //Default selected role
     super.initState();
   }
 
@@ -38,14 +48,14 @@ class _LoginFormState extends State<LoginForm> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            'Welcome back',
+            'Create an account',
             style: TextStyle(
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
             ),
           ),
           const Text(
-            'Please enter your details.',
+            'Insert your data and start using HikeTracker.',
             style: TextStyle(
               fontSize: 18.0,
             ),
@@ -136,16 +146,107 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(
             height: 32,
           ),
+          FractionallySizedBox(
+            widthFactor: widget.isSmall ? 1 : 0.6,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Confirm Password',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Theme.of(context).colorScheme.outline,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 8.0,
+                ),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 32,
+          ),
+          FractionallySizedBox(
+            widthFactor: widget.isSmall ? 1 : 0.6,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Role',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Theme.of(context).colorScheme.outline,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 8.0,
+                ),
+                Row(
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Local Guide',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Theme.of(context).colorScheme.outline,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Radio(
+                          value: UserRole.LocalGuide,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                          groupValue: role,
+                          onChanged: (UserRole? value) => setState(
+                            () => role = value ?? UserRole.LocalGuide,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 32,
+          ),
           TextButton.icon(
             onPressed: () => widget.onSubmit(
               emailController.text,
               passwordController.text,
+              confirmPasswordController.text,
+              role,
             ),
-            icon: const Icon(Icons.login),
+            icon: const Icon(Icons.account_box_outlined),
             label: const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                'Confirm',
+                'Create',
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
@@ -157,9 +258,9 @@ class _LoginFormState extends State<LoginForm> {
             height: 32,
           ),
           TextButton(
-            onPressed: () => widget.onSignupTap(),
+            onPressed: () => widget.onLoginTap(),
             child: Text(
-              'Don\'t have an account? Sign up',
+              'Do you already have an account? Login',
               style: TextStyle(
                 fontSize: 18.0,
                 color: Theme.of(context).colorScheme.tertiary,
