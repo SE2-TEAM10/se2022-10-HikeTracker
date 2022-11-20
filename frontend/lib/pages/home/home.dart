@@ -7,8 +7,8 @@ import 'package:layout/layout.dart';
 
 class Home extends StatefulWidget {
   const Home({
-    super.key,
     required this.client,
+    super.key,
   });
 
   final RestClient client;
@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
             ? Row(
                 children: [
                   AnimatedSize(
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     child: Container(
                       color: Theme.of(context).colorScheme.surface,
                       width: showFilter ? 300 : 0,
@@ -102,25 +102,25 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   builder: (context) => FractionallySizedBox(
-                      heightFactor: 0.8,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Container(
-                              height: 2,
-                              width: 200,
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
+                    heightFactor: 0.8,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                            height: 2,
+                            width: 200,
+                            color: Theme.of(context).colorScheme.outline,
                           ),
-                          FilterTab(
-                            filterHikes: filterHikes,
-                            client: widget.client,
-                            currentFilter: filter,
-                          )
-                        ],
-                      )),
+                        ),
+                        FilterTab(
+                          filterHikes: filterHikes,
+                          client: widget.client,
+                          currentFilter: filter,
+                        )
+                      ],
+                    ),
+                  ),
                 );
               } else {
                 setState(() {

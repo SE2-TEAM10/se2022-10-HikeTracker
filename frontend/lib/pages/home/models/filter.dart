@@ -11,15 +11,15 @@ class Filter {
   static List<String> list = <String>['ALL', 'PH', 'H', 'T'];
 
   Map<String, dynamic> toQueryParameters() {
-    Map<String, dynamic> query = {
-      if (startAsc?.isNotEmpty ?? false) 'start_asc': "$startAsc",
-      if (endAsc?.isNotEmpty ?? false) 'end_asc': "$endAsc",
-      if (startLen?.isNotEmpty ?? false) 'start_len': "$startLen",
-      if (endLen?.isNotEmpty ?? false) 'end_len': "$endLen",
+    final query = <String, dynamic>{
+      if (startAsc?.isNotEmpty ?? false) 'start_asc': '$startAsc',
+      if (endAsc?.isNotEmpty ?? false) 'end_asc': '$endAsc',
+      if (startLen?.isNotEmpty ?? false) 'start_len': '$startLen',
+      if (endLen?.isNotEmpty ?? false) 'end_len': '$endLen',
       if ((difficulty?.isNotEmpty ?? false) && difficulty != 'ALL')
-        'difficulty': "$difficulty",
-      if (city?.isNotEmpty ?? false) 'city': "$city",
-      if (province?.isNotEmpty ?? false) 'province': "$province",
+        'difficulty': '$difficulty',
+      if (city?.isNotEmpty ?? false) 'city': '$city',
+      if (province?.isNotEmpty ?? false) 'province': '$province',
     };
     return query;
   }

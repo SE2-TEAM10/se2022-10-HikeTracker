@@ -18,10 +18,10 @@ class MainScaffold extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: context.breakpoint > LayoutBreakpoint.sm
-            ? Container(
+            ? DecoratedBox(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(40),
                   ),
                 ),

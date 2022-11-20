@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/user.dart';
 import 'package:frontend/pages/login/widget/login_banner.dart';
 import 'package:frontend/pages/login/widget/login_form.dart';
 import 'package:frontend/utils/rest_client.dart';
@@ -42,7 +43,7 @@ class _LoginState extends State<Login> {
           );
   }
 
-  onSubmit({
+  Future<void> onSubmit({
     required String email,
     required String password,
   }) async {
@@ -54,10 +55,10 @@ class _LoginState extends State<Login> {
       },
     );
 
-    if (res.body == "\"Incorrect username or password.\"") {
-      widget.onLogged(false);
+    if (res.body == '"Incorrect username or password."') {
+      widget.onLogged(null);
     } else {
-      widget.onLogged(true);
+      widget.onLogged(User.fromJson(res.body));
     }
   }
 }

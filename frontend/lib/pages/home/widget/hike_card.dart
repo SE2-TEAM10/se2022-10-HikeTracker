@@ -6,18 +6,18 @@ class HikeCard extends StatelessWidget {
   const HikeCard({
     required this.hike,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Hike hike;
   final Function onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(
             16.0,
           ),
@@ -27,7 +27,7 @@ class HikeCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => onTap(),
-          borderRadius: BorderRadius.all(
+          borderRadius: const BorderRadius.all(
             Radius.circular(
               16.0,
             ),
@@ -41,7 +41,7 @@ class HikeCard extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
+                      child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary,
                           image: const DecorationImage(
@@ -60,7 +60,7 @@ class HikeCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8.0,
                   ),
                   Padding(
@@ -82,7 +82,7 @@ class HikeCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 16,
                         ),
                         Row(
@@ -145,9 +145,10 @@ class HikeCard extends StatelessWidget {
                   label: Text(
                     hike.formatDifficulty(),
                     style: TextStyle(
-                        color: hike.difficultyTextColor(
-                      context,
-                    )),
+                      color: hike.difficultyTextColor(
+                        context,
+                      ),
+                    ),
                   ),
                 ),
               ),

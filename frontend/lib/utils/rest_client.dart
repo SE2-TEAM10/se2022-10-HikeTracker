@@ -8,18 +8,21 @@ import 'package:requests/requests.dart';
 class RestClient {
   RestClient();
 
-  Future<Response> get(
-      {required String api,
-      String? endpoint,
-      Map<String, String>? headers,
-      Filter? filter}) async {
+  Future<Response> get({
+    required String api,
+    String? endpoint,
+    Map<String, String>? headers,
+    Filter? filter,
+  }) async {
     final e = endpoint ?? dotenv.env['ENDPOINT'];
 
-    return Requests.get('$e$api',
-        withCredentials: true,
-        verify: false,
-        persistCookies: false,
-        queryParameters: filter?.toQueryParameters());
+    return Requests.get(
+      '$e$api',
+      withCredentials: true,
+      verify: false,
+      persistCookies: false,
+      queryParameters: filter?.toQueryParameters(),
+    );
   }
 
   Future<Response> post({

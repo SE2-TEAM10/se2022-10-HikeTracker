@@ -4,8 +4,8 @@ class LoginForm extends StatefulWidget {
   const LoginForm({
     required this.onSubmit,
     this.isSmall = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final bool isSmall;
   final Function(String, String) onSubmit;
@@ -69,10 +69,9 @@ class _LoginFormState extends State<LoginForm> {
                     const SizedBox(
                       height: 8.0,
                     ),
-                    Container(
+                    DecoratedBox(
                       decoration: BoxDecoration(
                         border: Border.all(
-                          width: 1.0,
                           color: Theme.of(context).colorScheme.outline,
                         ),
                         borderRadius: const BorderRadius.all(
@@ -108,10 +107,9 @@ class _LoginFormState extends State<LoginForm> {
                     const SizedBox(
                       height: 8.0,
                     ),
-                    Container(
+                    DecoratedBox(
                       decoration: BoxDecoration(
                         border: Border.all(
-                          width: 1.0,
                           color: Theme.of(context).colorScheme.outline,
                         ),
                         borderRadius: const BorderRadius.all(

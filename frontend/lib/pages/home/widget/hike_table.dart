@@ -9,9 +9,9 @@ import '../models/hike.dart';
 
 class HikesTable extends StatefulWidget {
   const HikesTable({
-    super.key,
-    required this.filter,
     required this.client,
+    required this.filter,
+    super.key,
   });
 
   final Filter filter;

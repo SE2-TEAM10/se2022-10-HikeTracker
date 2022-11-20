@@ -34,10 +34,12 @@ class Hike {
   static Hike fromJson(String jsonString) {
     final res = jsonDecode(jsonString);
 
-    final ls = List<Location>.from(res['location']
-        .map((e) => e != null ? Location.fromJson(json.encode(e)) : null)
-        .toList()
-        .whereType<Location>());
+    final ls = List<Location>.from(
+      res['location']
+          .map((e) => e != null ? Location.fromJson(json.encode(e)) : null)
+          .toList()
+          .whereType<Location>(),
+    );
 
     return Hike(
       id: res['id'] ?? 0,
@@ -51,12 +53,16 @@ class Hike {
       description: res['description'] ?? 'NA',
       hikeID: res['hike_ID'] ?? 0,
       endLocation: ls.isNotEmpty
-          ? ls.firstWhere((e) => e.name == res['end_point'],
-              orElse: () => Location())
+          ? ls.firstWhere(
+              (e) => e.name == res['end_point'],
+              orElse: () => Location(),
+            )
           : null,
       startLocation: ls.isNotEmpty
-          ? ls.firstWhere((e) => e.name == res['start_point'],
-              orElse: () => Location())
+          ? ls.firstWhere(
+              (e) => e.name == res['start_point'],
+              orElse: () => Location(),
+            )
           : null,
     );
   }

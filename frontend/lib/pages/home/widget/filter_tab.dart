@@ -38,7 +38,7 @@ class _FilterTab extends State<FilterTab> {
       future: widget.client.get(
         api: 'hike',
       ),
-      builder: ((context, snapshot) {
+      builder: (context, snapshot) {
         if (snapshot.hasData) {
           final hikes = Hikes.fromJson(snapshot.data!.body).results;
           final minAsc =
@@ -75,7 +75,7 @@ class _FilterTab extends State<FilterTab> {
                 children: [
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'Ascent: ',
                           style: TextStyle(
@@ -103,10 +103,10 @@ class _FilterTab extends State<FilterTab> {
                       },
                     ),
                   ),
-                  Divider(),
+                  const Divider(),
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'Length: ',
                           style: TextStyle(
@@ -134,9 +134,8 @@ class _FilterTab extends State<FilterTab> {
                       },
                     ),
                   ),
-                  Divider(),
+                  const Divider(),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
@@ -146,10 +145,9 @@ class _FilterTab extends State<FilterTab> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
+                      DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            width: 1.0,
                             color: Theme.of(context).colorScheme.outline,
                           ),
                           borderRadius: const BorderRadius.all(
@@ -162,7 +160,7 @@ class _FilterTab extends State<FilterTab> {
                             value: filter.difficulty,
                             icon: const Icon(Icons.arrow_drop_down),
                             elevation: 16,
-                            underline: SizedBox(),
+                            underline: const SizedBox(),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                             ),
@@ -184,11 +182,10 @@ class _FilterTab extends State<FilterTab> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
@@ -198,10 +195,9 @@ class _FilterTab extends State<FilterTab> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
+                      DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            width: 1.0,
                             color: Theme.of(context).colorScheme.outline,
                           ),
                           borderRadius: const BorderRadius.all(
@@ -214,7 +210,7 @@ class _FilterTab extends State<FilterTab> {
                             value: filter.city,
                             icon: const Icon(Icons.arrow_drop_down),
                             elevation: 16,
-                            underline: SizedBox(),
+                            underline: const SizedBox(),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                             ),
@@ -236,11 +232,10 @@ class _FilterTab extends State<FilterTab> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
@@ -250,10 +245,9 @@ class _FilterTab extends State<FilterTab> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
+                      DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            width: 1.0,
                             color: Theme.of(context).colorScheme.outline,
                           ),
                           borderRadius: const BorderRadius.all(
@@ -266,7 +260,7 @@ class _FilterTab extends State<FilterTab> {
                             value: filter.province,
                             icon: const Icon(Icons.arrow_drop_down),
                             elevation: 16,
-                            underline: SizedBox(),
+                            underline: const SizedBox(),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                             ),
@@ -288,7 +282,7 @@ class _FilterTab extends State<FilterTab> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   Row(
@@ -333,7 +327,7 @@ class _FilterTab extends State<FilterTab> {
             child: CircularProgressIndicator(),
           );
         }
-      }),
+      },
     );
   }
 }

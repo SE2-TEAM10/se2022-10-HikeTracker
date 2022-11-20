@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/common/main_scaffold.dart';
 import 'package:frontend/common/sub_scaffold.dart';
+import 'package:frontend/models/user.dart';
+import 'package:frontend/pages/pages.dart';
 import 'package:frontend/router/constants.dart';
 import 'package:frontend/utils/rest_client.dart';
 import 'package:go_router/go_router.dart';
 
-import '../pages/pages.dart';
-
 GoRouter getRouter({
   required RestClient client,
   required bool showSplash,
-  required bool isLogged,
+  required User? currentUser,
   required Function onLogged,
 }) {
   return GoRouter(
@@ -62,7 +62,9 @@ GoRouter getRouter({
     redirect: (context, state) {
       if (showSplash) {
         return LOADING;
-      } else if (!showSplash && isLogged && state.location == '/login') {
+      } else if (!showSplash &&
+          currentUser != null &&
+          state.location == '/login') {
         return HOME;
       } else if (!showSplash && state.location == '/loading') {
         return HOME;

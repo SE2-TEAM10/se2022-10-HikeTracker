@@ -3,8 +3,8 @@ import 'package:frontend/utils/constants.dart';
 
 class LoginBanner extends StatelessWidget {
   const LoginBanner({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class LoginBanner extends StatelessWidget {
       flex: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
             image: const DecorationImage(
@@ -38,7 +38,7 @@ class LoginBanner extends StatelessWidget {
                 const SizedBox(
                   height: 128,
                 ),
-                Container(
+                ColoredBox(
                   color: Theme.of(context)
                       .colorScheme
                       .onSurfaceVariant
@@ -66,7 +66,7 @@ class LoginBanner extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 16,
                                 ),
                                 Text(

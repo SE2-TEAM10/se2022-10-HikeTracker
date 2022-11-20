@@ -63,7 +63,7 @@ packages:
       name: ficcanaso
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.7"
+    version: "4.0.0"
   flutter:
     dependency: "direct main"
     description: flutter

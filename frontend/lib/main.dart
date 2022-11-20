@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/models/user.dart';
 import 'package:frontend/router/router.dart';
 import 'package:frontend/theme/theme.dart';
 import 'package:frontend/utils/rest_client.dart';
 import 'package:layout/layout.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
+  await dotenv.load();
   final client = RestClient();
 
   runApp(
@@ -29,13 +30,15 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool showSplash = true;
-  bool isLogged = false;
+  User? currentUser;
 
   @override
   void initState() {
     widget.client.get(api: 'sessions/current').then((value) {
       setState(() {
-        isLogged = json.decode(value.body)['error'] != null ? false : true;
+        currentUser = json.decode(value.body)['error'] == null
+            ? User.fromJson(value.body)
+            : null;
         showSplash = false;
       });
     });
@@ -49,8 +52,8 @@ class _MyAppState extends State<MyApp> {
         routerConfig: getRouter(
           client: widget.client,
           showSplash: showSplash,
-          isLogged: isLogged,
-          onLogged: (val) => setState(() => isLogged = val),
+          currentUser: currentUser,
+          onLogged: (User val) => setState(() => currentUser = val),
         ),
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

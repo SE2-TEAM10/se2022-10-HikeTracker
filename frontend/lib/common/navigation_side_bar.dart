@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 class NavigationSideBar extends StatelessWidget {
   const NavigationSideBar({
     required this.currentPath,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String currentPath;
 
