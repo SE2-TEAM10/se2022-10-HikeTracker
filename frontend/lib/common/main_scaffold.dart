@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/common/navigation_bottom_bar.dart';
 import 'package:frontend/common/navigation_side_bar.dart';
+import 'package:frontend/models/user.dart';
 import 'package:layout/layout.dart';
 
 class MainScaffold extends StatelessWidget {
   const MainScaffold({
     required this.child,
     required this.currentPath,
+    required this.currentUser,
     super.key,
   });
 
   final Widget child;
   final String currentPath;
+  final User? currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +67,7 @@ class MainScaffold extends StatelessWidget {
               children: [
                 NavigationSideBar(
                   currentPath: currentPath,
+                  currentUser: currentUser,
                 ),
                 Expanded(
                   child: child,
@@ -77,6 +81,7 @@ class MainScaffold extends StatelessWidget {
                 ),
                 NavigationBottomBar(
                   currentPath: currentPath,
+                  currentUser: currentUser,
                 ),
               ],
             ),

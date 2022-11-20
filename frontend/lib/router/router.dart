@@ -3,7 +3,7 @@ import 'package:frontend/common/main_scaffold.dart';
 import 'package:frontend/common/sub_scaffold.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/pages/pages.dart';
-import 'package:frontend/router/constants.dart';
+import 'package:frontend/router/utils.dart';
 import 'package:frontend/utils/rest_client.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,23 +21,36 @@ GoRouter getRouter({
         builder: (BuildContext context, GoRouterState state) {
           return MainScaffold(
             currentPath: state.path!,
+            currentUser: currentUser,
             child: Home(
               client: client,
             ),
           );
         },
       ),
-      GoRoute(
-        path: LOGIN,
-        builder: (BuildContext context, GoRouterState state) {
-          return SubScaffold(
-            child: Login(
-              client: client,
-              onLogged: onLogged,
-            ),
-          );
-        },
-      ),
+      if (currentUser == null)
+        GoRoute(
+          path: LOGIN,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: Login(
+                client: client,
+                onLogged: onLogged,
+              ),
+            );
+          },
+        ),
+      if (currentUser != null)
+        GoRoute(
+          path: PROFILE,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: Center(
+                child: Text('PROFILE PAGE: ${currentUser.name}'),
+              ),
+            );
+          },
+        ),
       GoRoute(
         path: LOADING,
         builder: (BuildContext context, GoRouterState state) {
@@ -62,10 +75,6 @@ GoRouter getRouter({
     redirect: (context, state) {
       if (showSplash) {
         return LOADING;
-      } else if (!showSplash &&
-          currentUser != null &&
-          state.location == '/login') {
-        return HOME;
       } else if (!showSplash && state.location == '/loading') {
         return HOME;
       } else {

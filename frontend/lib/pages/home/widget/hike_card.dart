@@ -41,7 +41,8 @@ class HikeCard extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: DecoratedBox(
+                      // ignore: use_decorated_box
+                      child: Container(
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary,
                           image: const DecorationImage(

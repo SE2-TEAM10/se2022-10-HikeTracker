@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/router/constants.dart';
+import 'package:frontend/models/user.dart';
+import 'package:frontend/router/utils.dart';
 import 'package:go_router/go_router.dart';
 
 class NavigationBottomBar extends StatelessWidget {
   const NavigationBottomBar({
     required this.currentPath,
+    required this.currentUser,
     super.key,
   });
 
   final String currentPath;
+  final User? currentUser;
 
   @override
   Widget build(BuildContext context) {
+    final routes = RouteUtils.getNavigationRoutes(currentUser);
+
     return BottomNavigationBar(
-      items: NAVIGATION_BAR_ROUTES
+      items: routes
           .map(
             (e) => BottomNavigationBarItem(
               icon: Icon(e.icon),
@@ -21,11 +26,10 @@ class NavigationBottomBar extends StatelessWidget {
             ),
           )
           .toList(),
-      onTap: (value) => currentPath != NAVIGATION_BAR_ROUTES[value].path
-          ? GoRouter.of(context).push(NAVIGATION_BAR_ROUTES[value].path)
+      onTap: (value) => currentPath != routes[value].path
+          ? GoRouter.of(context).push(routes[value].path)
           : null,
-      currentIndex:
-          NAVIGATION_BAR_ROUTES.firstWhere((r) => r.path == currentPath).index,
+      currentIndex: routes.firstWhere((r) => r.path == currentPath).index,
     );
   }
 }
