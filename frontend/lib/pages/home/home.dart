@@ -1,8 +1,8 @@
+import 'package:HikeTracker/pages/home/models/filter.dart';
+import 'package:HikeTracker/pages/home/widget/filter_tab.dart';
+import 'package:HikeTracker/pages/home/widget/hike_table.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/home/models/filter.dart';
-import 'package:frontend/pages/home/widget/filter_tab.dart';
-import 'package:frontend/pages/home/widget/hike_table.dart';
-import 'package:frontend/utils/rest_client.dart';
 import 'package:layout/layout.dart';
 
 class Home extends StatefulWidget {

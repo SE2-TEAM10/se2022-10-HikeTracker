@@ -1,7 +1,7 @@
+import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
+import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/add_hike/widget/add_hike_form.dart';
-import 'package:frontend/pages/add_hike/widget/map_banner.dart';
-import 'package:frontend/utils/rest_client.dart';
 import 'package:gpx/gpx.dart';
 import 'package:layout/layout.dart';
 
