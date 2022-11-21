@@ -38,9 +38,14 @@ class _AddHikeState extends State<AddHike> {
                 }),
               ),
               AddHikeForm(
-                onSubmit: (email, password) => onSubmit(
-                  email: email,
-                  password: password,
+                onSubmit:
+                    (name, length, expected_time, difficulty, description) =>
+                        onSubmit(
+                  name: name,
+                  length: length,
+                  expected_time: expected_time,
+                  difficulty: difficulty,
+                  description: description,
                 ),
                 isSmall: context.breakpoint <= LayoutBreakpoint.xs,
               ),
@@ -49,18 +54,26 @@ class _AddHikeState extends State<AddHike> {
   }
 
   Future<void> onSubmit({
-    required String email,
-    required String password,
+    required String name,
+    required String length,
+    required String expected_time,
+    required String difficulty,
+    required String description,
   }) async {
     final res = await widget.client.post(
-      api: 'sessions',
+      api: 'hike',
       body: {
-        'username': email,
-        'password': password,
+        'hike': {
+          'name': name,
+          'length': length,
+          'expected_time': expected_time,
+          'difficulty': difficulty,
+          'description': description,
+        }
       },
     );
 
-    if (res.body == '"Incorrect username or password."') {
+    if (res.body == '"Incorrect"') {
       // TODO
     } else {
       // pop

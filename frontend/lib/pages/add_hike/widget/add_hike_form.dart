@@ -9,7 +9,7 @@ class AddHikeForm extends StatefulWidget {
   });
 
   final bool isSmall;
-  final Function(String, String) onSubmit;
+  final Function(String, String, String, String, String) onSubmit;
 
   @override
   State<AddHikeForm> createState() => _AddHikeFormState();
@@ -278,6 +278,9 @@ class _AddHikeFormState extends State<AddHikeForm> {
                       onPressed: () => widget.onSubmit(
                         nameController.text,
                         lengthController.text,
+                        '${time.hour}:${time.minute}',
+                        difficulty,
+                        descriptionController.text,
                       ),
                       icon: const Icon(Icons.login),
                       label: const Padding(
