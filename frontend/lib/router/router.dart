@@ -51,6 +51,17 @@ GoRouter getRouter({
             );
           },
         ),
+      if (currentUser?.role == UserRole.LocalGuide)
+        GoRoute(
+          path: HIKE_ADD,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: AddHike(
+                client: client,
+              ),
+            );
+          },
+        ),
       GoRoute(
         path: LOADING,
         builder: (BuildContext context, GoRouterState state) {

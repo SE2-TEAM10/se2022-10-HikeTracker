@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
           onLogged: (User val) => setState(() => currentUser = val),
         ),
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Hike Tracker',
         themeMode: ThemeMode.light,
         theme: ThemeData(
           useMaterial3: true,

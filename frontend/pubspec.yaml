@@ -1,4 +1,4 @@
-name: frontend
+name: Hike Tracker
 description: A new Flutter project.
 publish_to: 'none'
 version: 1.0.0+1
@@ -8,11 +8,15 @@ environment:
 
 dependencies:
   equatable: ^2.0.5
+  file_picker: ^5.2.2
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.2
+  flutter_map: ^3.0.0
   go_router: ^5.1.5
+  gpx: ^2.2.0
   http: ^0.13.5
+  latlong2: ^0.8.1
   layout: ^1.0.3
   requests: ^4.8.0-alpha.0
 
