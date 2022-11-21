@@ -180,6 +180,20 @@ app.post(
 
 
 
+//set a boolean value (verified) to 1
+app.put(
+    '/api/:id/setVerified',
+    async (req, res) => {
+        try {
+            const result1 = await db.setVerified(req.user.id);
+            res.status(201).json(result1);
+        } catch (err) {
+            console.error(err);
+            res.status(503).json(err);
+        }
+    }
+);
+
 
 // Activate the server
 app.listen(port, () => {

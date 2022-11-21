@@ -262,8 +262,9 @@ class Database {
   addUser = (user) => {
     return new Promise((resolve, reject) => {
       let database = this.db;
-      const salt = crypto.randomBytes(16);
-      crypto.scrypt(user.password, salt, 32, function (err, hashedPassword) {
+      let salt = crypto.randomBytes(16);
+      crypto.scrypt(user.password, salt.toString(), 32, function (err, hashedPassword) {
+
         const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
         database.run(
             sql,
@@ -286,6 +287,31 @@ class Database {
 
     });
   };
+
+
+  setVerified = (user_id) => {
+    return new Promise((resolve, reject) => {
+      let query = "UPDATE user SET verified = 1 WHERE ID=";
+
+      db.run(query, [user_id], function (err) {
+        if (err)
+          reject(err);
+        else {
+          if (this.changes > 0)
+            resolve();
+          else {
+            reject(new Error("Non è stato trovato nessun utente"));
+          }
+
+        }
+
+      });
+    });
+  }
+
+
+
+
 
   getUserById = (id) => {
     return new Promise((resolve, reject) => {
