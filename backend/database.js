@@ -331,7 +331,7 @@ class Database {
 
   setVerified = (user_id) => {
     return new Promise((resolve, reject) => {
-      let query = "UPDATE user SET verified = 1 WHERE ID=";
+      let query = "UPDATE user SET verified = 1 WHERE ID=?";
 
       db.run(query, [user_id], function (err) {
         if (err)
