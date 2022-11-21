@@ -152,10 +152,10 @@ app.post(
 
     try {
       const result1 = await db.addNewHike(req.body.hike);
-      const result2 = await db.addNewLocation(req.body.startp,result1);
-      const result3 = await db.addNewLocation(req.body.endp,result1);
+      const result2 = await db.addNewLocation(req.body.startp, result1);
+      const result3 = await db.addNewLocation(req.body.endp, result1);
       const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
-      const result5 = await db.linkHikeUser(req.user.id,result1);
+      const result5 = await db.linkHikeUser(req.user.id, result1);
       res.status(201).json(result1);
     } catch (err) {
       console.error(err);
@@ -165,33 +165,33 @@ app.post(
 );
 
 app.post(
-    "/api/addUser",
-    async (req, res) => {
+  "/api/addUser",
+  async (req, res) => {
 
-      try {
-        const result1 = await db.addUser(req.body.user);
-        res.status(201).json(result1);
-      } catch (err) {
-        console.error(err);
-        res.status(503).json(err);
-      }
+    try {
+      const result1 = await db.addUser(req.body.user);
+      res.status(201).json(result1);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
     }
+  }
 );
 
 
 
 //set a boolean value (verified) to 1
 app.put(
-    '/api/:id/setVerified',
-    async (req, res) => {
-        try {
-            const result1 = await db.setVerified(req.user.id);
-            res.status(201).json(result1);
-        } catch (err) {
-            console.error(err);
-            res.status(503).json(err);
-        }
+  '/api/:id/setVerified',
+  async (req, res) => {
+    try {
+      const result1 = await db.setVerified(req.user.id);
+      res.status(201).json(result1);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
     }
+  }
 );
 
 
