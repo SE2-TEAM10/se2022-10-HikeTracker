@@ -191,6 +191,22 @@ class Database {
 
   addNewHike = (hike) => {
     return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike.name !== 'string' ||
+          typeof hike.length !== 'number' ||
+          typeof hike.expected_time !== 'string' ||
+          typeof hike.ascent !== 'number' ||
+          typeof hike.difficulty !== 'string' ||
+          typeof hike.start_point !== 'string' ||
+          typeof hike.end_point !== 'string' ||
+          typeof hike.description !== 'string'
+        ) {
+          return reject(422); /* 422 - UNPROCESSABLE */
+        }
+      } catch (e) {
+        return reject(503); /* 503 - UNAVAILABLE */
+      }
       const sql =
         "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
       this.db.run(
@@ -215,6 +231,16 @@ class Database {
 
   linkHikeUser = (hikeID, userID) => {
     return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hikeID !== 'number' ||
+          typeof userID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
       const sql = "INSERT INTO hike_user(hike_id, user_id) VALUES(?,?)";
       this.db.run(sql, [hikeID, userID], function (err) {
         if (err) reject(err);
@@ -225,6 +251,20 @@ class Database {
 
   addNewLocation = (loc, id) => {
     return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof loc.location_name !== 'string' ||
+          typeof loc.latitude !== 'string' ||
+          typeof loc.longitude !== 'string' ||
+          typeof loc.city !== 'string' ||
+          typeof loc.province !== 'string' ||
+          typeof id !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
       const sql =
         "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
       this.db.run(
