@@ -1,5 +1,5 @@
+import 'package:HikeTracker/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/utils/constants.dart';
 
 class LoginBanner extends StatelessWidget {
   const LoginBanner({

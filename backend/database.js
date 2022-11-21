@@ -64,6 +64,7 @@ class Database {
         console.log(query2);
       }
 
+      console.log("final query: ", query2);
       this.db.all(query2, [], (err, rows) => {
         if (err) {
           reject(err);
@@ -86,12 +87,13 @@ class Database {
           province: e.province,
           hike_ID: e.hike_ID,
         }));
-        console.log(list);
+        //console.log(list);
         let array = [];
         list.forEach((i) => {
           if (array.find((a) => a.id === i.id) === undefined) {
             let temp = list.filter((course) => course.id === i.id);
-            console.log("temp temp temp temp temp", temp);
+            //console.log("temp temp temp temp temp");
+            //console.log(temp);
             if (temp.length === 1) {
               array.push(temp[0]);
             } else {
@@ -130,7 +132,7 @@ class Database {
   getHikeById = (id) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike WHERE ID = ?";
-      this.db.run(sql, [id], function (err, rows) {
+      this.db.get(sql, [id], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
@@ -140,19 +142,49 @@ class Database {
   getLocationByHikeId = (hikeId) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM location WHERE hike_ID = ?";
-      this.db.run(sql, [hikeId], function (err, rows) {
+      this.db.all(sql, [hikeId], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
     });
   };
 
-  getLinkUser = (hikeId, userID) => {
+  getLinkUser = (hikeID, userID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike_user WHERE hike_id=? AND user_id=?";
-      this.db.run(sql, [hikeId, userID], function (err, rows) {
+      this.db.all(sql, [hikeID, userID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
+      });
+    });
+  };
+
+  deleteHikeByID = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike WHERE ID=?";
+      this.db.run(sql, [id], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteLocationByHikeID = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM location WHERE hike_ID=?";
+      this.db.run(sql, [id], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteLinkHikeUser = (hikeID, userID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_user WHERE hike_id=? AND user_id=?";
+      this.db.run(sql, [hikeID, userID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
       });
     });
   };
@@ -184,7 +216,7 @@ class Database {
   linkHikeUser = (hikeID, userID) => {
     return new Promise((resolve, reject) => {
       const sql = "INSERT INTO hike_user(hike_id, user_id) VALUES(?,?)";
-      db.run(sql, [hikeID, userID], function (err) {
+      this.db.run(sql, [hikeID, userID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });

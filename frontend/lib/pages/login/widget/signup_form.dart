@@ -1,5 +1,5 @@
+import 'package:HikeTracker/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/models/user.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({

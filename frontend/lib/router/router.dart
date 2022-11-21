@@ -1,10 +1,10 @@
+import 'package:HikeTracker/common/main_scaffold.dart';
+import 'package:HikeTracker/common/sub_scaffold.dart';
+import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/pages/pages.dart';
+import 'package:HikeTracker/router/utils.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/common/main_scaffold.dart';
-import 'package:frontend/common/sub_scaffold.dart';
-import 'package:frontend/models/user.dart';
-import 'package:frontend/pages/pages.dart';
-import 'package:frontend/router/utils.dart';
-import 'package:frontend/utils/rest_client.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter getRouter({
@@ -47,6 +47,17 @@ GoRouter getRouter({
             return SubScaffold(
               child: Center(
                 child: Text('PROFILE PAGE: ${currentUser.name}'),
+              ),
+            );
+          },
+        ),
+      if (currentUser?.role == UserRole.LocalGuide)
+        GoRoute(
+          path: HIKE_ADD,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: AddHike(
+                client: client,
               ),
             );
           },

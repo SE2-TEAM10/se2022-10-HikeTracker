@@ -1,6 +1,6 @@
+import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/router/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/models/user.dart';
-import 'package:frontend/router/utils.dart';
 import 'package:go_router/go_router.dart';
 
 class NavigationSideBar extends StatelessWidget {

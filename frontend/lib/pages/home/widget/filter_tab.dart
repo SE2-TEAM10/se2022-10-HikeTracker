@@ -1,9 +1,9 @@
 import 'dart:math';
 
+import 'package:HikeTracker/pages/home/models/filter.dart';
+import 'package:HikeTracker/pages/home/models/hike.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/home/models/filter.dart';
-import 'package:frontend/pages/home/models/hike.dart';
-import 'package:frontend/utils/rest_client.dart';
 
 class FilterTab extends StatefulWidget {
   const FilterTab({
