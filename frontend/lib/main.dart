@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
           client: widget.client,
           showSplash: showSplash,
           currentUser: currentUser,
-          onLogged: (User val) => setState(() => currentUser = val),
+          onLogged: (User? val) => setState(() => currentUser = val),
         ),
         debugShowCheckedModeBanner: false,
         title: 'Hike Tracker',
