@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/add_hike/widget/add_hike_form.dart';
 import 'package:frontend/pages/add_hike/widget/map_banner.dart';
 import 'package:frontend/utils/rest_client.dart';
+import 'package:gpx/gpx.dart';
 import 'package:layout/layout.dart';
 
 class AddHike extends StatefulWidget {
@@ -18,6 +19,8 @@ class AddHike extends StatefulWidget {
 
 class _AddHikeState extends State<AddHike> {
   bool isLoading = false;
+  String? gpxContent;
+  Gpx? gpx;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,13 @@ class _AddHikeState extends State<AddHike> {
           )
         : Row(
             children: [
-              const MapBanner(),
+              MapBanner(
+                gpx: gpx,
+                onGpxLoaded: (val, text) => setState(() {
+                  gpx = val;
+                  gpxContent = text;
+                }),
+              ),
               AddHikeForm(
                 onSubmit: (email, password) => onSubmit(
                   email: email,
