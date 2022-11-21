@@ -113,7 +113,7 @@ describe.only('hikeController Tests', () => {
 
         })
 
-        test('try to insert new hike with wrong params', async () => {
+        test('try to insert a hike with wrong params', async () => {
 
             let reqbody = {
 
@@ -152,6 +152,13 @@ describe.only('hikeController Tests', () => {
 
         })
 
+        test('try to insert a hike with empty params', async () => {
+
+            const result = await hikeController.addNewHike().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
         test('try to insert a location with wrong params', async () => {
             let reqbody = {
                 "startp": {
@@ -169,12 +176,7 @@ describe.only('hikeController Tests', () => {
 
         test('try to insert a location with empty params', async () => {
 
-            let reqbody = {
-                "startp": {
-                }
-            };
-
-            const result = await hikeController.addNewLocation(reqbody, 100).catch(() => { });
+            const result = await hikeController.addNewLocation().catch(() => { });
             expect(result).to.be.undefined;
 
         })

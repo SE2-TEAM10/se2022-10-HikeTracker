@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1669028397254" clover="3.2.0">
-  <project timestamp="1669028397255" name="All files">
-    <metrics statements="154" coveredstatements="97" conditionals="94" coveredconditionals="37" methods="47" coveredmethods="37" elements="295" coveredelements="171" complexity="0" loc="154" ncloc="154" packages="1" files="1" classes="1"/>
+<coverage generated="1669029283697" clover="3.2.0">
+  <project timestamp="1669029283698" name="All files">
+    <metrics statements="154" coveredstatements="98" conditionals="94" coveredconditionals="37" methods="47" coveredmethods="37" elements="295" coveredelements="172" complexity="0" loc="154" ncloc="154" packages="1" files="1" classes="1"/>
     <file name="database.js" path="C:\Users\giovy\Documents\se2022-10-HikeTracker\backend\database.js">
-      <metrics statements="154" coveredstatements="97" conditionals="94" coveredconditionals="37" methods="47" coveredmethods="37"/>
+      <metrics statements="154" coveredstatements="98" conditionals="94" coveredconditionals="37" methods="47" coveredmethods="37"/>
       <line num="3" count="1" type="stmt"/>
       <line num="4" count="1" type="stmt"/>
       <line num="5" count="1" type="stmt"/>
@@ -100,11 +100,11 @@
       <line num="186" count="1" type="cond" truecount="1" falsecount="1"/>
       <line num="187" count="1" type="stmt"/>
       <line num="192" count="1" type="stmt"/>
-      <line num="193" count="2" type="stmt"/>
-      <line num="194" count="2" type="stmt"/>
-      <line num="195" count="2" type="cond" truecount="2" falsecount="0"/>
+      <line num="193" count="3" type="stmt"/>
+      <line num="194" count="3" type="stmt"/>
+      <line num="195" count="3" type="cond" truecount="2" falsecount="0"/>
       <line num="205" count="1" type="stmt"/>
-      <line num="208" count="0" type="stmt"/>
+      <line num="208" count="1" type="stmt"/>
       <line num="211" count="1" type="stmt"/>
       <line num="212" count="1" type="stmt"/>
       <line num="225" count="1" type="cond" truecount="1" falsecount="1"/>
@@ -123,8 +123,8 @@
       <line num="253" count="5" type="stmt"/>
       <line num="254" count="5" type="stmt"/>
       <line num="255" count="5" type="cond" truecount="2" falsecount="0"/>
-      <line num="263" count="2" type="stmt"/>
-      <line num="266" count="1" type="stmt"/>
+      <line num="263" count="1" type="stmt"/>
+      <line num="266" count="2" type="stmt"/>
       <line num="269" count="2" type="stmt"/>
       <line num="270" count="2" type="stmt"/>
       <line num="281" count="2" type="cond" truecount="1" falsecount="1"/>
