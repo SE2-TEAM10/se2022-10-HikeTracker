@@ -1,6 +1,6 @@
+import 'package:HikeTracker/pages/home/models/hike.dart';
+import 'package:HikeTracker/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/home/models/hike.dart';
-import 'package:frontend/utils/constants.dart';
 
 class HikeCard extends StatelessWidget {
   const HikeCard({

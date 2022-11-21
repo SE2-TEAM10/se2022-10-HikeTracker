@@ -1,7 +1,7 @@
+import 'package:HikeTracker/common/navigation_bottom_bar.dart';
+import 'package:HikeTracker/common/navigation_side_bar.dart';
+import 'package:HikeTracker/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/common/navigation_bottom_bar.dart';
-import 'package:frontend/common/navigation_side_bar.dart';
-import 'package:frontend/models/user.dart';
 import 'package:layout/layout.dart';
 
 class MainScaffold extends StatelessWidget {

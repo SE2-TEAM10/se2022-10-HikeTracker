@@ -1,8 +1,8 @@
+import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/pages/login/widget/login_banner.dart';
+import 'package:HikeTracker/pages/login/widget/login_form.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/models/user.dart';
-import 'package:frontend/pages/login/widget/login_banner.dart';
-import 'package:frontend/pages/login/widget/login_form.dart';
-import 'package:frontend/utils/rest_client.dart';
 import 'package:layout/layout.dart';
 
 class Login extends StatefulWidget {

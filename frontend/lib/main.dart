@@ -1,11 +1,11 @@
 import 'dart:convert';
 
+import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/router/router.dart';
+import 'package:HikeTracker/theme/theme.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/models/user.dart';
-import 'package:frontend/router/router.dart';
-import 'package:frontend/theme/theme.dart';
-import 'package:frontend/utils/rest_client.dart';
 import 'package:layout/layout.dart';
 
 void main() async {
