@@ -229,30 +229,29 @@ class Database {
 
   addUser = (user) => {
     return new Promise((resolve, reject) => {
-      let hashPassword = '';
+      let database = this.db;
       const salt = crypto.randomBytes(16);
       crypto.scrypt(user.password, salt, 32, function (err, hashedPassword) {
+        const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
+        database.run(
+            sql,
+            [
+              user.name,
+              user.surname,
+              user.mail,
+              hashedPassword,
+              salt,
+              user.role,
+              0,
+            ], (err) => {
+              if (err) reject(err);
+              else {
+                resolve(this.lastID);
+              }
+            });
 
-        Buffer.from(hashPassword, "hex"),
-            hashedPassword
       });
-      const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
-      this.db.run(
-          sql,
-          [
-            user.name,
-            user.surname,
-            user.mail,
-            hashPassword,
-            salt,
-            user.role,
-            0,
-          ], (err) => {
-            if (err) reject(err);
-            else {
-              resolve(this.lastID);
-            }
-          });
+
     });
   };
 
