@@ -19,6 +19,9 @@ class _AddHikeFormState extends State<AddHikeForm> {
   late TextEditingController nameController;
   late TextEditingController lengthController;
   late TimeOfDay time;
+  late String difficulty;
+  late TextEditingController descriptionController;
+  final List<String> difficulties = <String>['T', 'PH', 'H'];
 
   String? gpxContent;
 
@@ -27,6 +30,8 @@ class _AddHikeFormState extends State<AddHikeForm> {
     nameController = TextEditingController(text: 'Prova');
     lengthController = TextEditingController(text: '5');
     time = const TimeOfDay(hour: 7, minute: 15);
+    difficulty = 'T';
+    descriptionController = TextEditingController(text: 'A cool hike');
     super.initState();
   }
 
@@ -154,6 +159,39 @@ class _AddHikeFormState extends State<AddHikeForm> {
                     const SizedBox(
                       height: 8.0,
                     ),
+                    ElevatedButton(
+                      child: Text('${time.hour}:${time.minute}'),
+                      onPressed: () async {
+                        final newTime = await showTimePicker(
+                          context: context,
+                          initialTime: time,
+                        );
+                        if (newTime != null) {
+                          setState(() {
+                            time = newTime;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 32,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Difficulty',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Theme.of(context).colorScheme.outline,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
                     DecoratedBox(
                       decoration: BoxDecoration(
                         border: Border.all(
@@ -165,19 +203,66 @@ class _AddHikeFormState extends State<AddHikeForm> {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: ElevatedButton(
-                          child: Text('${time.hour}:${time.minute}'),
-                          onPressed: () async {
-                            final newTime = await showTimePicker(
-                              context: context,
-                              initialTime: time,
-                            );
-                            if (newTime != null) {
-                              setState(() {
-                                time = newTime;
-                              });
-                            }
+                        child: DropdownButton(
+                          value: difficulty,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          elevation: 16,
+                          underline: const SizedBox(),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          onChanged: (String? value) {
+                            setState(() {
+                              difficulty = value!;
+                            });
                           },
+                          items: difficulties
+                              .map(
+                                (String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 32,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Description',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Theme.of(context).colorScheme.outline,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: TextField(
+                          controller: descriptionController,
+                          maxLines: null,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
