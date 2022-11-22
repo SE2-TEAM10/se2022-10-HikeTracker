@@ -167,6 +167,16 @@ class Database {
     });
   };
 
+  getUserById = (userID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM user WHERE ID = ?";
+      this.db.all(sql, [userID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+  
   deleteHikeByID = (id) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike WHERE ID=?";
@@ -206,6 +216,17 @@ class Database {
       });
     });
   };
+  
+  deleteUserByID = (userID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM user WHERE ID=?";
+      this.db.run(sql, [userID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
 
   addNewHike = (hike, gpx_string) => {
     return new Promise((resolve, reject) => {
