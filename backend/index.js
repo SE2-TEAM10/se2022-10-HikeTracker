@@ -1,6 +1,6 @@
 "use strict";
 
-let gpxParser = require('gpxparser');
+const GpxParser = require("gpxparser");
 const dayjs = require("dayjs");
 const express = require("express");
 const morgan = require("morgan"); // logging middleware
@@ -152,9 +152,13 @@ app.post(
         }*/
 
     try {
-      const result1 = await db.addNewHike(req.body.hike);
-      const result2 = await db.addNewLocation(req.body.startp, result1);
-      const result3 = await db.addNewLocation(req.body.endp, result1);
+      if(typeof req.body.gpx !== 'string'){
+        res.status(422).json(err);  //UNPROCESSABLE
+      }
+    
+      const result1 = await db.addNewHike(req.body.hike, req.body.gpx);
+      const result2 = await db.addNewLocation(req.body.startp, result1, req.body.gpx);
+      const result3 = await db.addNewLocation(req.body.endp, result1, req.body.gpx);
       const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
       const result5 = await db.linkHikeUser(req.user.id, result1);
 
