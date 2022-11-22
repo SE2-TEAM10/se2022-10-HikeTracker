@@ -85,6 +85,7 @@ class _AddHikeState extends State<AddHike> {
           'city': end.city?.text,
           'province': end.province?.text,
         },
+        'gpx': gpxContent,
       },
     );
 
