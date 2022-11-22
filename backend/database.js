@@ -88,13 +88,10 @@ class Database {
           province: e.province,
           hike_ID: e.hike_ID,
         }));
-        //console.log(list);
         let array = [];
         list.forEach((i) => {
           if (array.find((a) => a.id === i.id) === undefined) {
-            let temp = list.filter((course) => course.id === i.id);
-            //console.log("temp temp temp temp temp");
-            //console.log(temp);
+            let temp = list.filter((elem) => elem.id === i.id);
             if (temp.length === 1) {
               array.push(temp[0]);
             } else {
@@ -212,22 +209,23 @@ class Database {
 
   addNewHike = (hike, gpx_string) => {
     return new Promise((resolve, reject) => {
-      var gpx = new GpxParser();
-      gpx.parse(gpx_string);
-      let length = parseInt((gpx.tracks[0].distance.total) / 1000);
-      let ascent = parseInt((gpx.tracks[0].elevation.max));
       try {
         if (
           typeof hike.name !== 'string' ||
           typeof hike.expected_time !== 'string' ||
           typeof hike.difficulty !== 'string' ||
-          typeof hike.description !== 'string'
+          typeof hike.description !== 'string' ||
+          typeof gpx_string !== 'string'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
+      var gpx = new GpxParser();
+      gpx.parse(gpx_string);
+      let length = parseInt((gpx.tracks[0].distance.total) / 1000);
+      let ascent = parseInt((gpx.tracks[0].elevation.max));
       const sql =
         "INSERT INTO hike(name,length,expected_time,ascent,difficulty,description) VALUES(?,?,?,?,?,?)";
       this.db.run(
@@ -291,7 +289,7 @@ class Database {
           longitude,
           loc.city,
           loc.province,
-          id,
+          hike_ID,
         ],
         function (err) {
           if (err) reject(err);
@@ -307,26 +305,39 @@ class Database {
       try {
         if (
           typeof gpx_string !== 'string' ||
-          typeof hike_ID !== 'number'
+          typeof hikeID !== 'number'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
-      const sql = "INSERT INTO hike_gpx(ID,gpx,hike_id) VALUES(?,?,?)";
+      const sql = "INSERT INTO hike_gpx(gpx,hike_id) VALUES(?,?)";
       this.db.run(sql, [gpx_string, hikeID], function (err) {
         if (err) reject(err);
         else
-          resolve(
-            this.lastID
-          );
+          resolve(this.lastID);
       });
     });
   };
 
   addUser = (user) => {
     return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof user.name !== 'string' ||
+          typeof user.surname !== 'string' ||
+          typeof user.mail !== 'string' ||
+          typeof user.role !== 'string' /* ||
+          typeof user.password !== 'string' ||
+          typeof user.salt !== 'string' ||
+          typeof user.verified !== 'number' */
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
       let database = this.db;
       let salt = crypto.randomBytes(16);
       crypto.scrypt(user.password, salt.toString(), 32, function (err, hashedPassword) {

@@ -1,6 +1,5 @@
 "use strict";
 
-const GpxParser = require("gpxparser");
 const dayjs = require("dayjs");
 const express = require("express");
 const morgan = require("morgan"); // logging middleware

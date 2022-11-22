@@ -67,12 +67,23 @@ describe.only('hikeController Tests', () => {
 
             const hike_id = await hikeController.addNewHike(reqbody.hike, reqbody.gpx);
 
-            console.log("hike ID", hike_id);
+            //console.log("hike ID - SHOULD BE 26", hike_id);
 
             const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "startp", hike_id, reqbody.gpx);
-            const newendpLocation = await hikeController.addNewLocation(reqbody.endp, "endp", hike_id, reqbody.gpx);
-            //const hikeGPX_id = await hikeController.addNewHikeGPX(reqbody.gpx,hike_id);
+
+            //console.log("startLoc - SHOULD BE TRUE", newStartpLocation);
+
+            const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "endp", hike_id, reqbody.gpx);
+
+            //console.log("endLoc - SHOULD BE TRUE", newEndpLocation);
+
+            const hikeGPX_id = await hikeController.addNewHikeGPX(reqbody.gpx, hike_id);
+
+            console.log("hikeGPX_id - SHOULD BE 26", hikeGPX_id);
+
             const newLinkHikeUser = await hikeController.linkHikeUser(hike_id, 111);
+
+            console.log("linkUser - SHOULD BE TRUE", newLinkHikeUser);
 
             const result1 = await hikeController.getHikeById(hike_id);
 
