@@ -206,6 +206,51 @@ describe.only('hikeController Tests', () => {
 
         })
     })
+    
+    
+    
+    describe('addUser method test', () => {
+        test('successful use of addUser', async () => {
+
+           
+            let user = {
+                name: "testName",
+                surname : "testSurname",
+                mail:"test@hike.it",
+                password:"password",
+                salt:"f4df7b66d7",
+                role:"local guide",
+                verified:0
+            };
+
+            //await hikeController.deleteUserByID(4);
+            const userId = await hikeController.addUser(user);
+            const result = await hikeController.getUserById(userId);
+
+            assert.equal(result.name, user.name);
+            assert.equal(result.surname, user.surname);
+            assert.equal(result.mail, user.mail);
+            assert.equal(result.password, user.password);
+            assert.equal(result.salt, user.salt);
+            assert.equal(result.role, user.role);
+            assert.equal(result.verified, user.verified);
+            
+            
+        })
+
+        test('try to add user with wrong params', async () => {
+            let user = {
+                name: "testName2",
+                surname : "testSurname2",
+                mail:23456,
+                password:"password",
+                salt:23456,
+            };
+
+            const result = await hikeController.addUser(user).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+    })
 
 
 })
