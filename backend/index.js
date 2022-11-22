@@ -157,8 +157,8 @@ app.post(
       }
     
       const result1 = await db.addNewHike(req.body.hike, req.body.gpx);
-      const result2 = await db.addNewLocation(req.body.startp, result1, req.body.gpx);
-      const result3 = await db.addNewLocation(req.body.endp, result1, req.body.gpx);
+      const result2 = await db.addNewLocation(req.body.startp, "startp",result1, req.body.gpx);
+      const result3 = await db.addNewLocation(req.body.endp, "endp", result1, req.body.gpx);
       const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
       const result5 = await db.linkHikeUser(req.user.id, result1);
 

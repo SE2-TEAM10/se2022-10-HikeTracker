@@ -150,6 +150,16 @@ class Database {
     });
   };
 
+  getGpxByHikeId = (hikeId) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_gpx WHERE hike_id = ?";
+      this.db.all(sql, [hikeId], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
   getLinkUser = (hikeID, userID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike_user WHERE hike_id=? AND user_id=?";
@@ -238,14 +248,14 @@ class Database {
     });
   };
 
-  addNewLocation = (loc, hike_ID, gpx_string) => {
+  addNewLocation = (loc, position, hike_ID, gpx_string) => {
     return new Promise((resolve, reject) => {
       try {
         if (
           typeof loc.location_name !== 'string' ||
           typeof loc.city !== 'string' ||
           typeof loc.province !== 'string' ||
-          typeof loc.position !== 'string' ||
+          typeof position !== 'string' ||
           typeof hike_ID !== 'number'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
@@ -262,14 +272,14 @@ class Database {
       var lat_end = gpx.tracks[0].points[len].lat;
       var lon_end = gpx.tracks[0].points[len].lon;
       let latitude, longitude;
-      if (loc.position === 'start') {
+      if (position === 'startp') {
         latitude = lat;
         longitude = lon;
-      } else if (loc.position === 'end') {
+      } else if (position === 'endp') {
         latitude = lat_end;
         longitude = lon_end;
       } else {
-        return reject(422);
+        return reject(422); //UNPROCESSABLE
       }
       const sql =
         "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
@@ -291,16 +301,26 @@ class Database {
     });
   };
 
-  /* CHECK IF GPX FILE STRING HAS TO BE PARSED OR IT IS CORRECT */
-  addNewHikeGPX = (gpx, hikeID) => {
+
+  addNewHikeGPX = (gpx_string, hikeID) => {
     return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof gpx_string !== 'string' ||
+          typeof hike_ID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
       const sql = "INSERT INTO hike_gpx(ID,gpx,hike_id) VALUES(?,?,?)";
-      this.db.run(sql, [gpx, hikeID], function (err) {
+      this.db.run(sql, [gpx_string, hikeID], function (err) {
         if (err) reject(err);
         else
           resolve(
             this.lastID
-          ); /* CHECK IF GPX'S ID IS AUTOINCREMENTAL OR NOT */
+          );
       });
     });
   };
