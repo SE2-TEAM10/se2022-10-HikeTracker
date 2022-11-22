@@ -397,7 +397,9 @@ class Database {
       let length = parseInt((gpx.tracks[0].distance.total*2) / 1000);
       console.log("LENGTH ", length);
 
-      let ascent = parseInt((gpx.tracks[0].elevation.pos));
+      let max_el = gpx.tracks[0].elevation.max;
+      let min_el = gpx.tracks[0].elevation.min;
+      let ascent = parseInt((max_el - min_el));
       console.log("ASCENT ", ascent);
 
       var lat = gpx.tracks[0].points[0].lat;
