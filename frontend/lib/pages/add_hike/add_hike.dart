@@ -1,3 +1,4 @@
+import 'package:HikeTracker/pages/add_hike/models/location.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -38,14 +39,16 @@ class _AddHikeState extends State<AddHike> {
                 }),
               ),
               AddHikeForm(
-                onSubmit:
-                    (name, length, expected_time, difficulty, description) =>
-                        onSubmit(
+                onSubmit: (name, length, expected_time, difficulty, description,
+                        start, end) =>
+                    onSubmit(
                   name: name,
                   length: length,
                   expected_time: expected_time,
                   difficulty: difficulty,
                   description: description,
+                  start: start,
+                  end: end,
                 ),
                 isSmall: context.breakpoint <= LayoutBreakpoint.xs,
               ),
@@ -59,6 +62,8 @@ class _AddHikeState extends State<AddHike> {
     required String expected_time,
     required String difficulty,
     required String description,
+    required Location start,
+    required Location end,
   }) async {
     final res = await widget.client.post(
       api: 'hike',
@@ -69,7 +74,17 @@ class _AddHikeState extends State<AddHike> {
           'expected_time': expected_time,
           'difficulty': difficulty,
           'description': description,
-        }
+        },
+        'startp': {
+          'location_name': start.name?.text,
+          'city': start.city?.text,
+          'province': start.province?.text,
+        },
+        'endp': {
+          'location_name': end.name?.text,
+          'city': end.city?.text,
+          'province': end.province?.text,
+        },
       },
     );
 
