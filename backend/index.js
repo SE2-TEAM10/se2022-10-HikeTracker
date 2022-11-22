@@ -1,5 +1,6 @@
 "use strict";
 
+let gpxParser = require('gpxparser');
 const dayjs = require("dayjs");
 const express = require("express");
 const morgan = require("morgan"); // logging middleware
@@ -156,13 +157,45 @@ app.post(
       const result3 = await db.addNewLocation(req.body.endp, result1);
       const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
       const result5 = await db.linkHikeUser(req.user.id, result1);
-      res.status(201).json(result1);
+
+        res.status(201).json(result1);
     } catch (err) {
       console.error(err);
       res.status(503).json(err);
     }
   }
 );
+
+
+app.post(
+    "/api/gpx",
+    //isLoggedIn,
+    [
+        /*
+            check('name').isLength({ min: 1, max: 100 }),
+            check('length').isInt(),
+            check('expected_time').islength({ min: 5, max: 5 }),
+            check('ascent').isInt(),
+            check('difficulty').islength({ min: 1, max: 2 }),
+          */
+    ],
+    async (req, res) => {
+        /* const errors = validationResult(req).formatWith(errorFormatter); // format error message
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+            }*/
+
+        try {
+           const  result5 = await db.addGpx(req.body.gpx);
+
+            res.status(201).json(result1);
+        } catch (err) {
+            console.error(err);
+            res.status(503).json(err);
+        }
+    }
+);
+
 
 app.post(
   "/api/addUser",
