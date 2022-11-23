@@ -102,7 +102,7 @@ docker push se2team10/se2hiketracker:fe
 ```
 
 
-### Run the backend image container
+### Run the frontend image container
 
 Run the following command:
 ```
