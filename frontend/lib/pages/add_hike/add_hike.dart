@@ -1,4 +1,4 @@
-import 'package:HikeTracker/pages/add_hike/models/location.dart';
+import 'package:HikeTracker/pages/add_hike/models/location_controller.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
 import 'package:HikeTracker/utils/rest_client.dart';

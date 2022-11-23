@@ -1,4 +1,4 @@
-import 'package:HikeTracker/pages/add_hike/models/location.dart';
+import 'package:HikeTracker/pages/add_hike/models/location_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

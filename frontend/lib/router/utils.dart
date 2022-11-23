@@ -7,7 +7,9 @@ const LOGIN = '/login';
 const LOADING = '/loading';
 const HIKE_DETAIL = '/hike/:hikeID';
 const PROFILE = '/profile';
-const HIKE_ADD = '/add';
+const HIKE_ADD = '/hike/add';
+const HUT_ADD = '/hut/add';
+const PARKING_ADD = '/parking/add';
 
 class Route {
   Route({
@@ -72,4 +74,16 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
     path: HIKE_ADD,
     icon: Icons.add,
   ),
+  Route(
+    index: 3,
+    label: 'Add Hut',
+    path: HUT_ADD,
+    icon: Icons.add_home,
+  ),
+  Route(
+    index: 4,
+    label: 'Add Parking',
+    path: PARKING_ADD,
+    icon: Icons.local_parking,
+  )
 ];
