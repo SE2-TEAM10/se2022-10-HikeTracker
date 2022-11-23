@@ -2,7 +2,7 @@
 
 ##### This is the official repository for the Hike Tracker Project, developed by _Team 10_ from the Software Engineering II Course at Politecnico di Torino.
 
-----
+
 
 ## Technology Stack
 
@@ -22,7 +22,7 @@
 - [Javascript](https://www.javascript.com/)
 - [Node.js](https://nodejs.org/)
 
-----
+
 
 ## API Server
 
@@ -38,7 +38,7 @@
 * DELETE
 
 
-----
+
 
 ## Database tables
 
@@ -56,7 +56,7 @@ Table `hike_gpx` contains relation between table _hike_ and table _hike_gpx_
 
 Table `hike_rf` contains relation between table _hike_ and table _reference_point_
 
----
+
 
 ## Docker instructions
 
@@ -84,7 +84,7 @@ docker run -p 8080:5000 se2team10/se2hiketracker:be
 
 This command binds the port 5000 configured in the container to the TCP port 8080, accessible from the browser.
 
----
+
 
 ### Build the frontend docker image
 
@@ -111,7 +111,7 @@ docker run -p 8080:5000 se2team10/se2hiketracker:fe
 
 This command binds the port 5000 configured in the container to the TCP port 8080, accessible from the browser.
 
----
+
 
 ## Users credentials
 
@@ -130,7 +130,7 @@ Email: massimiliano.allegri@hike.it
 Password: localguide3
 ```
 
----
+
 
 ## Team members
 
