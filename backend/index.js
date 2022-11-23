@@ -1,6 +1,8 @@
 "use strict";
 
 const dayjs = require("dayjs");
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 const express = require("express");
 const morgan = require("morgan"); // logging middleware
 const cors = require("cors");
@@ -130,6 +132,32 @@ app.get("/api/hike", async (req, res) => {
         .json({ error: `Database error while retrieving courses` })
         .end();
     });
+});
+
+app.get("/api/sendEmail", async (req, res) => {
+  let transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "hiketracker10@gmail.com",
+      pass: "wbqwfuybngqfmuqe",
+    },
+  });
+
+  let mailOptions = {
+    from: '"Hike Tracker <hiketracker10@gmail.com>',
+    to: 'hiketracker10gmail.com',
+    subject: 'Confirm Email',
+    text: 'Please,confirm your email to activate the hike tracker account! ',
+  };
+
+  transport.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Message sent: %s', info.messageId);
+  });
 });
 
 app.post(
