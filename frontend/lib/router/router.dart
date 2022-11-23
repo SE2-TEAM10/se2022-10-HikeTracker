@@ -1,6 +1,8 @@
 import 'package:HikeTracker/common/main_scaffold.dart';
 import 'package:HikeTracker/common/sub_scaffold.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/pages/add_hut/add_hut.dart';
+import 'package:HikeTracker/pages/add_parking/add_parking.dart';
 import 'package:HikeTracker/pages/pages.dart';
 import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -57,6 +59,28 @@ GoRouter getRouter({
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
               child: AddHike(
+                client: client,
+              ),
+            );
+          },
+        ),
+      if (currentUser?.role == UserRole.LocalGuide)
+        GoRoute(
+          path: HUT_ADD,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: AddHut(
+                client: client,
+              ),
+            );
+          },
+        ),
+      if (currentUser?.role == UserRole.LocalGuide)
+        GoRoute(
+          path: PARKING_ADD,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: AddParking(
                 client: client,
               ),
             );
