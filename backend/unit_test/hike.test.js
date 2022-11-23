@@ -225,7 +225,7 @@ describe.only('hikeController Tests', () => {
 
             //await hikeController.deleteUserByID(4);
             const userId = await hikeController.addUser(user);
-            const result = await hikeController.getUserById(userId);
+            const result = await hikeController.getUserByIdTesting(userId);
 
             assert.equal(result.name, user.name);
             assert.equal(result.surname, user.surname);
