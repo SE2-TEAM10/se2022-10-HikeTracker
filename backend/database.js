@@ -427,9 +427,16 @@ class Database {
 
   setVerified = (user_id) => {
     return new Promise((resolve, reject) => {
+      try {
+        if (typeof user_id !== 'number') {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
       let query = "UPDATE user SET verified = 1 WHERE ID=?";
 
-      db.run(query, [user_id], function (err) {
+      this.db.run(query, [user_id], function (err) {
         if (err)
           reject(err);
         else {
@@ -438,13 +445,11 @@ class Database {
           else {
             reject(new Error("User not found!"));
           }
-
         }
-
       });
     });
   }
-  
+
   login = (username, password) => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT * FROM user WHERE mail = ?`;

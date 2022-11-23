@@ -146,8 +146,8 @@ app.get("/api/sendEmail", async (req, res) => {
   });
 
   let mailOptions = {
-    from: '"Hike Tracker <hiketracker10@gmail.com>',
-    to: 'hiketracker10gmail.com',
+    from: 'Hike Tracker <hiketracker10@gmail.com>',
+    to: 'hiketracker10@gmail.com',
     subject: 'Confirm Email',
     text: 'Please,confirm your email to activate the hike tracker account! ',
   };
