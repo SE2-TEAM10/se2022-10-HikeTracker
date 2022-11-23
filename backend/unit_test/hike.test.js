@@ -79,11 +79,11 @@ describe.only('hikeController Tests', () => {
 
             const hikeGPX_id = await hikeController.addNewHikeGPX(reqbody.gpx, hike_id);
 
-            console.log("hikeGPX_id - SHOULD BE 26", hikeGPX_id);
+            //console.log("hikeGPX_id - SHOULD BE 26", hikeGPX_id);
 
             const newLinkHikeUser = await hikeController.linkHikeUser(hike_id, 111);
 
-            console.log("linkUser - SHOULD BE TRUE", newLinkHikeUser);
+            //console.log("linkUser - SHOULD BE TRUE", newLinkHikeUser);
 
             const result1 = await hikeController.getHikeById(hike_id);
 
@@ -206,49 +206,54 @@ describe.only('hikeController Tests', () => {
 
         })
     })
-    
-    
-    
+
     describe('addUser method test', () => {
         test('successful use of addUser', async () => {
 
-           
-            let user = {
+            let reqbody = {
                 name: "testName",
-                surname : "testSurname",
-                mail:"test@hike.it",
-                password:"password",
-                salt:"f4df7b66d7",
-                role:"local guide",
-                verified:0
+                surname: "testSurname",
+                mail: "test@hike.it",
+                password: "password",
+                salt: "f4df7b66d7",
+                role: "local guide",
+                verified: 0
             };
 
-            //await hikeController.deleteUserByID(4);
-            const userId = await hikeController.addUser(user);
-            const result = await hikeController.getUserById(userId);
+            await hikeController.deleteUserByID(4);
+            await hikeController.addUser(reqbody);
 
-            assert.equal(result.name, user.name);
-            assert.equal(result.surname, user.surname);
-            assert.equal(result.mail, user.mail);
-            assert.equal(result.password, user.password);
-            assert.equal(result.salt, user.salt);
-            assert.equal(result.role, user.role);
-            assert.equal(result.verified, user.verified);
-            
-            
+            const result = await hikeController.getUserById(4);
+
+            console.log("user result: ", result);
+
+            /*password and salt cannot be tested, since they are crypted and they will never match the ones in the JSON */
+            assert.equal(result.name, reqbody.name);
+            assert.equal(result.surname, reqbody.surname);
+            assert.equal(result.mail, reqbody.mail);
+            assert.equal(result.role, reqbody.role);
+            assert.equal(result.verified, reqbody.verified);
+
         })
 
         test('try to add user with wrong params', async () => {
             let user = {
                 name: "testName2",
-                surname : "testSurname2",
-                mail:23456,
-                password:"password",
-                salt:23456,
+                surname: "testSurname2",
+                mail: 23456,
+                password: "password",
+                salt: 23456,
             };
 
             const result = await hikeController.addUser(user).catch(() => { });
             expect(result).to.be.undefined;
+        })
+
+        test('try to add user with empty params', async () => {
+
+            const result = await hikeController.addUser().catch(() => { });
+            expect(result).to.be.undefined;
+
         })
     })
 

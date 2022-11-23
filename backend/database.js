@@ -176,7 +176,7 @@ class Database {
       });
     });
   };
-  
+
   deleteHikeByID = (id) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike WHERE ID=?";
@@ -216,7 +216,7 @@ class Database {
       });
     });
   };
-  
+
   deleteUserByID = (userID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM user WHERE ID=?";
@@ -349,10 +349,8 @@ class Database {
           typeof user.name !== 'string' ||
           typeof user.surname !== 'string' ||
           typeof user.mail !== 'string' ||
-          typeof user.role !== 'string' /* ||
-          typeof user.password !== 'string' ||
-          typeof user.salt !== 'string' ||
-          typeof user.verified !== 'number' */
+          typeof user.role !== 'string' ||
+          typeof user.verified !== 'number'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
@@ -362,27 +360,15 @@ class Database {
       let database = this.db;
       let salt = crypto.randomBytes(16);
       crypto.scrypt(user.password, salt.toString(), 32, function (err, hashedPassword) {
-
         const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
         database.run(
-          sql,
-          [
-            user.name,
-            user.surname,
-            user.mail,
-            hashedPassword,
-            salt,
-            user.role,
-            0,
-          ], (err) => {
+          sql, [user.name, user.surname, user.mail, hashedPassword, salt, user.role, 0], (err) => {
             if (err) reject(err);
             else {
               resolve(this.lastID);
             }
           });
-
       });
-
     });
   };
 
@@ -415,7 +401,7 @@ class Database {
       /* let track = gpx.tracks[0];
       console.log("track - ", track); */
 
-      let length = parseInt((gpx.tracks[0].distance.total*2) / 1000);
+      let length = parseInt((gpx.tracks[0].distance.total * 2) / 1000);
       console.log("LENGTH ", length);
 
       let max_el = gpx.tracks[0].elevation.max;
@@ -458,27 +444,27 @@ class Database {
       });
     });
   }
-
-  getUserById = (id) => {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM user WHERE id = ?";
-      this.db.get(sql, [id], (err, row) => {
-        if (err) reject(err);
-        else if (row === undefined) resolve({ error: "User not found." });
-        else {
-          // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
-          const user = {
-            id: row.ID,
-            username: row.mail,
-            name: row.name,
-            role: row.role,
-          };
-          resolve(user);
-        }
+  /* 
+    getUserById = (id) => {
+      return new Promise((resolve, reject) => {
+        const sql = "SELECT * FROM user WHERE id = ?";
+        this.db.get(sql, [id], (err, row) => {
+          if (err) reject(err);
+          else if (row === undefined) resolve({ error: "User not found." });
+          else {
+            // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
+            const user = {
+              id: row.ID,
+              username: row.mail,
+              name: row.name,
+              role: row.role,
+            };
+            resolve(user);
+          }
+        });
       });
-    });
-  };
-
+    };
+   */
   login = (username, password) => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT * FROM user WHERE mail = ?`;
