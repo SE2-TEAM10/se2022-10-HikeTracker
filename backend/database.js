@@ -170,7 +170,7 @@ class Database {
   getUserById = (userID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM user WHERE ID = ?";
-      this.db.all(sql, [userID], function (err, rows) {
+      this.db.get(sql, [userID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
