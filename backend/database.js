@@ -167,7 +167,7 @@ class Database {
     });
   };
 
-  getUserByIdTesting = (userID) => {
+  getUserById = (userID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM user WHERE ID = ?";
       this.db.get(sql, [userID], function (err, rows) {
@@ -436,7 +436,7 @@ class Database {
           if (this.changes > 0)
             resolve();
           else {
-            reject(new Error("Non è stato trovato nessun utente"));
+            reject(new Error("User not found!"));
           }
 
         }
@@ -444,27 +444,7 @@ class Database {
       });
     });
   }
-  /* 
-    getUserById = (id) => {
-      return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM user WHERE id = ?";
-        this.db.get(sql, [id], (err, row) => {
-          if (err) reject(err);
-          else if (row === undefined) resolve({ error: "User not found." });
-          else {
-            // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
-            const user = {
-              id: row.ID,
-              username: row.mail,
-              name: row.name,
-              role: row.role,
-            };
-            resolve(user);
-          }
-        });
-      });
-    };
-   */
+  
   login = (username, password) => {
     return new Promise((resolve, reject) => {
       const sql = `SELECT * FROM user WHERE mail = ?`;
