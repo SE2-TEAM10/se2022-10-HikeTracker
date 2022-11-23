@@ -143,6 +143,9 @@ app.get("/api/sendEmail", async (req, res) => {
       user: "hiketracker10@gmail.com",
       pass: "wbqwfuybngqfmuqe",
     },
+    tls: {
+      rejectUnauthorized: false
+    }
   });
 
   let mailOptions = {
