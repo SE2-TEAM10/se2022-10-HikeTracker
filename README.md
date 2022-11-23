@@ -84,7 +84,7 @@ docker run -p 8080:5000 se2team10/se2hiketracker:be
 
 This command binds the port 5000 configured in the container to the TCP port 8080, accessible from the browser.
 
-
+---
 
 ### Build the frontend docker image
 
