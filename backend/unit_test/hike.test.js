@@ -256,6 +256,35 @@ describe.only('hikeController Tests', () => {
 
         })
     })
+    
+     describe('setVerified method test', () => {
+        test('successful use of set verified from 0 to 1', async () => {
+
+            await hikeController.setVerifiedBack(3);
+            await hikeController.setVerified(3);
+            const result = await hikeController.getUserById(3);
+
+            assert.equal(result.verified,1);
+
+        })
+
+        test('try to set verified with wrong params', async () => {
+            
+            await hikeController.setVerifiedBack(3);
+            
+            const result = await await hikeController.setVerified("wrong parms").catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to set verified with empty params', async () => {
+
+            await hikeController.setVerifiedBack(3);
+            
+            const result = await await hikeController.setVerified().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+    })
 
 
 })
