@@ -138,15 +138,15 @@ class Hikes {
 class Location {
   Location({
     this.name = 'Undefined',
-    this.latitude = 'NA',
-    this.longitude = 'NA',
+    this.latitude = 0.0,
+    this.longitude = 0.0,
     this.city = 'NA',
     this.province = 'NA',
   });
 
   String name;
-  String latitude;
-  String longitude;
+  double latitude;
+  double longitude;
   String city;
   String province;
 
