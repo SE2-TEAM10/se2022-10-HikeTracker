@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.96% </span>
+                <span class="strong">64.23% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>165/254</span>
+                <span class='fraction'>167/260</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">46.08% </span>
+                <span class="strong">45.29% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>53/115</span>
+                <span class='fraction'>53/117</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.23% </span>
+                <span class="strong">68.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>162/234</span>
+                <span class='fraction'>164/240</span>
             </div>
         
             
@@ -551,20 +551,7 @@
 <a name='L486'></a><a href='#L486'>486</a>
 <a name='L487'></a><a href='#L487'>487</a>
 <a name='L488'></a><a href='#L488'>488</a>
-<a name='L489'></a><a href='#L489'>489</a>
-<a name='L490'></a><a href='#L490'>490</a>
-<a name='L491'></a><a href='#L491'>491</a>
-<a name='L492'></a><a href='#L492'>492</a>
-<a name='L493'></a><a href='#L493'>493</a>
-<a name='L494'></a><a href='#L494'>494</a>
-<a name='L495'></a><a href='#L495'>495</a>
-<a name='L496'></a><a href='#L496'>496</a>
-<a name='L497'></a><a href='#L497'>497</a>
-<a name='L498'></a><a href='#L498'>498</a>
-<a name='L499'></a><a href='#L499'>499</a>
-<a name='L500'></a><a href='#L500'>500</a>
-<a name='L501'></a><a href='#L501'>501</a>
-<a name='L502'></a><a href='#L502'>502</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L489'></a><a href='#L489'>489</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -813,6 +800,8 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -994,6 +983,13 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1003,28 +999,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1139,7 +1113,7 @@ class Database {
 <span class="cstat-no" title="statement not covered" >          return;</span>
         }
         const list = rows.map((e) =&gt; ({
-          id: e.ID,
+          ID: e.ID,
           name: e.name,
           length: e.length,
           expected_time: e.expected_time,
@@ -1157,8 +1131,8 @@ class Database {
         }));
         let array = [];
         list.forEach((i) =&gt; {
-          if (array.find((a) =&gt; a.id === i.id) === undefined) {
-            let temp = list.filter((elem) =&gt; elem.id === i.id);
+          if (array.find((a) =&gt; a.ID === i.ID) === undefined) {
+            let temp = list.filter((elem) =&gt; elem.ID === i.ID);
             <span class="missing-if-branch" title="if path not taken" >I</span>if (temp.length === 1) {
 <span class="cstat-no" title="statement not covered" >              array.push(temp[0]);</span>
             } else {
@@ -1174,7 +1148,7 @@ class Database {
                 return t;
               });
               array.push({
-                id: temp[0].id,
+                ID: temp[0].ID,
                 name: temp[0].name,
                 length: temp[0].length,
                 expected_time: temp[0].expected_time,
@@ -1194,100 +1168,100 @@ class Database {
   };
 &nbsp;
   /*For testing*/
-  getHikeById = (id) =&gt; {
+  getHikeByID = (ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
       const sql = "SELECT * FROM hike WHERE ID = ?";
-      this.db.get(sql, [id], function (err, rows) {
+      this.db.get(sql, [ID], function (err, rows) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(rows);
       });
     });
   };
 &nbsp;
-  getLocationByHikeId = (hikeId) =&gt; {
+  getLocationByHikeID = (hike_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
       const sql = "SELECT * FROM location WHERE hike_ID = ?";
-      this.db.all(sql, [hikeId], function (err, rows) {
+      this.db.all(sql, [hike_ID], function (err, rows) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(rows);
       });
     });
   };
 &nbsp;
-  getGpxByHikeId = (hikeId) =&gt; {
+  getGpxByHikeID = (hike_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
-      const sql = "SELECT * FROM hike_gpx WHERE hike_id = ?";
-      this.db.all(sql, [hikeId], function (err, rows) {
+      const sql = "SELECT * FROM hike_gpx WHERE hike_ID = ?";
+      this.db.all(sql, [hike_ID], function (err, rows) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(rows);
       });
     });
   };
 &nbsp;
-  getLinkUser = (hikeID, userID) =&gt; {
+  getLinkUser = (hike_ID, user_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
-      const sql = "SELECT * FROM hike_user WHERE hike_id=? AND user_id=?";
-      this.db.all(sql, [hikeID, userID], function (err, rows) {
+      const sql = "SELECT * FROM hike_user WHERE hike_ID=? AND user_ID=?";
+      this.db.all(sql, [hike_ID, user_ID], function (err, rows) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(rows);
       });
     });
   };
 &nbsp;
-  getUserById = (userID) =&gt; {
+  getUserByID = (user_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
       const sql = "SELECT * FROM user WHERE ID = ?";
-      this.db.get(sql, [userID], function (err, rows) {
+      this.db.get(sql, [user_ID], function (err, rows) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(rows);
       });
     });
   };
 &nbsp;
-  deleteHikeByID = (id) =&gt; {
+  deleteHikeByID = (ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
       const sql = "DELETE FROM hike WHERE ID=?";
-      this.db.run(sql, [id], function (err) {
+      this.db.run(sql, [ID], function (err) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(true);
       });
     });
   };
 &nbsp;
-  deleteLocationByHikeID = (id) =&gt; {
+  deleteLocationByHikeID = (ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
       const sql = "DELETE FROM location WHERE hike_ID=?";
-      this.db.run(sql, [id], function (err) {
+      this.db.run(sql, [ID], function (err) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(true);
       });
     });
   };
 &nbsp;
-  deleteLinkHikeUser = (hikeID, userID) =&gt; {
+  deleteLinkHikeUser = (hike_ID, user_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
-      const sql = "DELETE FROM hike_user WHERE hike_id=? AND user_id=?";
-      this.db.run(sql, [hikeID, userID], function (err) {
+      const sql = "DELETE FROM hike_user WHERE hike_ID=? AND user_ID=?";
+      this.db.run(sql, [hike_ID, user_ID], function (err) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(true);
       });
     });
   };
 &nbsp;
-  deleteGpxByHikeID = (id) =&gt; {
+  deleteGpxByHikeID = (ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
-      const sql = "DELETE FROM hike_gpx WHERE hike_id=?";
-      this.db.run(sql, [id], function (err) {
+      const sql = "DELETE FROM hike_gpx WHERE hike_ID=?";
+      this.db.run(sql, [ID], function (err) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(true);
       });
     });
   };
 &nbsp;
-  deleteUserByID = (userID) =&gt; {
+  deleteUserByID = (user_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
       const sql = "DELETE FROM user WHERE ID=?";
-      this.db.run(sql, [userID], function (err) {
+      this.db.run(sql, [user_ID], function (err) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(true);
       });
@@ -1314,6 +1288,8 @@ class Database {
       gpx.parse(gpx_string);
       let length = parseInt((gpx.tracks[0].distance.total) / 1000);
       let ascent = parseInt((gpx.tracks[0].elevation.max));
+      console.log("length - ", length);
+      console.log("ascent - ", ascent);
       const sql =
         "INSERT INTO hike(name,length,expected_time,ascent,difficulty,description) VALUES(?,?,?,?,?,?)";
       this.db.run(
@@ -1388,20 +1364,20 @@ class Database {
   };
 &nbsp;
 &nbsp;
-  addNewHikeGPX = (gpx_string, hikeID) =&gt; {
+  addNewHikeGPX = (gpx_string, hike_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
       try {
         if (
           typeof gpx_string !== 'string' ||
-          typeof hikeID !== 'number'
+          typeof hike_ID !== 'number'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
 <span class="cstat-no" title="statement not covered" >        return reject(503); </span>// 503 - UNAVAILABLE
       }
-      const sql = "INSERT INTO hike_gpx(gpx,hike_id) VALUES(?,?)";
-      this.db.run(sql, [gpx_string, hikeID], function (err) {
+      const sql = "INSERT INTO hike_gpx(gpx,hike_ID) VALUES(?,?)";
+      this.db.run(sql, [gpx_string, hike_ID], function (err) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else
           resolve(this.lastID);
@@ -1440,20 +1416,20 @@ class Database {
   };
 &nbsp;
 &nbsp;
-  linkHikeUser = (hikeID, userID) =&gt; {
+  linkHikeUser = (hike_ID, user_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
       try {
         if (
-          typeof hikeID !== 'number' ||
-          typeof userID !== 'number'
+          typeof hike_ID !== 'number' ||
+          typeof user_ID !== 'number'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
 <span class="cstat-no" title="statement not covered" >        return reject(503); </span>// 503 - UNAVAILABLE
       }
-      const sql = "INSERT INTO hike_user(hike_id, user_id) VALUES(?,?)";
-      this.db.run(sql, [hikeID, userID], function (err) {
+      const sql = "INSERT INTO hike_user(hike_ID, user_ID) VALUES(?,?)";
+      this.db.run(sql, [hike_ID, user_ID], function (err) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >reject(err);</span>
         else resolve(true);
       });
@@ -1492,46 +1468,31 @@ class Database {
     });
   };
 &nbsp;
-  setVerified = <span class="fstat-no" title="function not covered" >(u</span>ser_id) =&gt; {
+  setVerified = <span class="fstat-no" title="function not covered" >(u</span>ser_ID) =&gt; {
 <span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve, reject) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+<span class="cstat-no" title="statement not covered" >        if (typeof user_ID !== 'number') {</span>
+<span class="cstat-no" title="statement not covered" >          return reject(422); </span>// 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+<span class="cstat-no" title="statement not covered" >        return reject(503); </span>// 503 - UNAVAILABLE
+      }
       let query = <span class="cstat-no" title="statement not covered" >"UPDATE user SET verified = 1 WHERE ID=?";</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >      db.run(query, [user_id], <span class="fstat-no" title="function not covered" >fu</span>nction (err) {</span>
+<span class="cstat-no" title="statement not covered" >      this.db.run(query, [user_ID], <span class="fstat-no" title="function not covered" >fu</span>nction (err) {</span>
 <span class="cstat-no" title="statement not covered" >        if (err)</span>
 <span class="cstat-no" title="statement not covered" >          reject(err);</span>
         else {
 <span class="cstat-no" title="statement not covered" >          if (this.changes &gt; 0)</span>
 <span class="cstat-no" title="statement not covered" >            resolve();</span>
           else {
-<span class="cstat-no" title="statement not covered" >            reject(new Error("Non è stato trovato nessun utente"));</span>
+<span class="cstat-no" title="statement not covered" >            reject(new Error("User not found!"));</span>
           }
-&nbsp;
         }
-&nbsp;
       });
     });
   }
-  /* 
-    getUserById = (id) =&gt; {
-      return new Promise((resolve, reject) =&gt; {
-        const sql = "SELECT * FROM user WHERE id = ?";
-        this.db.get(sql, [id], (err, row) =&gt; {
-          if (err) reject(err);
-          else if (row === undefined) resolve({ error: "User not found." });
-          else {
-            // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
-            const user = {
-              id: row.ID,
-              username: row.mail,
-              name: row.name,
-              role: row.role,
-            };
-            resolve(user);
-          }
-        });
-      });
-    };
-   */
+&nbsp;
   login = <span class="fstat-no" title="function not covered" >(u</span>sername, password) =&gt; {
 <span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve, reject) =&gt; {</span>
       const sql = <span class="cstat-no" title="statement not covered" >`SELECT * FROM user WHERE mail = ?`;</span>
@@ -1542,7 +1503,7 @@ class Database {
 <span class="cstat-no" title="statement not covered" >          resolve(false);</span>
         } else {
           const user = <span class="cstat-no" title="statement not covered" >{</span>
-            id: row.ID,
+            ID: row.ID,
             username: row.mail,
             name: row.name,
             role: row.role,
@@ -1573,7 +1534,7 @@ module.exports = Database;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-11-23T15:26:34.248Z
+                at 2022-11-24T16:45:39.143Z
             </div>
         <script src="prettify.js"></script>
         <script>

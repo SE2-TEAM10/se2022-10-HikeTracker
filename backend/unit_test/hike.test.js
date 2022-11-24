@@ -31,10 +31,10 @@ describe.only('hikeController Tests', () => {
                 //end_time : "30:00"
             };
 
-            await hikeController.deleteHikeByID(26);
             await hikeController.deleteLocationByHikeID(26);
             await hikeController.deleteLinkHikeUser(26, 111);
             await hikeController.deleteGpxByHikeID(26);
+            await hikeController.deleteHikeByID(26);
             const result = await hikeController.getHikeWithFilters(filters);
             assert.equal(result.length, 25);
         })
@@ -67,23 +67,23 @@ describe.only('hikeController Tests', () => {
 
             const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx);
 
-            //console.log("hike ID - SHOULD BE 26", hike_ID);
+            console.log("hike ID - SHOULD BE 26", hike_ID);
 
             const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "startp", hike_ID, reqbody.gpx);
 
-            //console.log("startLoc - SHOULD BE TRUE", newStartpLocation);
+            console.log("startLoc - SHOULD BE TRUE", newStartpLocation);
 
             const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "endp", hike_ID, reqbody.gpx);
 
-            //console.log("endLoc - SHOULD BE TRUE", newEndpLocation);
+            console.log("endLoc - SHOULD BE TRUE", newEndpLocation);
 
             const hikeGPX_ID = await hikeController.addNewHikeGPX(reqbody.gpx, hike_ID);
 
-            //console.log("hikeGPX_ID - SHOULD BE 26", hikeGPX_ID);
+            console.log("hikeGPX_ID - SHOULD BE 26", hikeGPX_ID);
 
             const newLinkHikeUser = await hikeController.linkHikeUser(hike_ID, 111);
 
-            //console.log("linkUser - SHOULD BE TRUE", newLinkHikeUser);
+            console.log("linkUser - SHOULD BE TRUE", newLinkHikeUser);
 
             const result1 = await hikeController.getHikeByID(hike_ID);
 
@@ -105,9 +105,11 @@ describe.only('hikeController Tests', () => {
 
 
             const result3 = await hikeController.getLinkUser(hike_ID, 111);
+            console.log("res3 length - ", result3.length);
             assert.equal(result3.length, 1);
 
             const result4 = await hikeController.getGpxByHikeID(hike_ID);
+            console.log("res4 length - ", result4.length);
             assert.equal(result4.length, 1);
 
         })

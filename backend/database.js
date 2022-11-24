@@ -335,7 +335,7 @@ class Database {
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
-      const sql = "INSERT INTO hike_gpx(gpx,ID) VALUES(?,?)";
+      const sql = "INSERT INTO hike_gpx(gpx,hike_ID) VALUES(?,?)";
       this.db.run(sql, [gpx_string, hike_ID], function (err) {
         if (err) reject(err);
         else
