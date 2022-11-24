@@ -12,6 +12,8 @@ const passport = require("passport"); // auth middleware
 const LocalStrategy = require("passport-local").Strategy; // username and password for login
 const session = require("express-session"); // enable sessions
 const { check, validationResult, body, param } = require("express-validator"); // validation middleware */
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 
 // set up the "username and password" login strategy
 // by setting a function to verify username and password
@@ -242,14 +244,23 @@ app.post(
   }
 );
 
-
 app.post(
   "/api/addUser",
   async (req, res) => {
 
+    //var url = "http://localhost:3000/verify?username=" + token_mail_verification;
+
     try {
       const result1 = await db.addUser(req.body.user);
+
+      console.log("RESULT",result1);
+      const token_mail_verification = jwt.sign({id: result1 },'ourSecretKey',{expiresIn:'10m'});
+
+
+      const message = `http://localhost:3001/api/user/verify/${token_mail_verification}`;
+      await sendEmail("hiketracker10@gmail.com", "Verify Email", message);
       res.status(201).json(result1);
+
     } catch (err) {
       console.error(err);
       res.status(503).json(err);
@@ -257,6 +268,23 @@ app.post(
   }
 );
 
+//api per la verifica
+app.get('/api/user/verify/:token', (req, res)=>{
+  const {token} = req.params;
+
+  // Verifing the JWT token
+  jwt.verify(token, 'ourSecretKey', function(err, decoded) {
+    console.log("Decoded",decoded);
+    if (err) {
+      console.log(err);
+      res.send("Email verification failed,possibly the link is invalid or expired");
+    }
+    else {
+
+      res.send("Email verifified successfully");
+    }
+  });
+});
 
 
 //set a boolean value (verified) to 1
@@ -264,7 +292,8 @@ app.put(
   '/api/:id/setVerified',
   async (req, res) => {
     try {
-      const result1 = await db.setVerified(req.user.ID);
+      const result1 = await db.setVerified(req.params.id);
+
       res.status(201).json(result1);
     } catch (err) {
       console.error(err);
@@ -272,6 +301,37 @@ app.put(
     }
   }
 );
+
+const sendEmail = async(email,subject,text) => {
+
+  let transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "hiketracker10@gmail.com",
+      pass: "wbqwfuybngqfmuqe",
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
+
+  let mailOptions = {
+    from: 'Hike Tracker <hiketracker10@gmail.com>',
+    to: email,
+    subject: subject,
+    html: '<h2 style="color:#59ac11;">Hello, Welcome to Hike Tracker!</h2></br><h4>Please confirm your email address by clicking the link below :</h4>'+text
+  };
+
+  transport.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Message sent: %s', info.messageId);
+  });
+};
+
 
 
 // Activate the server

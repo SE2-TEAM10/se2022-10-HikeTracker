@@ -364,9 +364,10 @@ class Database {
       crypto.scrypt(user.password, salt.toString(), 32, function (err, hashedPassword) {
         const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
         database.run(
-          sql, [user.name, user.surname, user.mail, hashedPassword, salt, user.role, 0], (err) => {
+          sql, [user.name, user.surname, user.mail, hashedPassword, salt, user.role, 0], function (err) {
             if (err) reject(err);
             else {
+              console.log(this.lastID);
               resolve(this.lastID);
             }
           });
