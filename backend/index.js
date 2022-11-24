@@ -12,7 +12,6 @@ const passport = require("passport"); // auth middleware
 const LocalStrategy = require("passport-local").Strategy; // username and password for login
 const session = require("express-session"); // enable sessions
 const { check, validationResult, body, param } = require("express-validator"); // validation middleware */
-const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
 // set up the "username and password" login strategy
