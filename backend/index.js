@@ -27,12 +27,12 @@ passport.use(
 // serialize and de-serialize the user (user object <-> session)
 // we serialize the user id and we store it in the session: the session is very small in this way
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.ID);
 });
 
 // starting from the data in the session, we extract the current (logged-in) user
-passport.deserializeUser((id, done) => {
-  db.getUserById(id)
+passport.deserializeUser((ID, done) => {
+  db.getUserById(ID)
     .then((user) => {
       done(null, user); // this will be available in req.user
     })
@@ -165,7 +165,7 @@ app.get("/api/sendEmail", async (req, res) => {
 
 app.post(
   "/api/hike",
-  //isLoggedIn,
+  isLoggedIn,
   [
     /*
         check('name').isLength({ min: 1, max: 100 }),
@@ -186,13 +186,25 @@ app.post(
         res.status(422).json(err);  //UNPROCESSABLE
       }
 
-      const result1 = await db.addNewHike(req.body.hike, req.body.gpx);
-      const result2 = await db.addNewLocation(req.body.startp, "startp", result1, req.body.gpx);
-      const result3 = await db.addNewLocation(req.body.endp, "endp", result1, req.body.gpx);
-      const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
-      const result5 = await db.linkHikeUser(req.user.id, result1);
+      const gpx_len = req.body.gpx.length;
+      console.log("gpx length: ", gpx_len);
+      if (gpx_len === 0) {
+        res.status(422).json("Error: the gpx file is empty!");  //UNPROCESSABLE
+      }
 
-      res.status(201).json(result1);
+      const result1 = await db.addNewHike(req.body.hike, req.body.gpx);
+      console.log("res1 - ", result1);
+      const result2 = await db.addNewLocation(req.body.startp, "startp", result1, req.body.gpx);
+      console.log("res2 - ", result2);
+      const result3 = await db.addNewLocation(req.body.endp, "endp", result1, req.body.gpx);
+      console.log("res3 - ", result3);
+      const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
+      console.log("res4 - ", result4);
+      const result5 = await db.linkHikeUser(req.user.ID, result1);
+      console.log("res5 - ", result5);
+
+      //console.log(result1);
+      res.status(201).json("Hike " + result1 + " correctly created!");
     } catch (err) {
       console.error(err);
       res.status(503).json(err);
@@ -252,7 +264,7 @@ app.put(
   '/api/:id/setVerified',
   async (req, res) => {
     try {
-      const result1 = await db.setVerified(req.user.id);
+      const result1 = await db.setVerified(req.user.ID);
       res.status(201).json(result1);
     } catch (err) {
       console.error(err);

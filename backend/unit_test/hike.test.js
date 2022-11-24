@@ -65,34 +65,34 @@ describe.only('hikeController Tests', () => {
 
             };
 
-            const hike_id = await hikeController.addNewHike(reqbody.hike, reqbody.gpx);
+            const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx);
 
-            //console.log("hike ID - SHOULD BE 26", hike_id);
+            //console.log("hike ID - SHOULD BE 26", hike_ID);
 
-            const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "startp", hike_id, reqbody.gpx);
+            const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "startp", hike_ID, reqbody.gpx);
 
             //console.log("startLoc - SHOULD BE TRUE", newStartpLocation);
 
-            const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "endp", hike_id, reqbody.gpx);
+            const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "endp", hike_ID, reqbody.gpx);
 
             //console.log("endLoc - SHOULD BE TRUE", newEndpLocation);
 
-            const hikeGPX_id = await hikeController.addNewHikeGPX(reqbody.gpx, hike_id);
+            const hikeGPX_ID = await hikeController.addNewHikeGPX(reqbody.gpx, hike_ID);
 
-            //console.log("hikeGPX_id - SHOULD BE 26", hikeGPX_id);
+            //console.log("hikeGPX_ID - SHOULD BE 26", hikeGPX_ID);
 
-            const newLinkHikeUser = await hikeController.linkHikeUser(hike_id, 111);
+            const newLinkHikeUser = await hikeController.linkHikeUser(hike_ID, 111);
 
             //console.log("linkUser - SHOULD BE TRUE", newLinkHikeUser);
 
-            const result1 = await hikeController.getHikeById(hike_id);
+            const result1 = await hikeController.getHikeByID(hike_ID);
 
             assert.equal(result1.name, reqbody.hike.name);
             assert.equal(result1.expected_time, reqbody.hike.expected_time);
             assert.equal(result1.difficulty, reqbody.hike.difficulty);
             assert.equal(result1.description, reqbody.hike.description);
 
-            const result2 = await hikeController.getLocationByHikeId(hike_id);
+            const result2 = await hikeController.getLocationByHikeID(hike_ID);
 
             assert.equal(result2.length, 2);
 
@@ -104,10 +104,10 @@ describe.only('hikeController Tests', () => {
             assert.equal(result2[1].province, reqbody.endp.province);
 
 
-            const result3 = await hikeController.getLinkUser(hike_id, 111);
+            const result3 = await hikeController.getLinkUser(hike_ID, 111);
             assert.equal(result3.length, 1);
 
-            const result4 = await hikeController.getGpxByHikeId(hike_id);
+            const result4 = await hikeController.getGpxByHikeID(hike_ID);
             assert.equal(result4.length, 1);
 
         })
@@ -138,8 +138,8 @@ describe.only('hikeController Tests', () => {
 
             };
 
-            const hike_id = await hikeController.addNewHike(reqbody.hike, reqbody.gpx).catch(() => { });
-            const result = await hikeController.getHikeById(hike_id);
+            const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx).catch(() => { });
+            const result = await hikeController.getHikeByID(hike_ID);
 
             expect(result).to.be.undefined;
 
@@ -175,10 +175,10 @@ describe.only('hikeController Tests', () => {
 
         test('try to link user and hike with wrong params', async () => {
 
-            let hike_id = "hikeID";
-            let user_id = "userID"
+            let hike_ID = "hike_ID";
+            let user_ID = "user_ID"
 
-            const result = await hikeController.linkHikeUser(hike_id, user_id).catch(() => { });
+            const result = await hikeController.linkHikeUser(hike_ID, user_ID).catch(() => { });
             expect(result).to.be.undefined;
 
         })
@@ -223,7 +223,7 @@ describe.only('hikeController Tests', () => {
             await hikeController.deleteUserByID(4);
             await hikeController.addUser(reqbody);
 
-            const result = await hikeController.getUserById(4);
+            const result = await hikeController.getUserByID(4);
 
             console.log("user result: ", result);
 
@@ -262,7 +262,7 @@ describe.only('hikeController Tests', () => {
 
             await hikeController.setVerifiedBack(3);
             await hikeController.setVerified(3);
-            const result = await hikeController.getUserById(3);
+            const result = await hikeController.getUserByID(3);
 
             assert.equal(result.verified,1);
 
