@@ -13,6 +13,7 @@ const LocalStrategy = require("passport-local").Strategy; // username and passwo
 const session = require("express-session"); // enable sessions
 const { check, validationResult, body, param } = require("express-validator"); // validation middleware */
 const jwt = require('jsonwebtoken');
+const bodyParser = require("body-parser");
 
 // set up the "username and password" login strategy
 // by setting a function to verify username and password
@@ -50,6 +51,10 @@ const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
 const app = express();
 const port = 3001;
 
+// fixing "413 Request Entity Too Large" errors
+app.use(bodyParser.json({ limit: '500mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' }));
+
 // set-up the middlewares
 app.use(morgan("common"));
 app.use(express.json());
@@ -57,7 +62,8 @@ const corsOptions = {
   origin: 'http://localhost:8000',
   credentials: true,
 };
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); 
+
 
 // custom middleware: check if a given request is coming from an authenticated user
 const isLoggedIn = (req, res, next) => {
