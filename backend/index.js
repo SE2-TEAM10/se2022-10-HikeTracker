@@ -63,7 +63,7 @@ const corsOptions = {
   origin: 'http://localhost:8000',
   credentials: true,
 };
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 
 
 // custom middleware: check if a given request is coming from an authenticated user
@@ -259,12 +259,13 @@ app.post(
     try {
       const result1 = await db.addUser(req.body.user);
 
-      console.log("RESULT",result1);
-      const token_mail_verification = jwt.sign({id: result1 },'ourSecretKey',{expiresIn:'10m'});
+      console.log("RESULT", result1);
+      const token_mail_verification = jwt.sign({ id: result1 }, 'ourSecretKey', { expiresIn: '1d' });
 
 
       const message = `http://localhost:3001/api/user/verify/${token_mail_verification}`;
-      await sendEmail("hiketracker10@gmail.com", "Verify Email", message);
+      //to insert: req.body.user.mail
+      await sendEmail(req.body.user.mail, "Verify Email", message);
       res.status(201).json(result1);
 
     } catch (err) {
@@ -275,22 +276,33 @@ app.post(
 );
 
 //api per la verifica
-app.get('/api/user/verify/:token', (req, res)=>{
-  const {token} = req.params;
+app.get('/api/user/verify/:token', (req, res) => {
+  const { token } = req.params;
 
   // Verifing the JWT token
-  jwt.verify(token, 'ourSecretKey', function(err, decoded) {
-    console.log("Decoded",decoded);
-    if (err) {
-      console.log(err);
-      res.sendFile(path.join(__dirname+'/indexNotVerified.html'));
-    }
-    else {
-
-      res.sendFile(path.join(__dirname+'/indexVerified.html'));
+  jwt.verify(token, 'ourSecretKey', async function (err, decoded) {
+    console.log("Decoded", decoded);
+    try {
+      const userToAdd = await db.getUserByID(decoded.id);
+      console.log("user to add: ", userToAdd);
+      const verifyToCheck = userToAdd.verified;
+      console.log(verifyToCheck);
+      if (err || verifyToCheck === 1) {
+        /* user already registered */
+        console.log(err);
+        res.sendFile(path.join(__dirname + '/indexNotVerified.html'));
+      }
+      else if(verifyToCheck === 0){
+        const result = await db.setVerified(decoded.id)
+        res.sendFile(path.join(__dirname + '/indexVerified.html'));
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(503).json(error);
     }
   });
 });
+
 
 
 //set a boolean value (verified) to 1
@@ -308,7 +320,7 @@ app.put(
   }
 );
 
-const sendEmail = async(email,subject,text) => {
+const sendEmail = async (email, subject, text) => {
 
   let transport = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -327,7 +339,7 @@ const sendEmail = async(email,subject,text) => {
     from: 'Hike Tracker <hiketracker10@gmail.com>',
     to: email,
     subject: subject,
-    html: '<h2 style="color:#59ac11;">Hello, Welcome to Hike Tracker!</h2></br><h4>Please confirm your email address by clicking the link below :</h4>'+text
+    html: '<h2 style="color:#59ac11;">Hello, Welcome to Hike Tracker!</h2></br><h4>Please confirm your email address by clicking the link below :</h4>' + text
   };
 
   transport.sendMail(mailOptions, (error, info) => {

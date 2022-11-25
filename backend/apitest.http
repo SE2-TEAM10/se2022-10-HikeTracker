@@ -7,7 +7,19 @@ Content-Type: application/json
 }
 
 ###testing mail verification
-GET http://localhost:3001/api/sendEmail
+POST http://localhost:3001/api/addUser
+Content-Type: application/json
+
+{
+    "user":{
+        "name": "prova",
+        "surname": "prova",
+        "mail":"test@polito.it",
+        "password": "test",
+        "role": "local guide",
+        "verified": 0
+    }
+}
 
 ### post on hikes
 POST http://localhost:3001/api/hike
