@@ -361,10 +361,11 @@ class Database {
       }
       let database = this.db;
       let salt = crypto.randomBytes(16);
-      crypto.scrypt(user.password, salt.toString(), 32, function (err, hashedPassword) {
+      console.log("STRING STRING ", salt.toString('hex'))
+      crypto.scrypt(user.password, salt.toString('hex'), 32, function (err, hashedPassword) {
         const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
         database.run(
-          sql, [user.name, user.surname, user.mail, hashedPassword, salt, user.role, 0], function (err) {
+          sql, [user.name, user.surname, user.mail, hashedPassword.toString('hex'), salt.toString('hex'), user.role, 0], function (err) {
             if (err) reject(err);
             else {
               console.log(this.lastID);
@@ -455,7 +456,7 @@ class Database {
 
   login = (username, password) => {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM user WHERE mail = ? AND verified = 1`;
+      const sql = "SELECT * FROM user WHERE mail = ? AND verified = 1";
       this.db.get(sql, [username], (err, row) => {
         if (err) {
           resolve(false);

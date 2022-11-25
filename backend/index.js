@@ -35,7 +35,7 @@ passport.serializeUser((user, done) => {
 
 // starting from the data in the session, we extract the current (logged-in) user
 passport.deserializeUser((ID, done) => {
-  db.getUserById(ID)
+  db.getUserByID(ID)
     .then((user) => {
       done(null, user); // this will be available in req.user
     })
