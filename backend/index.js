@@ -4,6 +4,7 @@ const dayjs = require("dayjs");
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const express = require("express");
+const path = require('path');
 const morgan = require("morgan"); // logging middleware
 const cors = require("cors");
 const Database = require("./database.js");
@@ -282,11 +283,11 @@ app.get('/api/user/verify/:token', (req, res)=>{
     console.log("Decoded",decoded);
     if (err) {
       console.log(err);
-      res.send("Email verification failed,possibly the link is invalid or expired");
+      res.sendFile(path.join(__dirname+'/indexNotVerified.html'));
     }
     else {
 
-      res.send("Email verifified successfully");
+      res.sendFile(path.join(__dirname+'/indexVerified.html'));
     }
   });
 });
