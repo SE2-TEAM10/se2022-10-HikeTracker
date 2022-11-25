@@ -1,25 +1,28 @@
 import 'dart:convert';
 
+import 'package:HikeTracker/pages/home/models/filter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/pages/home/filter.dart';
 import 'package:http/http.dart';
 import 'package:requests/requests.dart';
 
 class RestClient {
   RestClient();
 
-  Future<Response> get(
-      {required String api,
-      String? endpoint,
-      Map<String, String>? headers,
-      required Filter filter}) async {
+  Future<Response> get({
+    required String api,
+    String? endpoint,
+    Map<String, String>? headers,
+    Filter? filter,
+  }) async {
     final e = endpoint ?? dotenv.env['ENDPOINT'];
 
-    return Requests.get('$e$api',
-        withCredentials: false,
-        verify: false,
-        persistCookies: false,
-        queryParameters: filter.toQueryParameters());
+    return Requests.get(
+      '$e$api',
+      withCredentials: true,
+      verify: false,
+      persistCookies: false,
+      queryParameters: filter?.toQueryParameters(),
+    );
   }
 
   Future<Response> post({
@@ -66,6 +69,7 @@ class RestClient {
     return Requests.put(
       '$e$api',
       json: true,
+      withCredentials: true,
       body: jsonEncode(body),
     );
   }

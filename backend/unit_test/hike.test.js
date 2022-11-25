@@ -22,7 +22,7 @@ describe.only('hikeController Tests', () => {
 
             /* to test the real DB, you need to add filters and to make sure that the number of result is the same on the assert equal */
             let filters = {
-                difficulty : "T",
+                //difficulty: "T",
                 //start_len : 5,
                 //end_len : 15,
                 //start_asc : 500,
@@ -31,69 +31,173 @@ describe.only('hikeController Tests', () => {
                 //end_time : "30:00"
             };
 
+            await hikeController.deleteHikeByID(26);
+            await hikeController.deleteLocationByHikeID(26);
+            await hikeController.deleteLinkHikeUser(26, 111);
             const result = await hikeController.getHikeWithFilters(filters);
-            assert.equal(result.length, 6);
+            assert.equal(result.length, 25);
         })
     })
 
-    /* describe('getHike method test', () => {
-        let errorValue;
-        test('successful use of getHike', async () => {
-            const sqlInstruction = `INSERT INTO hike (ID, name, length, expected_time, ascent, difficulty, start_point, end_point, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+    describe('addNewHike method test', () => {
+        test('successful use of addNewHike', async () => {
 
-            await dbManager.genericSqlRun(sqlInstruction, 55, "name1", 10,"05:00", 500, "H", "stPoint", "endPoint", "aDesc")
-                .catch(() => { throw error });
-            await dbManager.genericSqlRun(sqlInstruction, 100, 50, 10.99, "notes", "first sku", 50)
-                .catch(() => { throw error });
+            let reqbody = {
 
-            await hikeController.createHike(
-                {
-                    ID: 65,
-                    name: "name65",
-                    length: 10,
-                    expected_time: "02:00",
-                    ascent: 500,
-                    difficulty: "T",
-                    start_point: "stPoint65",
-                    end_point: "endPoint65",
-                    description: "Desc65",
+                "hike": {
+                    "name": "Test3",
+                    "length": 1,
+                    "expected_time": "01:00",
+                    "ascent": 111,
+                    "difficulty": "T",
+                    "start_point": "Testing start1",
+                    "end_point": "Testing end1",
+                    "description": "Description"
+                },
+                "startp": {
+                    "location_name": "Testing start1",
+                    "latitude": "45.52487",
+                    "longitude": "46.53497",
+                    "city": "City1",
+                    "province": "Province1"
+                },
+                "endp": {
+                    "location_name": "Testing end1",
+                    "latitude": "47.54497",
+                    "longitude": "48.55507",
+                    "city": "City2",
+                    "province": "Province2"
+                },
+                "gpx": "C://......"
+
+            };
+
+            const hike_id = await hikeController.addNewHike(reqbody.hike);
+
+            console.log("hike ID", hike_id);
+            
+            const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, hike_id);
+            const newendpLocation = await hikeController.addNewLocation(reqbody.endp, hike_id);
+            //const hikeGPX_id = await hikeController.addNewHikeGPX(reqbody.gpx,hike_id);
+            const newLinkHikeUser = await hikeController.linkHikeUser(hike_id, 111);
+
+            const result1 = await hikeController.getHikeById(hike_id);
+
+            assert.equal(result1.name, reqbody.hike.name);
+            assert.equal(result1.length, reqbody.hike.length);
+            assert.equal(result1.expected_time, reqbody.hike.expected_time);
+            assert.equal(result1.ascent, reqbody.hike.ascent);
+            assert.equal(result1.difficulty, reqbody.hike.difficulty);
+            assert.equal(result1.start_point, reqbody.hike.start_point);
+            assert.equal(result1.end_point, reqbody.hike.end_point);
+            assert.equal(result1.description, reqbody.hike.description);
+
+            const result2 = await hikeController.getLocationByHikeId(hike_id);
+
+            assert.equal(result2.length, 2);
+
+            assert.equal(result2[0].location_name, reqbody.startp.location_name);
+            assert.equal(result2[0].latitude, reqbody.startp.latitude);
+            assert.equal(result2[0].longitude, reqbody.startp.longitude);
+            assert.equal(result2[0].city, reqbody.startp.city);
+            assert.equal(result2[0].province, reqbody.startp.province);
+            assert.equal(result2[1].location_name, reqbody.endp.location_name);
+            assert.equal(result2[1].latitude, reqbody.endp.latitude);
+            assert.equal(result2[1].longitude, reqbody.endp.longitude);
+            assert.equal(result2[1].city, reqbody.endp.city);
+            assert.equal(result2[1].province, reqbody.endp.province);
+
+
+            const result3 = await hikeController.getLinkUser(hike_id, 111);
+            assert.equal(result3.length, 1);
+
+        })
+
+        test('try to insert a hike with wrong params', async () => {
+
+            let reqbody = {
+
+                "hike": {
+                    "name": 3,
+                    "length": "1",
+                    "expected_time": "01:00",
+                    "ascent": 111,
+                    "difficulty": "T",
+                    "start_point": "Testing start1",
+                    "end_point": "Testing end",
+                    "description": "Description"
+                },
+                "startp": {
+                    "location_name": "Testing start1",
+                    "latitude": "45.52487",
+                    "longitude": "46.53497",
+                    "city": "City1",
+                    "province": "Province1"
+                },
+                "endp": {
+                    "location_name": "Testing end1",
+                    "latitude": "47.54497",
+                    "longitude": "48.55507",
+                    "city": "City2",
+                    "province": "Province2"
+                },
+                "gpx": "C://......"
+
+            };
+
+            const hike_id = await hikeController.addNewHike(reqbody.hike).catch(() => { });
+            const result = await hikeController.getHikeById(hike_id);
+
+            expect(result).to.be.undefined;
+
+        })
+
+        test('try to insert a hike with empty params', async () => {
+
+            const result = await hikeController.addNewHike().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+        test('try to insert a location with wrong params', async () => {
+            let reqbody = {
+                "startp": {
+                    "location_name": 2,
+                    "latitude": 4,
+                    "longitude": 6,
+                    "city": "City1",
+                    "province": "Province1"
                 }
-            )
-            await hikeController.createHike(
-                {
-                    ID: 66,
-                    name: "name66",
-                    length: 10,
-                    expected_time: "02:00",
-                    ascent: 500,
-                    difficulty: "T",
-                    start_point: "stPoint66",
-                    end_point: "endPoint66",
-                    description: "Desc66",
-                }
-            )
+            };
 
-            const result = await hikeController.getHike(2);
-            assert.equal(result.id, 2)
+            const result = await hikeController.addNewLocation(reqbody, "hike").catch(() => { });
+            expect(result).to.be.undefined;
         })
 
-        test('attempt of getItem with undefined id', async () => {
-            await itemController.getItem(undefined, 5).catch(err => errorValue = err);
-            assert.equal(errorValue.code, 422)
+        test('try to insert a location with empty params', async () => {
+
+            const result = await hikeController.addNewLocation().catch(() => { });
+            expect(result).to.be.undefined;
+
         })
 
-        test('attempt of getItem with invalid id', async () => {
-            await itemController.getItem("hello", 5).catch(err => errorValue = err);
-            assert.equal(errorValue.code, 422)
+        test('try to link user and hike with wrong params', async () => {
+
+            let hike_id = "hikeID";
+            let user_id = "userID"
+
+            const result = await hikeController.linkHikeUser(hike_id, user_id).catch(() => {});
+            expect(result).to.be.undefined;
+
         })
 
-        test('attempt of getItem with non-existant item', async () => {
-            await itemController.getItem(1, 5).catch(err => errorValue = err);
-            assert.equal(errorValue.code, 404)
+        test('try to link user and hike with empty params', async () => {
+
+            const result = await hikeController.addNewLocation().catch(() => { });
+            expect(result).to.be.undefined;
+
         })
+    })
 
-
-
-    }) */
 
 })

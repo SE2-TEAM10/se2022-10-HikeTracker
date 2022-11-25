@@ -64,6 +64,7 @@ class Database {
         console.log(query2);
       }
 
+      console.log("final query: ", query2);
       this.db.all(query2, [], (err, rows) => {
         if (err) {
           reject(err);
@@ -86,12 +87,13 @@ class Database {
           province: e.province,
           hike_ID: e.hike_ID,
         }));
-        console.log(list);
+        //console.log(list);
         let array = [];
         list.forEach((i) => {
           if (array.find((a) => a.id === i.id) === undefined) {
             let temp = list.filter((course) => course.id === i.id);
-            console.log("temp temp temp temp temp", temp);
+            //console.log("temp temp temp temp temp");
+            //console.log(temp);
             if (temp.length === 1) {
               array.push(temp[0]);
             } else {
@@ -126,27 +128,228 @@ class Database {
     });
   };
 
-  /* login = (username, password) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM manager WHERE mail = ?`
-            this.db.get(sql, [username], (err, row) => {
-                if (err) {
-                    resolve(false)
-                } else if (row === undefined) {
-                    resolve(false)
-                } else {
-                    const user = { id: row.id, username: row.mail, name: row.name }
+  /*For testing*/
+  getHikeById = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike WHERE ID = ?";
+      this.db.get(sql, [id], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
 
-                    crypto.scrypt(password, row.salt, 32, function (err, hashedPassword) {
-                        if (err) reject(err)
-                        if (!crypto.timingSafeEqual(Buffer.from(row.password, 'hex'), hashedPassword))
-                            resolve(false)
-                        else resolve(user)
-                    })
-                }
-            })
-        })
-    } */
+  getLocationByHikeId = (hikeId) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM location WHERE hike_ID = ?";
+      this.db.all(sql, [hikeId], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getLinkUser = (hikeID, userID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user WHERE hike_id=? AND user_id=?";
+      this.db.all(sql, [hikeID, userID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  deleteHikeByID = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike WHERE ID=?";
+      this.db.run(sql, [id], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteLocationByHikeID = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM location WHERE hike_ID=?";
+      this.db.run(sql, [id], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteLinkHikeUser = (hikeID, userID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_user WHERE hike_id=? AND user_id=?";
+      this.db.run(sql, [hikeID, userID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  addNewHike = (hike) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike.name !== 'string' ||
+          typeof hike.length !== 'number' ||
+          typeof hike.expected_time !== 'string' ||
+          typeof hike.ascent !== 'number' ||
+          typeof hike.difficulty !== 'string' ||
+          typeof hike.start_point !== 'string' ||
+          typeof hike.end_point !== 'string' ||
+          typeof hike.description !== 'string'
+        ) {
+          return reject(422); /* 422 - UNPROCESSABLE */
+        }
+      } catch (e) {
+        return reject(503); /* 503 - UNAVAILABLE */
+      }
+      const sql =
+        "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
+      this.db.run(
+        sql,
+        [
+          hike.name,
+          hike.length,
+          hike.expected_time,
+          hike.ascent,
+          hike.difficulty,
+          hike.start_point,
+          hike.end_point,
+          hike.description,
+        ],
+        function (err) {
+          if (err) reject(err);
+          else resolve(this.lastID);
+        }
+      );
+    });
+  };
+
+  linkHikeUser = (hikeID, userID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hikeID !== 'number' ||
+          typeof userID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "INSERT INTO hike_user(hike_id, user_id) VALUES(?,?)";
+      this.db.run(sql, [hikeID, userID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  addNewLocation = (loc, id) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof loc.location_name !== 'string' ||
+          typeof loc.latitude !== 'string' ||
+          typeof loc.longitude !== 'string' ||
+          typeof loc.city !== 'string' ||
+          typeof loc.province !== 'string' ||
+          typeof id !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql =
+        "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
+      this.db.run(
+        sql,
+        [
+          loc.location_name,
+          loc.latitude,
+          loc.longitude,
+          loc.city,
+          loc.province,
+          id,
+        ],
+        function (err) {
+          if (err) reject(err);
+          else resolve(true);
+        }
+      );
+    });
+  };
+
+  /* CHECK IF GPX FILE STRING HAS TO BE PARSED OR IT IS CORRECT */
+  addNewHikeGPX = (gpx, hikeID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "INSERT INTO hike_gpx(ID,gpx,hike_id) VALUES(?,?,?)";
+      this.db.run(sql, [gpx, hikeID], function (err) {
+        if (err) reject(err);
+        else
+          resolve(
+            this.lastID
+          ); /* CHECK IF GPX'S ID IS AUTOINCREMENTAL OR NOT */
+      });
+    });
+  };
+
+  getUserById = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM user WHERE id = ?";
+      this.db.get(sql, [id], (err, row) => {
+        if (err) reject(err);
+        else if (row === undefined) resolve({ error: "User not found." });
+        else {
+          // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
+          const user = {
+            id: row.ID,
+            username: row.mail,
+            name: row.name,
+            role: row.role,
+          };
+          resolve(user);
+        }
+      });
+    });
+  };
+
+  login = (username, password) => {
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT * FROM user WHERE mail = ? AND verified=1`;
+      this.db.get(sql, [username], (err, row) => {
+        if (err) {
+          resolve(false);
+        } else if (row === undefined) {
+          resolve(false);
+        } else {
+          const user = {
+            id: row.ID,
+            username: row.mail,
+            name: row.name,
+            role: row.role,
+          };
+
+          crypto.scrypt(password, row.salt, 32, function (err, hashedPassword) {
+            if (err) reject(err);
+            if (
+              !crypto.timingSafeEqual(
+                Buffer.from(row.password, "hex"),
+                hashedPassword
+              )
+            )
+              resolve(false);
+            else resolve(user);
+          });
+        }
+      });
+    });
+  };
 }
 
 module.exports = Database;

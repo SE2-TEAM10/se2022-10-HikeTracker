@@ -1,11 +1,15 @@
+import 'dart:convert';
+
+import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/router/router.dart';
+import 'package:HikeTracker/theme/theme.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/rest_client.dart';
-import 'package:frontend/router.dart';
 import 'package:layout/layout.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
+  await dotenv.load();
   final client = RestClient();
 
   runApp(
@@ -15,20 +19,52 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final RestClient client;
 
   const MyApp({required this.client, super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool showSplash = true;
+  User? currentUser;
+
+  @override
+  void initState() {
+    widget.client.get(api: 'sessions/current').then((value) {
+      setState(() {
+        currentUser = json.decode(value.body)['error'] == null
+            ? User.fromJson(value.body)
+            : null;
+        showSplash = false;
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Layout(
       child: MaterialApp.router(
+        routerConfig: getRouter(
+          client: widget.client,
+          showSplash: showSplash,
+          currentUser: currentUser,
+          onLogged: (User val) => setState(() => currentUser = val),
+        ),
         debugShowCheckedModeBanner: false,
-        routerConfig: getRouter(client),
-        title: 'Flutter Demo',
+        title: 'Hike Tracker',
+        themeMode: ThemeMode.light,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          useMaterial3: true,
+          colorScheme: lightColorScheme,
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: darkColorScheme,
         ),
       ),
     );
