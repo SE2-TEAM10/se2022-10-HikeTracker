@@ -14,8 +14,8 @@ Content-Type: application/json
     "user":{
         "name": "prova",
         "surname": "prova",
-        "mail":"test@polito.it",
-        "password": "test",
+        "mail":"hiketracker10@gmail.com",
+        "password": "testhiketracker",
         "role": "local guide",
         "verified": 0
     }

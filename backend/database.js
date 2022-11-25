@@ -455,7 +455,7 @@ class Database {
 
   login = (username, password) => {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM user WHERE mail = ?`;
+      const sql = `SELECT * FROM user WHERE mail = ? AND verified = 1`;
       this.db.get(sql, [username], (err, row) => {
         if (err) {
           resolve(false);
