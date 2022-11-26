@@ -39,8 +39,15 @@ class _AddHikeState extends State<AddHike> {
                 }),
               ),
               AddHikeForm(
-                onSubmit: (name, length, expected_time, difficulty, description,
-                        start, end) =>
+                onSubmit: (
+                  name,
+                  length,
+                  expected_time,
+                  difficulty,
+                  description,
+                  start,
+                  end,
+                ) =>
                     onSubmit(
                   name: name,
                   length: length,
