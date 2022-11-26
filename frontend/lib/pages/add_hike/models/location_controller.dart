@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Location {
   Location();
 
-  TextEditingController? name;
-  TextEditingController? city;
-  TextEditingController? province;
+  late TextEditingController name;
+  late TextEditingController city;
+  late TextEditingController province;
 }

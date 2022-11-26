@@ -1,3 +1,4 @@
+import 'package:HikeTracker/common/message.dart';
 import 'package:HikeTracker/pages/add_hike/models/location_controller.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
@@ -96,10 +97,23 @@ class _AddHikeState extends State<AddHike> {
       },
     );
 
-    if (res.body == '"Incorrect"') {
-      // TODO
+    if (res.statusCode == 201) {
+      Message(
+        context: context,
+        message: 'Hike added successfully.',
+      ).show();
+    } else if (res.statusCode == 422) {
+      Message(
+        context: context,
+        message: 'Gpx file error.',
+        messageType: MessageType.Error,
+      ).show();
     } else {
-      // pop
+      Message(
+        context: context,
+        message: 'Internal error.',
+        messageType: MessageType.Error,
+      ).show();
     }
   }
 }
