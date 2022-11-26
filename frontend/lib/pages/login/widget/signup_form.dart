@@ -1,4 +1,6 @@
+import 'package:HikeTracker/common/input_field.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/pages/login/models/new_user.dart';
 import 'package:flutter/material.dart';
 
 class SignupForm extends StatefulWidget {
@@ -11,10 +13,7 @@ class SignupForm extends StatefulWidget {
 
   final bool isSmall;
   final Function(
-    String,
-    String,
-    String,
-    UserRole,
+    NewUser,
   ) onSubmit;
   final Function onLoginTap;
 
@@ -23,17 +22,11 @@ class SignupForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<SignupForm> {
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-  late TextEditingController confirmPasswordController;
-  late UserRole role;
+  late NewUser user;
 
   @override
   void initState() {
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    confirmPasswordController = TextEditingController();
-    role = UserRole.LocalGuide; //Default selected role
+    user = NewUser(role: UserRole.LocalGuide);
     super.initState();
   }
 
@@ -66,37 +59,23 @@ class _LoginFormState extends State<SignupForm> {
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(
-                  'Email',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Theme.of(context).colorScheme.outline,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: InputField(
+                    onChange: (value) =>
+                        setState(() => user = user.copyWith(name: value)),
+                    label: 'Name',
                   ),
                 ),
-                const SizedBox(
-                  height: 8.0,
+                SizedBox(
+                  width: widget.isSmall ? 8 : 16,
                 ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: TextField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                    ),
+                Expanded(
+                  child: InputField(
+                    onChange: (value) =>
+                        setState(() => user = user.copyWith(surname: value)),
+                    label: 'Surname',
                   ),
                 ),
               ],
@@ -107,41 +86,10 @@ class _LoginFormState extends State<SignupForm> {
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Password',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Theme.of(context).colorScheme.outline,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 8.0,
-                ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            child: InputField(
+              onChange: (value) =>
+                  setState(() => user = user.copyWith(email: value)),
+              label: 'Email',
             ),
           ),
           SizedBox(
@@ -149,41 +97,23 @@ class _LoginFormState extends State<SignupForm> {
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Confirm Password',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Theme.of(context).colorScheme.outline,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 8.0,
-                ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            child: InputField(
+              onChange: (value) =>
+                  setState(() => user = user.copyWith(password: value)),
+              label: 'Password',
+              isPassword: true,
+            ),
+          ),
+          SizedBox(
+            height: widget.isSmall ? 8 : 32,
+          ),
+          FractionallySizedBox(
+            widthFactor: widget.isSmall ? 1 : 0.6,
+            child: InputField(
+              onChange: (value) =>
+                  setState(() => user = user.copyWith(confirm: value)),
+              label: 'Confirm Password',
+              isPassword: true,
             ),
           ),
           SizedBox(
@@ -221,9 +151,11 @@ class _LoginFormState extends State<SignupForm> {
                         Radio(
                           value: UserRole.LocalGuide,
                           activeColor: Theme.of(context).colorScheme.primary,
-                          groupValue: role,
+                          groupValue: user.role,
                           onChanged: (UserRole? value) => setState(
-                            () => role = value ?? UserRole.LocalGuide,
+                            () => user = user.copyWith(
+                              role: value ?? UserRole.LocalGuide,
+                            ),
                           ),
                         ),
                       ],
@@ -237,12 +169,11 @@ class _LoginFormState extends State<SignupForm> {
             height: widget.isSmall ? 8 : 32,
           ),
           TextButton.icon(
-            onPressed: () => widget.onSubmit(
-              emailController.text,
-              passwordController.text,
-              confirmPasswordController.text,
-              role,
-            ),
+            onPressed: user.isFull()
+                ? () => widget.onSubmit(
+                      user,
+                    )
+                : null,
             icon: const Icon(Icons.account_box_outlined),
             label: const Padding(
               padding: EdgeInsets.all(8.0),

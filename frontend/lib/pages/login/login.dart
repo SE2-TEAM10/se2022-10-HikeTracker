@@ -1,5 +1,6 @@
 import 'package:HikeTracker/common/message.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/pages/login/models/new_user.dart';
 import 'package:HikeTracker/pages/login/widget/login_banner.dart';
 import 'package:HikeTracker/pages/login/widget/login_form.dart';
 import 'package:HikeTracker/pages/login/widget/signup_form.dart';
@@ -77,16 +78,10 @@ class _LoginState extends State<Login> {
                           ),
                           SignupForm(
                             onSubmit: (
-                              email,
-                              password,
-                              confirm,
-                              role,
+                              user,
                             ) =>
                                 onSignUp(
-                              email: email,
-                              password: password,
-                              confirm: confirm,
-                              role: role,
+                              user: user,
                             ),
                             onLoginTap: () => controller.animateToPage(
                               0,
@@ -154,12 +149,14 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> onSignUp({
-    required String email,
-    required String password,
-    required String confirm,
-    required UserRole role,
+    required NewUser user,
   }) async {
-    if (password != confirm) {
+    if (!user.passwordMatches()) {
+      Message(
+        context: context,
+        message: 'Password confirm does not match.',
+        messageType: MessageType.Error,
+      ).show();
       return;
     }
 
@@ -167,16 +164,10 @@ class _LoginState extends State<Login> {
       isLoading = true;
     });
 
-    //BE CALL TO CREATE AN ACCOUNT AND TRIGGER CONFIRMATION EMAIL
-
-    // final res = await widget.client.post(
-    //   api: 'sessions',
-    //   body: {
-    //     'username': email,
-    //     'password': password,
-    //     'role': role.name,
-    //   },
-    // );
+    final res = await widget.client.post(
+      api: 'addUser',
+      body: user.toMap(),
+    );
 
     setState(() {
       isLoading = false;

@@ -258,7 +258,7 @@ app.post(
     //var url = "http://localhost:3000/verify?username=" + token_mail_verification;
 
     try {
-      const result1 = await db.addUser(req.body.user);
+      const result1 = await db.addUser(req.body);
 
       console.log("RESULT", result1);
       const token_mail_verification = jwt.sign({ id: result1 }, 'ourSecretKey', { expiresIn: '1d' });
@@ -266,7 +266,7 @@ app.post(
 
       const message = `http://localhost:3001/api/user/verify/${token_mail_verification}`;
       //to insert: req.body.user.mail
-      await sendEmail(req.body.user.mail, "Verify Email", message);
+      await sendEmail(req.body.mail, "Verify Email", message);
       res.status(201).json(result1);
 
     } catch (err) {

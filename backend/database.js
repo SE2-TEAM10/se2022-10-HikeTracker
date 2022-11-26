@@ -352,7 +352,7 @@ class Database {
           typeof user.surname !== 'string' ||
           typeof user.mail !== 'string' ||
           typeof user.role !== 'string' ||
-          typeof user.verified !== 'number'
+          typeof user.password !== 'string'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
