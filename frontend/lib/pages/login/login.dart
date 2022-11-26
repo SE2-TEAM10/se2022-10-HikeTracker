@@ -164,10 +164,16 @@ class _LoginState extends State<Login> {
       isLoading = true;
     });
 
-    final res = await widget.client.post(
+    await widget.client.post(
       api: 'addUser',
       body: user.toMap(),
     );
+
+    Message(
+      context: context,
+      message: 'A confirmation email has been send to ${user.email}',
+      messageType: MessageType.Info,
+    ).show();
 
     setState(() {
       isLoading = false;
