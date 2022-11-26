@@ -1,3 +1,4 @@
+import 'package:HikeTracker/common/message.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/login/widget/login_banner.dart';
 import 'package:HikeTracker/pages/login/widget/login_form.dart';
@@ -128,9 +129,24 @@ class _LoginState extends State<Login> {
     );
 
     if (res.body == '"Incorrect username or password."') {
-      widget.onLogged(null);
+      Message(
+        context: context,
+        message: 'Wrong Email or Password',
+        messageType: MessageType.Error,
+      ).show();
+    } else if (res.body == '"User is not verified."') {
+      Message(
+        context: context,
+        message: 'This account has not been verified yet. Check your email.',
+        messageType: MessageType.Error,
+      ).show();
     } else {
-      widget.onLogged(User.fromJson(res.body));
+      final user = User.fromJson(res.body);
+      Message(
+        context: context,
+        message: 'Welcome back ${user.name}',
+      ).show();
+      widget.onLogged(user);
     }
     setState(() {
       isLoading = false;

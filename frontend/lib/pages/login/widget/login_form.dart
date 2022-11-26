@@ -22,8 +22,8 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void initState() {
-    emailController = TextEditingController(text: 'john.doe@hike.it');
-    passwordController = TextEditingController(text: 'localguide1');
+    emailController = TextEditingController(text: 'jennifer.lopez@hike.it');
+    passwordController = TextEditingController(text: 'localguide2');
     super.initState();
   }
 

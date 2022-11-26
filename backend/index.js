@@ -22,6 +22,7 @@ passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
     const user = await db.login(username, password);
     if (!user) return cb(null, false, "Incorrect username or password.");
+    if(user.verified == 0) return cb(null, false, "User is not verified.");
 
     return cb(null, user);
   })
