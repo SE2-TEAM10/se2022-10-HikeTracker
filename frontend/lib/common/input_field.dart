@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class InputField extends StatelessWidget {
   const InputField({
@@ -6,6 +7,9 @@ class InputField extends StatelessWidget {
     this.controller,
     this.onChange,
     this.isPassword = false,
+    this.keyboardType,
+    this.inputFormatters,
+    this.multiline = false,
     super.key,
   });
 
@@ -13,6 +17,9 @@ class InputField extends StatelessWidget {
   final void Function(String)? onChange;
   final String label;
   final bool isPassword;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final bool multiline;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +51,13 @@ class InputField extends StatelessWidget {
             child: TextField(
               controller: controller,
               onChanged: onChange,
+              keyboardType: keyboardType,
+              inputFormatters: inputFormatters,
               obscureText: isPassword,
               decoration: const InputDecoration(
                 border: InputBorder.none,
               ),
+              maxLines: multiline ? 3 : 1,
             ),
           ),
         ),
