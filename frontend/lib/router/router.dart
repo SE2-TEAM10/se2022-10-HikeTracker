@@ -48,7 +48,22 @@ GoRouter getRouter({
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
               child: Center(
-                child: Text('PROFILE PAGE: ${currentUser.name}'),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('PROFILE PAGE: ${currentUser.name}'),
+                    TextButton.icon(
+                      onPressed: () async {
+                        await client.delete(
+                          api: 'sessions/current',
+                        );
+                        onLogged(null);
+                      },
+                      icon: const Icon(Icons.logout),
+                      label: const Text('Logout'),
+                    )
+                  ],
+                ),
               ),
             );
           },
