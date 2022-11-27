@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const dayjs = require("dayjs");
 const GpxParser = require("gpxparser");
 
+
 class Database {
   constructor(dbName) {
     this.db = new sqlite.Database(dbName, (err) => {
@@ -126,7 +127,30 @@ class Database {
     });
   };
 
-  /*For testing*/
+
+  getHikesDetailsByHikeID = (hike_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID INNER JOIN hike_gpx ON hike.ID = hike_gpx.hike_ID WHERE hike.ID = ?";
+      this.db.all(sql, [hike_ID], function (err, rows) {
+        if (err) reject(err);
+        else {
+          resolve(rows);
+        }
+      });
+    });
+  };
+
+  getHikesDetails = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID INNER JOIN hike_gpx ON hike.ID = hike_gpx.hike_ID";
+      this.db.get(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  /*testing START*/
   getHikeByID = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike WHERE ID = ?";
@@ -226,6 +250,8 @@ class Database {
       });
     });
   };
+
+  /*testing END*/
 
 
   addNewHike = (hike, gpx_string) => {

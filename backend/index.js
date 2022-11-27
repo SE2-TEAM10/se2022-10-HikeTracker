@@ -137,10 +137,48 @@ app.get("/api/hike", async (req, res) => {
       console.log(err);
       res
         .status(500)
-        .json({ error: `Database error while retrieving courses` })
+        .json({ error: `Database error while retrieving hike` })
         .end();
     });
 });
+
+app.get("/api/hikesdetails", /*isLoggedIn,*/ async (req, res) => {
+
+  try {
+
+    /* let user = await db.getUserByID(req.user.id);
+     if (user.role !== "hiker") {
+       return res.status(422).json({ error: `not a hiker` }).end();
+     }*/
+
+    const hikedetails = await db.getHikesDetails();
+    return res.status(200).json(hikedetails);
+
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+
+});
+
+app.get("/api/hikesdetails/:hike_ID", /*isLoggedIn,*/ async (req, res) => {
+
+  try {
+
+    /* let user = await db.getUserByID(req.user.id);
+     if (user.role !== "hiker") {
+       return res.status(422).json({ error: `not a hiker` }).end();
+     }*/
+
+    const hikedetails = await db.getHikesDetailsByHikeID(req.params.hike_ID);
+    return res.status(200).json(hikedetails);
+
+
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+
+});
+
 
 app.get("/api/sendEmail", async (req, res) => {
   let transport = nodemailer.createTransport({
@@ -292,7 +330,7 @@ app.get('/api/user/verify/:token', (req, res) => {
         console.log(err);
         res.sendFile(path.join(__dirname + '/indexNotVerified.html'));
       }
-      else if(verifyToCheck === 0){
+      else if (verifyToCheck === 0) {
         const result = await db.setVerified(decoded.id)
         res.sendFile(path.join(__dirname + '/indexVerified.html'));
       }
