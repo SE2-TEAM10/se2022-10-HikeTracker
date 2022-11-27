@@ -24,7 +24,7 @@
     2. [POST](#post)
     3. [PUT](#put)
     4. [DELETE](#delete)
-4. [Database](#database)
+4. [Database tables](#database)
 5. [User Credentials](#usercredentials)
 6. [Team](#team)
 
