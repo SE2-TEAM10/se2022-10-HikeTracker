@@ -134,7 +134,59 @@ class Database {
       this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else {
-          resolve(rows);
+          const list = rows.map((e) => ({
+            ID: e.ID,
+            name: e.name,
+            length: e.length,
+            expected_time: e.expected_time,
+            ascent: e.ascent,
+            difficulty: e.difficulty,
+            start_point: e.start_point,
+            end_point: e.end_point,
+            description: e.description,
+            location_name: e.location_name,
+            latitude: e.latitude,
+            longitude: e.longitude,
+            city: e.city,
+            province: e.province,
+            hike_ID: e.hike_ID,
+            gpx : e.gpx,
+          }));
+          let array = [];
+          list.forEach((i) => {
+            if (array.find((a) => a.ID === i.ID) === undefined) {
+              let temp = list.filter((elem) => elem.ID === i.ID);
+              if (temp.length === 1) {
+                array.push(temp[0]);
+              } else {
+                let location = [];
+                temp.map((t) => {
+                  location.push({
+                    name: t.location_name,
+                    latitude: t.latitude,
+                    longitude: t.longitude,
+                    city: t.city,
+                    province: t.province,
+                  });
+                  return t;
+                });
+                array.push({
+                  ID: temp[0].ID,
+                  name: temp[0].name,
+                  length: temp[0].length,
+                  expected_time: temp[0].expected_time,
+                  ascent: temp[0].ascent,
+                  difficulty: temp[0].difficulty,
+                  start_point: temp[0].start_point,
+                  end_point: temp[0].end_point,
+                  description: temp[0].description,
+                  location: location,
+                  gpx: temp[0].gpx,
+                });
+              }
+            }
+          });
+          return resolve(array);
         }
       });
     });
