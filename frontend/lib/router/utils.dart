@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 //ROUTES
 const HOME = '/';
 const LOGIN = '/login';
+const SIGNUP = '/signup';
 const LOADING = '/loading';
 const HIKE_DETAIL = '/hike/:hikeID';
 const PROFILE = '/profile';
@@ -52,6 +53,12 @@ final NOT_LOGGED_NAVIGATION_BAR_ROUTES = [
     label: 'Login',
     path: LOGIN,
     icon: Icons.login_outlined,
+  ),
+  Route(
+    index: 2,
+    label: 'Signup',
+    path: SIGNUP,
+    icon: Icons.person_add_alt,
   ),
 ];
 

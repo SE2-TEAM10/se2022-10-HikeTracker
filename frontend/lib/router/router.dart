@@ -4,6 +4,7 @@ import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/add_hut/add_hut.dart';
 import 'package:HikeTracker/pages/add_parking/add_parking.dart';
 import 'package:HikeTracker/pages/pages.dart';
+import 'package:HikeTracker/pages/signup/signup.dart';
 import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,18 @@ GoRouter getRouter({
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
               child: Login(
+                client: client,
+                onLogged: onLogged,
+              ),
+            );
+          },
+        ),
+      if (currentUser == null)
+        GoRoute(
+          path: SIGNUP,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: Signup(
                 client: client,
                 onLogged: onLogged,
               ),

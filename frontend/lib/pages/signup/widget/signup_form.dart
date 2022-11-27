@@ -1,6 +1,6 @@
 import 'package:HikeTracker/common/input_field.dart';
 import 'package:HikeTracker/models/user.dart';
-import 'package:HikeTracker/pages/login/models/new_user.dart';
+import 'package:HikeTracker/pages/signup/models/new_user.dart';
 import 'package:flutter/material.dart';
 
 class SignupForm extends StatefulWidget {
