@@ -8,9 +8,32 @@
 
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=SE2-TEAM10_se2022-10-HikeTracker&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=SE2-TEAM10_se2022-10-HikeTracker)   [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=SE2-TEAM10_se2022-10-HikeTracker&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=SE2-TEAM10_se2022-10-HikeTracker)  [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=SE2-TEAM10_se2022-10-HikeTracker&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=SE2-TEAM10_se2022-10-HikeTracker)   [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=SE2-TEAM10_se2022-10-HikeTracker&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=SE2-TEAM10_se2022-10-HikeTracker)   [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=SE2-TEAM10_se2022-10-HikeTracker&metric=bugs)](https://sonarcloud.io/summary/new_code?id=SE2-TEAM10_se2022-10-HikeTracker)   [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SE2-TEAM10_se2022-10-HikeTracker&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=SE2-TEAM10_se2022-10-HikeTracker)
 
-## Technology Stack
+# Table of contents
+1. [Technology Stack](#technolystack)
+    1. [Frontend](#frontend)
+    2. [Backend](#backend)
+2. [Docker Instructions](#docker)
+    1. [Build the backend docker image](#buildbe)
+    2. [Push the image on docker hub](#pushbe)
+    3. [Run the backend image container](#runbe)
+    4. [Build the frontend docker image](#buildfe)
+    5. [Push the image on docker hub](#pushfe)
+    6. [Run the frontend image container](#runfe) 
+3. [API Server](#api)
+    1. [GET](#get)
+    2. [POST](#post)
+    3. [PUT](#put)
+    4. [DELETE](#delete)
+4. [Database](#database)
+5. [User Credentials](#usercredentials)
+6. [Team](#team)
 
-### Frontend
+
+
+
+## Technology Stack <a name="technolystack">
+
+### Frontend <a name="frontend">
 
 <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/dartlang/dartlang-icon.svg" alt="dart" width="40" height="40"/>
 
@@ -19,7 +42,7 @@
 - [Dart](https://dart.dev/)
 
 
-### Backend
+### Backend <a name="backend">
 
 <img src="https://upload.vectorlogo.zone/logos/javascript/images/239ec8a4-163e-4792-83b6-3f6d96911757.svg" alt="flutter" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/nodejs/nodejs-ar21.svg" alt="dart" width="80" height="40"/>
 
@@ -27,9 +50,9 @@
 - [Node.js](https://nodejs.org/)
 
 
-## Docker instructions
+## Docker Instructions <a name="docker">
 
-### Build the backend docker image
+### Build the backend docker image <a name="buildbe">
 
 Open the terminal from the backend folder and run the following command:
 ```
@@ -37,14 +60,14 @@ sudo docker image build -t se2team10/se2hiketracker:be .
 ```
 This will build a Docker image with the name _se2team10/se2hiketracker_ and tagname _be_.
 
-### Push the image on docker hub
+### Push the image on docker hub <a name="pushbe">
 
 Run the following command:
 ```
 docker push se2team10/se2hiketracker:be
 ```
 
-### Run the backend image container
+### Run the backend image container <a name="runbe">
 
 Run the following command: 
 ```
@@ -55,7 +78,7 @@ This command binds the port 5000 configured in the container to the TCP port 808
 
 ---
 
-### Build the frontend docker image
+### Build the frontend docker image <a name="buildfe">
 
 Open the terminal from the frontend folder and run the following command:
 ```
@@ -63,7 +86,7 @@ sudo docker image build -t se2team10/se2hiketracker:fe .
 ```
 This will build a Docker image with the name _se2team10/se2hiketracker_ and tagname _fe_.
 
-### Push the image on docker hub
+### Push the image on docker hub <a name="pushfe">
 
 Run the following command:
 ```
@@ -71,7 +94,7 @@ docker push se2team10/se2hiketracker:fe
 ```
 
 
-### Run the frontend image container
+### Run the frontend image container <a name="runfe">
 
 Run the following command:
 ```
@@ -82,24 +105,23 @@ This command binds the port 5000 configured in the container to the TCP port 808
 
 
 
+## API Server <a name="api">
 
-## API Server
-
-* GET
-
-
-* POST
+* GET <a name="get">
 
 
-* PUT
+* POST <a name="post">
 
 
-* DELETE
+* PUT <a name="put">
 
+
+* DELETE <a name="delete">
 
 
 
-## Database tables
+
+## Database tables <a name="database">
 
 Table `hike` contains all the hikes details
 
@@ -148,7 +170,7 @@ Table `hike_rf` contains relation between table _hike_ and table _reference_poin
 | 1   | 1 |  
 
 
-## Users credentials
+## Users credentials <a name="usercredentials">
 
 ```
 Email: john.doe@hike.it
@@ -167,7 +189,7 @@ Password: localguide3
 
 
 
-## Team members
+## Team members <a name="team">
 
 | Matricola | Surname      | Name     |      
 |-----------|--------------|----------|      
