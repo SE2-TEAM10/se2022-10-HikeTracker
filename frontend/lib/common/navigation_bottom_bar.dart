@@ -21,7 +21,9 @@ class NavigationBottomBar extends StatelessWidget {
       items: routes
           .map(
             (e) => BottomNavigationBarItem(
-              icon: Icon(e.icon),
+              icon: Icon(
+                e.icon,
+              ),
               label: e.label,
             ),
           )

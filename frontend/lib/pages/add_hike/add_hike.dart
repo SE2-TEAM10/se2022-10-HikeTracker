@@ -4,6 +4,7 @@ import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gpx/gpx.dart';
 import 'package:layout/layout.dart';
 
@@ -74,6 +75,7 @@ class _AddHikeState extends State<AddHike> {
         context: context,
         message: 'Hike added successfully.',
       ).show();
+      GoRouter.of(context).pop();
     } else if (res.statusCode == 422) {
       Message(
         context: context,
