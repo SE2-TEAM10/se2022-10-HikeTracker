@@ -142,25 +142,13 @@ app.get("/api/hike", async (req, res) => {
     });
 });
 
-app.get("/api/hikesdetails", /*isLoggedIn,*/ async (req, res) => {
 
-  try {
+app.get("/api/hikesdetails/:hike_ID", /*isLoggedIn,*/ async (req, res) => {
 
-    /* let user = await db.getUserByID(req.user.id);
+   /* let user = await db.getUserByID(req.user.id);
      if (user.role !== "hiker") {
        return res.status(422).json({ error: `not a hiker` }).end();
      }*/
-
-    const hikedetails = await db.getHikesDetails();
-    return res.status(200).json(hikedetails);
-
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-
-});
-
-app.get("/api/hikesdetails/:hike_ID", /*isLoggedIn,*/ async (req, res) => {
   await db
       .getHikesDetailsByHikeID(req.params.hike_ID)
       .then((lists) => {

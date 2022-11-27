@@ -132,7 +132,7 @@ class Database {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID INNER JOIN hike_gpx ON hike.ID = hike_gpx.hike_ID WHERE hike.ID = ?";
       this.db.all(sql, [hike_ID], function (err, rows) {
-        if (err) reject(err);
+        if (err||rows.length === 0) reject(err);
         else {
           const list = rows.map((e) => ({
             ID: e.ID,
@@ -192,15 +192,6 @@ class Database {
     });
   };
 
-  getHikesDetails = () => {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID INNER JOIN hike_gpx ON hike.ID = hike_gpx.hike_ID";
-      this.db.get(sql, [], function (err, rows) {
-        if (err) reject(err);
-        else resolve(rows);
-      });
-    });
-  };
 
   /*testing START*/
   getHikeByID = (ID) => {
@@ -517,6 +508,31 @@ class Database {
         return reject(503); // 503 - UNAVAILABLE
       }
       let query = "UPDATE user SET verified = 1 WHERE ID=?";
+
+      this.db.run(query, [user_ID], function (err) {
+        if (err)
+          reject(err);
+        else {
+          if (this.changes > 0)
+            resolve();
+          else {
+            reject(new Error("User not found!"));
+          }
+        }
+      });
+    });
+  }
+
+  setVerifiedBack = (user_ID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (typeof user_ID !== 'number') {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      let query = "UPDATE user SET verified = 0 WHERE ID=?";
 
       this.db.run(query, [user_ID], function (err) {
         if (err)
