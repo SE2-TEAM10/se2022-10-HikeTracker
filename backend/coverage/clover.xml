@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1669561437852" clover="3.2.0">
-  <project timestamp="1669561437852" name="All files">
+<coverage generated="1669561969638" clover="3.2.0">
+  <project timestamp="1669561969638" name="All files">
     <metrics statements="273" coveredstatements="201" conditionals="131" coveredconditionals="67" methods="76" coveredmethods="70" elements="480" coveredelements="338" complexity="0" loc="273" ncloc="273" packages="1" files="1" classes="1"/>
-    <file name="database.js" path="D:\SE2_HIKES\se2022-10-HikeTracker\backend\database.js">
+    <file name="database.js" path="C:\Users\giovy\Documents\se2022-10-HikeTracker\backend\database.js">
       <metrics statements="273" coveredstatements="201" conditionals="131" coveredconditionals="67" methods="76" coveredmethods="70"/>
       <line num="3" count="1" type="stmt"/>
       <line num="4" count="1" type="stmt"/>
@@ -143,10 +143,10 @@
       <line num="291" count="1" type="cond" truecount="1" falsecount="1"/>
       <line num="292" count="1" type="stmt"/>
       <line num="300" count="1" type="stmt"/>
-      <line num="301" count="4" type="stmt"/>
-      <line num="302" count="4" type="stmt"/>
-      <line num="303" count="4" type="cond" truecount="2" falsecount="0"/>
-      <line num="310" count="2" type="stmt"/>
+      <line num="301" count="3" type="stmt"/>
+      <line num="302" count="3" type="stmt"/>
+      <line num="303" count="3" type="cond" truecount="2" falsecount="0"/>
+      <line num="310" count="1" type="stmt"/>
       <line num="313" count="1" type="stmt"/>
       <line num="315" count="1" type="stmt"/>
       <line num="316" count="1" type="stmt"/>
