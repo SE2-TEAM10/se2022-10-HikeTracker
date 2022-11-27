@@ -1,0 +1,38 @@
+version: "3.6"
+services:
+  gifted_borg:
+    command:
+      - "node"
+      - "index.js"
+    container_name: "gifted_borg"
+    entrypoint:
+      - "docker-entrypoint.sh"
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "NODE_VERSION=12.18.1"
+      - "YARN_VERSION=1.22.4"
+      - "NODE_ENV=production"
+    image: "se2team10/se2hiketracker:be"
+    network_mode: "bridge"
+    ports:
+      - "0.0.0.0:3001:3001/tcp"
+    tty: true
+    working_dir: "/app"
+  vibrant_antonelli:
+    command:
+      - "nginx"
+      - "-g"
+      - "daemon off;"
+    container_name: "vibrant_antonelli"
+    entrypoint:
+      - "/docker-entrypoint.sh"
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "NGINX_VERSION=1.21.1"
+      - "NJS_VERSION=0.6.1"
+      - "PKG_RELEASE=1"
+    image: "se2team10/se2hiketracker:fe"
+    network_mode: "bridge"
+    ports:
+      - "0.0.0.0:8080:80/tcp"
+    tty: true
