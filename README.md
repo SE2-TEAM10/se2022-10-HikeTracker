@@ -127,7 +127,7 @@ Table `hike` contains all the hikes details
 
 | ID | name      | length (km) | expected_time (h) | ascent (m) | difficulty   | start_point | end_point | description |    
 |-----------|--------------|----------|-----------|--------------|----------|-----------|--------------|----------|      
-| 1   | Monte Tivoli | 5  | 02:00 | 410 | T | Crissolo | Monte Tivoli | Really easy and frequented hike, with really low possibility of errors |
+| 1   | Monte Tivoli | 5  | 02:00 | 410 | T | Crissolo | Monte Tivoli | Really easy and frequented hike |
 
 
 Table `location` contains all the information of one specific point
