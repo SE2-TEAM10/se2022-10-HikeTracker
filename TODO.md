@@ -198,7 +198,7 @@
 > > -
 ### BACK-END
 > 
-> -
+> - copy and paste the code from HT-31, changing the role check value
 ### FRONT-END
 >
 > -
@@ -212,7 +212,7 @@
 > > -
 >
 > -
-> > -
+> > - copy and paste the code from HT-32, changing the role check value
 ### BACK-END
 > 
 > -
@@ -282,8 +282,8 @@
 > -
 > > -
 ### BACK-END
-> 
-> -
+> NEW TABLE
+> - table hut_img (hut_ID, img)
 ### FRONT-END
 >
 > -
