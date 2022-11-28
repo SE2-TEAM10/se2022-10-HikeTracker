@@ -1,4 +1,4 @@
-import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
+import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/pages/add_parking/widget/add_parking_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +53,8 @@ class _AddParkingState extends State<AddParking> {
     final res = await widget.client.post(
       api: 'parking',
       body: {
-        "parking": {
-          "name": parking.name?.text,
+        'parking': {
+          'name': parking.name?.text,
         }
       },
     );

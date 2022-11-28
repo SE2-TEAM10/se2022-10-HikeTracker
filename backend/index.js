@@ -142,10 +142,38 @@ app.get("/api/hike", async (req, res) => {
       console.log(err);
       res
         .status(500)
-        .json({ error: `Database error while retrieving courses` })
+        .json({ error: `Database error while retrieving hike` })
         .end();
     });
 });
+
+
+app.get("/api/hikesdetails/:hike_ID", /*isLoggedIn,*/ async (req, res) => {
+
+   /* let user = await db.getUserByID(req.user.id);
+     if (user.role !== "hiker") {
+       return res.status(422).json({ error: `not a hiker` }).end();
+     }*/
+  await db
+      .getHikesDetailsByHikeID(req.params.hike_ID)
+      .then((lists) => {
+        lists.map((row) => {
+          if (row.location !== null && !Array.isArray(row.location))
+            row.location = [row.location];
+          return row;
+        });
+        res.json(lists);
+      })
+      .catch((err) => {
+        console.log(err);
+        res
+            .status(500)
+            .json({ error: `Database error while retrieving hike` })
+            .end();
+      });
+
+});
+
 
 app.get("/api/sendEmail", async (req, res) => {
   let transport = nodemailer.createTransport({

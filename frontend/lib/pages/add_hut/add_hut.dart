@@ -1,4 +1,4 @@
-import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
+import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/pages/add_hut/widget/add_hut_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +53,8 @@ class _AddHutState extends State<AddHut> {
     final res = await widget.client.post(
       api: 'hike',
       body: {
-        "hut": {
-          "name": hut.name?.text,
+        'hut': {
+          'name': hut.name?.text,
         }
       },
     );
