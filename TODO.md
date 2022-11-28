@@ -1,10 +1,13 @@
 # TODO:
 
 ## FIX ERRORS
-> - add table "local guide" (ID, authorized, ..., user_ID)
+> - FE - Put password verification (at least 8 characters, etc)
+> - BE & FE - Put more explicit errors
 
+----
 
 ## HT-5 - Hut Description (ESTIMATION: 2 PTS)
+> ### *As a local guide I want to insert a hut description*
 ### FROM THE FAQ:
 > - *About story HT-5 and HT-15, can a hut worker “access” huts that were inserted by a local guide in HT-5? In other words, can a hut worker insert extra info for a hut by clicking a modify button on a hut that was inserted by a local guide?*
 > > - *Yes, after a hut worker has been validate as actually working at a given hut she can add/modify information about that hut*
@@ -22,6 +25,7 @@
 ------
 
 ## HT-6 - Describe parking (ESTIMATION: 2 PTS)
+> ### *As a local guide I want to add a parking lot*
 ### FROM THE FAQ:
 > -
 ### BACK-END
@@ -36,6 +40,7 @@
 ------
 
 ## HT-7 - Search hut (ESTIMATION: 5 PTS)
+> ### *As a hiker I want to search for hut description*
 ### FROM THE FAQ:
 > -
 ### BACK-END
@@ -48,6 +53,7 @@
 -----
 
 ## HT-8 - Link start/arrival (ESTIMATION: 3 PTS)
+> ### *As a local guide I want to add parking lots and huts as start/arrivals points for hikes*
 ### FROM THE FAQ:
 > - *For stories 8/9/33 can the localguide work with all the hikes or only with those entered by her?*
 > > - *a guide can change only her own hikes*
@@ -63,6 +69,7 @@
 -----
 
 ## HT-9 - Link hut (ESTIMATION: 3 PTS)
+> ### *As a local guide I want to link a hut to a hike So that hikers can better plan their hike*
 ### FROM THE FAQ:
 > - *Can you confirm to me that the work that needs to be done in story 9 is to enter as an hike reference point a hut that is in the vicinity of the hike? Again, if yes, could you quantify "in the vicinity"? Is 1km okay?*
 > > - *a hut liked to a hike is not necessarily a reference point, it could be just close to the hike but not on the hike. There is no distance threshold but typically is max 5 km from any point in the hike*
@@ -85,6 +92,7 @@
 -----
 
 ## HT-33 - Define reference points (ESTIMATION: 5 PTS)
+> ### *As a local guide I want to define reference points for a hike I added So that hikers can be tracked*
 ### FROM THE FAQ:
 > - *Story 33 should allow me (as a local guide) to go to the map, pick a generic point in the surroundings of the hike (again, can you quantify "in the surroundings" ?) and enter it as a reference point? Should we create a new reference point for all the possible types of points or is it okay if we consider all types of reference points listed in the project submission document, except hut and parking lot? Because we have already entered hut/parking into the system with stories 6/7.*
 > > - *not any point near but any point that is part of the hike trace, you can consider all types excepts paking lots and hikes*
@@ -105,6 +113,7 @@
 -----
 
 ## HT-10 - Set profile (ESTIMATION: 5 PTS)
+> ### *As a hiker I want to record my performance parameters So that I can get personalised recommendations*
 ### FROM THE FAQ:
 > -
 > > - 
@@ -123,6 +132,7 @@
 -----
 
 ## HT-11 - Filter hikes (ESTIMATION: 3 PTS)
+> ### *As a hiker I want to filter the list of hikes based on my profile So that I can see them based on certain characteristics*
 ### FROM THE FAQ:
 > - *What does "filter the hikes based on my profile so that I can see them based on certain characteristics" mean? What are these characteristics, and how do they differ from the filter from HT-1?*
 > > - *performance are preferences in terms of duration and ascent (see FAQ on HT-10)*
@@ -139,6 +149,7 @@
 -----
 
 ## HT-31 - Register local guide (ESTIMATION: 3-5-8 PTS)
+> ### *As a local guide I want to register To be able to access reserved features*
 ### FROM THE FAQ:
 > - *what's the difference with HT-3? Is not the registration equal?*
 > > - *HT-3 was intended for hikers, but can be a similar procedure*
@@ -160,6 +171,7 @@
 -----
 
 ## HT-32 - Validate local guide (ESTIMATION: 2-3 PTS)
+> ### *As a platform manager I want to validate a local guide registration So that they can access specific features*
 ### FROM THE FAQ:
 > -
 > > -
@@ -177,6 +189,7 @@
 -----
 
 ## HT-12 - Hut worker sign-up (ESTIMATION: PTS)
+> ### *As a hut worker I want to request a user login So that I can operate on the platform*
 ### FROM THE FAQ:
 > -
 > > -
@@ -193,6 +206,7 @@
 -----
 
 ## HT-13 - Verify hut worker (ESTIMATION: PTS)
+> ### *As a platform manager I want to verify hut worker users So that they can operate on the platform*
 ### FROM THE FAQ:
 > -
 > > -
@@ -209,6 +223,7 @@
 -----
 
 ## HT-14 - Update hike condition (ESTIMATION: PTS)
+> ### *As a hut worker I want to update the condition of a hike linked to the hut So that prospective hikers are informed*
 ### FROM THE FAQ:
 > -
 > > -
@@ -225,6 +240,7 @@
 -----
 
 ## HT-30 - Modify hike description (ESTIMATION: PTS)
+> ### *As a local guide I want to modify and delete hikes I added*
 ### FROM THE FAQ:
 > -
 > > -
@@ -241,6 +257,7 @@
 -----
 
 ## HT-15 - Hut info (ESTIMATION: PTS)
+> ### *As a hut worker I want to add information on the hut So that hikers can better plan their hike*
 ### FROM THE FAQ:
 > - *About story HT-5 and HT-15, can a hut worker “access” huts that were inserted by a local guide in HT-5? In other words, can a hut worker insert extra info for a hut by clicking a modify button on a hut that was inserted by a local guide?*
 > > - *Yes, after a hut worker has been validate as actually working at a given hut she can add/modify information about that hut*
@@ -257,6 +274,7 @@
 -----
 
 ## HT-16 - Hut pictures (ESTIMATION: PTS)
+> ### *As a hut worker I want to add photos of the hut So that hikers can better plan their hike*
 ### FROM THE FAQ:
 > -
 > > -
@@ -273,6 +291,7 @@
 -----
 
 ## HT-17 - Start hike (ESTIMATION: PTS)
+> ### *As a hiker I want to start a registered hike So that I can record my position*
 ### FROM THE FAQ:
 > -
 > > -
@@ -289,6 +308,7 @@
 -----
 
 ## HT-18 - Terminate hike (ESTIMATION: PTS)
+> ### *As a hiker I want to terminate a hike So that everybody is informed*
 ### FROM THE FAQ:
 > -
 > > -
@@ -305,6 +325,7 @@
 -----
 
 ## HT-19 - Record point (ESTIMATION: PTS)
+> ### *As a hiker I want to record reaching a reference point of a registered hike So that I can track my hike*
 ### FROM THE FAQ:
 > -
 > > -
@@ -321,6 +342,7 @@
 -----
 
 ## HT-20 - Broadcasting URL (ESTIMATION: PTS)
+> ### *As a hiker I want to get the broadcasting URL for my hike So that I can share it with my friends to let them follow me*
 ### FROM THE FAQ:
 > -
 > > -
@@ -337,6 +359,7 @@
 -----
 
 ## HT-21 - Monitor hike (ESTIMATION: PTS)
+> ### *As a friend (of a hiker) I want to monitor the progress of my hiker friend*
 ### FROM THE FAQ:
 > -
 > > -
@@ -353,6 +376,7 @@
 -----
 
 ## HT-22 - Unfinished hike (ESTIMATION: PTS)
+> ### *As a hiker I want to be notified about an unfinished hike So that I can terminate it*
 ### FROM THE FAQ:
 > -
 > > -
@@ -369,6 +393,7 @@
 -----
 
 ## HT-23 - Plan hike (ESTIMATION: PTS)
+> ### *As a hiker I want to register a planned hike So that it can be later traced*
 ### FROM THE FAQ:
 > -
 > > -
@@ -385,6 +410,7 @@
 -----
 
 ## HT-24 - Add group (ESTIMATION: PTS)
+> ### *As a hiker I want to add an hiker to a group for a planned hike So that we can hike together*
 ### FROM THE FAQ:
 > -
 > > -
@@ -401,6 +427,7 @@
 -----
 
 ## HT-25 - Confirm group (ESTIMATION: PTS)
+> ### *As a hiker I want to be able to confirm group participation To be part of a group hike*
 ### FROM THE FAQ:
 > -
 > > -
@@ -417,6 +444,7 @@
 -----
 
 ## HT-26 - Confirm buddy end (ESTIMATION: PTS)
+> ### *As a hiker I want to notify that someone of my group has completed their hike So that the group hike track is updated*
 ### FROM THE FAQ:
 > -
 > > -
@@ -433,6 +461,7 @@
 -----
 
 ## HT-27 - New weather alert (ESTIMATION: PTS)
+> ### *As a platform manager I want to enter a weather alert for a given area So that hikers can be warned*
 ### FROM THE FAQ:
 > -
 > > -
@@ -449,6 +478,7 @@
 -----
 
 ## HT-28 - Notify buddy late (ESTIMATION: PTS)
+> ### *As a hiker I want to be notified if someone of my group has not completed the hike yet So that I can verify her presence*
 ### FROM THE FAQ:
 > -
 > > -
@@ -465,6 +495,7 @@
 -----
 
 ## HT-29 - Weather alert notification (ESTIMATION: PTS)
+> ### *As a hiker I want to receive a weather alert notification in my current hiking area So that I am warned*
 ### FROM THE FAQ:
 > -
 > > -
