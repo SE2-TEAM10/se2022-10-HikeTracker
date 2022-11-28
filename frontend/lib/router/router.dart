@@ -1,7 +1,10 @@
 import 'package:HikeTracker/common/main_scaffold.dart';
 import 'package:HikeTracker/common/sub_scaffold.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/pages/add_hut/add_hut.dart';
+import 'package:HikeTracker/pages/add_parking/add_parking.dart';
 import 'package:HikeTracker/pages/pages.dart';
+import 'package:HikeTracker/pages/signup/signup.dart';
 import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -40,13 +43,40 @@ GoRouter getRouter({
             );
           },
         ),
+      if (currentUser == null)
+        GoRoute(
+          path: SIGNUP,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: Signup(
+                client: client,
+                onLogged: onLogged,
+              ),
+            );
+          },
+        ),
       if (currentUser != null)
         GoRoute(
           path: PROFILE,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
               child: Center(
-                child: Text('PROFILE PAGE: ${currentUser.name}'),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('PROFILE PAGE: ${currentUser.name}'),
+                    TextButton.icon(
+                      onPressed: () async {
+                        await client.delete(
+                          api: 'sessions/current',
+                        );
+                        onLogged(null);
+                      },
+                      icon: const Icon(Icons.logout),
+                      label: const Text('Logout'),
+                    )
+                  ],
+                ),
               ),
             );
           },
@@ -57,6 +87,28 @@ GoRouter getRouter({
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
               child: AddHike(
+                client: client,
+              ),
+            );
+          },
+        ),
+      if (currentUser?.role == UserRole.LocalGuide)
+        GoRoute(
+          path: HUT_ADD,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: AddHut(
+                client: client,
+              ),
+            );
+          },
+        ),
+      if (currentUser?.role == UserRole.LocalGuide)
+        GoRoute(
+          path: PARKING_ADD,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: AddParking(
                 client: client,
               ),
             );

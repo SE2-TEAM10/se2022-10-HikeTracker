@@ -1,7 +1,10 @@
+import 'package:HikeTracker/common/message.dart';
+import 'package:HikeTracker/pages/add_hike/models/new_hike.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gpx/gpx.dart';
 import 'package:layout/layout.dart';
 
@@ -38,9 +41,11 @@ class _AddHikeState extends State<AddHike> {
                 }),
               ),
               AddHikeForm(
-                onSubmit: (email, password) => onSubmit(
-                  email: email,
-                  password: password,
+                onSubmit: (
+                  newHike,
+                ) =>
+                    onSubmit(
+                  newHike: newHike,
                 ),
                 isSmall: context.breakpoint <= LayoutBreakpoint.xs,
               ),
@@ -49,21 +54,40 @@ class _AddHikeState extends State<AddHike> {
   }
 
   Future<void> onSubmit({
-    required String email,
-    required String password,
+    required NewHike newHike,
   }) async {
+    if (gpxContent == null) {
+      Message(
+        context: context,
+        message: 'Select a GPX file.',
+      ).show();
+      return;
+    }
+    newHike = newHike.copyWith(gpx: gpxContent);
+
     final res = await widget.client.post(
-      api: 'sessions',
-      body: {
-        'username': email,
-        'password': password,
-      },
+      api: 'hike',
+      body: newHike.toMap(),
     );
 
-    if (res.body == '"Incorrect username or password."') {
-      // TODO
+    if (res.statusCode == 201) {
+      Message(
+        context: context,
+        message: 'Hike added successfully.',
+      ).show();
+      GoRouter.of(context).pop();
+    } else if (res.statusCode == 422) {
+      Message(
+        context: context,
+        message: 'Gpx file error.',
+        messageType: MessageType.Error,
+      ).show();
     } else {
-      // pop
+      Message(
+        context: context,
+        message: 'Internal error.',
+        messageType: MessageType.Error,
+      ).show();
     }
   }
 }

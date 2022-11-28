@@ -61,7 +61,7 @@ class MainScaffold extends StatelessWidget {
               )
             : null,
       ),
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: context.breakpoint > LayoutBreakpoint.sm,
       body: context.breakpoint > LayoutBreakpoint.sm
           ? Row(
               children: [

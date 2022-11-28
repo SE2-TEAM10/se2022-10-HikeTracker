@@ -3,6 +3,7 @@
 const sqlite = require("sqlite3");
 const crypto = require("crypto");
 const dayjs = require("dayjs");
+const GpxParser = require("gpxparser");
 
 class Database {
   constructor(dbName) {
@@ -71,7 +72,7 @@ class Database {
           return;
         }
         const list = rows.map((e) => ({
-          id: e.ID,
+          ID: e.ID,
           name: e.name,
           length: e.length,
           expected_time: e.expected_time,
@@ -87,13 +88,10 @@ class Database {
           province: e.province,
           hike_ID: e.hike_ID,
         }));
-        //console.log(list);
         let array = [];
         list.forEach((i) => {
-          if (array.find((a) => a.id === i.id) === undefined) {
-            let temp = list.filter((course) => course.id === i.id);
-            //console.log("temp temp temp temp temp");
-            //console.log(temp);
+          if (array.find((a) => a.ID === i.ID) === undefined) {
+            let temp = list.filter((elem) => elem.ID === i.ID);
             if (temp.length === 1) {
               array.push(temp[0]);
             } else {
@@ -109,7 +107,7 @@ class Database {
                 return t;
               });
               array.push({
-                id: temp[0].id,
+                ID: temp[0].ID,
                 name: temp[0].name,
                 length: temp[0].length,
                 expected_time: temp[0].expected_time,
@@ -129,96 +127,138 @@ class Database {
   };
 
   /*For testing*/
-  getHikeById = (id) => {
+  getHikeByID = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike WHERE ID = ?";
-      this.db.get(sql, [id], function (err, rows) {
+      this.db.get(sql, [ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
     });
   };
 
-  getLocationByHikeId = (hikeId) => {
+  getLocationByHikeID = (hike_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM location WHERE hike_ID = ?";
-      this.db.all(sql, [hikeId], function (err, rows) {
+      this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
     });
   };
 
-  getLinkUser = (hikeID, userID) => {
+  getGpxByHikeID = (hike_ID) => {
     return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM hike_user WHERE hike_id=? AND user_id=?";
-      this.db.all(sql, [hikeID, userID], function (err, rows) {
+      const sql = "SELECT * FROM hike_gpx WHERE hike_ID = ?";
+      this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
     });
   };
 
-  deleteHikeByID = (id) => {
+  getLinkUser = (hike_ID, user_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user WHERE hike_ID=? AND user_ID=?";
+      this.db.all(sql, [hike_ID, user_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getUserByID = (user_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM user WHERE ID = ?";
+      this.db.get(sql, [user_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  deleteHikeByID = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike WHERE ID=?";
-      this.db.run(sql, [id], function (err) {
+      this.db.run(sql, [ID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });
     });
   };
 
-  deleteLocationByHikeID = (id) => {
+  deleteLocationByHikeID = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM location WHERE hike_ID=?";
-      this.db.run(sql, [id], function (err) {
+      this.db.run(sql, [ID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });
     });
   };
 
-  deleteLinkHikeUser = (hikeID, userID) => {
+  deleteLinkHikeUser = (hike_ID, user_ID) => {
     return new Promise((resolve, reject) => {
-      const sql = "DELETE FROM hike_user WHERE hike_id=? AND user_id=?";
-      this.db.run(sql, [hikeID, userID], function (err) {
+      const sql = "DELETE FROM hike_user WHERE hike_ID=? AND user_ID=?";
+      this.db.run(sql, [hike_ID, user_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });
     });
   };
 
-  addNewHike = (hike) => {
+  deleteGpxByHikeID = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_gpx WHERE hike_ID=?";
+      this.db.run(sql, [ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteUserByID = (user_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM user WHERE ID=?";
+      this.db.run(sql, [user_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+
+  addNewHike = (hike, gpx_string) => {
     return new Promise((resolve, reject) => {
       try {
         if (
           typeof hike.name !== 'string' ||
-          typeof hike.length !== 'number' ||
           typeof hike.expected_time !== 'string' ||
-          typeof hike.ascent !== 'number' ||
           typeof hike.difficulty !== 'string' ||
-          typeof hike.start_point !== 'string' ||
-          typeof hike.end_point !== 'string' ||
-          typeof hike.description !== 'string'
+          typeof hike.description !== 'string' ||
+          typeof gpx_string !== 'string'
         ) {
-          return reject(422); /* 422 - UNPROCESSABLE */
+          return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
-        return reject(503); /* 503 - UNAVAILABLE */
+        return reject(503); // 503 - UNAVAILABLE
       }
+      var gpx = new GpxParser();
+      gpx.parse(gpx_string);
+      let length = parseInt((gpx.tracks[0].distance.total) / 1000);
+      let ascent = parseInt((gpx.tracks[0].elevation.max));
+      console.log("length - ", length);
+      console.log("ascent - ", ascent);
       const sql =
-        "INSERT INTO hike(name,length,expected_time,ascent,difficulty,start_point,end_point,description) VALUES(?,?,?,?,?,?,?,?)";
+        "INSERT INTO hike(name,length,expected_time,ascent,difficulty,description) VALUES(?,?,?,?,?,?)";
       this.db.run(
         sql,
         [
           hike.name,
-          hike.length,
+          length,
           hike.expected_time,
-          hike.ascent,
+          ascent,
           hike.difficulty,
-          hike.start_point,
-          hike.end_point,
           hike.description,
         ],
         function (err) {
@@ -229,41 +269,38 @@ class Database {
     });
   };
 
-  linkHikeUser = (hikeID, userID) => {
+  addNewLocation = (loc, position, hike_ID, gpx_string) => {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hikeID !== 'number' ||
-          typeof userID !== 'number'
+          typeof loc.location_name !== 'string' ||
+          typeof loc.city !== 'string' ||
+          typeof loc.province !== 'string' ||
+          typeof position !== 'string' ||
+          typeof hike_ID !== 'number'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
-      const sql = "INSERT INTO hike_user(hike_id, user_id) VALUES(?,?)";
-      this.db.run(sql, [hikeID, userID], function (err) {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
-  };
+      let gpx = new GpxParser();
+      gpx.parse(gpx_string);
+      var lat = gpx.tracks[0].points[0].lat;
+      var lon = gpx.tracks[0].points[0].lon;
 
-  addNewLocation = (loc, id) => {
-    return new Promise((resolve, reject) => {
-      try {
-        if (
-          typeof loc.location_name !== 'string' ||
-          typeof loc.latitude !== 'string' ||
-          typeof loc.longitude !== 'string' ||
-          typeof loc.city !== 'string' ||
-          typeof loc.province !== 'string' ||
-          typeof id !== 'number'
-        ) {
-          return reject(422); // 422 - UNPROCESSABLE
-        }
-      } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+      let len = gpx.tracks[0].points.length - 1;
+      var lat_end = gpx.tracks[0].points[len].lat;
+      var lon_end = gpx.tracks[0].points[len].lon;
+      let latitude, longitude;
+      if (position === 'startp') {
+        latitude = lat;
+        longitude = lon;
+      } else if (position === 'endp') {
+        latitude = lat_end;
+        longitude = lon_end;
+      } else {
+        return reject(422); //UNPROCESSABLE
       }
       const sql =
         "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
@@ -271,11 +308,11 @@ class Database {
         sql,
         [
           loc.location_name,
-          loc.latitude,
-          loc.longitude,
+          latitude,
+          longitude,
           loc.city,
           loc.province,
-          id,
+          hike_ID,
         ],
         function (err) {
           if (err) reject(err);
@@ -285,43 +322,141 @@ class Database {
     });
   };
 
-  /* CHECK IF GPX FILE STRING HAS TO BE PARSED OR IT IS CORRECT */
-  addNewHikeGPX = (gpx, hikeID) => {
+
+  addNewHikeGPX = (gpx_string, hike_ID) => {
     return new Promise((resolve, reject) => {
-      const sql = "INSERT INTO hike_gpx(ID,gpx,hike_id) VALUES(?,?,?)";
-      this.db.run(sql, [gpx, hikeID], function (err) {
+      try {
+        if (
+          typeof gpx_string !== 'string' ||
+          typeof hike_ID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "INSERT INTO hike_gpx(gpx,hike_ID) VALUES(?,?)";
+      this.db.run(sql, [gpx_string, hike_ID], function (err) {
         if (err) reject(err);
         else
-          resolve(
-            this.lastID
-          ); /* CHECK IF GPX'S ID IS AUTOINCREMENTAL OR NOT */
+          resolve(this.lastID);
       });
     });
   };
 
-  getUserById = (id) => {
+  addUser = (user) => {
     return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM user WHERE id = ?";
-      this.db.get(sql, [id], (err, row) => {
+      try {
+        if (
+          typeof user.name !== 'string' ||
+          typeof user.surname !== 'string' ||
+          typeof user.mail !== 'string' ||
+          typeof user.role !== 'string' ||
+          typeof user.password !== 'string'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      let database = this.db;
+      let salt = crypto.randomBytes(16);
+      console.log("STRING STRING ", salt.toString('hex'))
+      crypto.scrypt(user.password, salt.toString('hex'), 32, function (err, hashedPassword) {
+        const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
+        database.run(
+          sql, [user.name, user.surname, user.mail, hashedPassword.toString('hex'), salt.toString('hex'), user.role, 0], function (err) {
+            if (err) reject(err);
+            else {
+              console.log(this.lastID);
+              resolve(this.lastID);
+            }
+          });
+      });
+    });
+  };
+
+
+  linkHikeUser = (hike_ID, user_ID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike_ID !== 'number' ||
+          typeof user_ID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "INSERT INTO hike_user(hike_ID, user_ID) VALUES(?,?)";
+      this.db.run(sql, [hike_ID, user_ID], function (err) {
         if (err) reject(err);
-        else if (row === undefined) resolve({ error: "User not found." });
+        else resolve(true);
+      });
+    });
+  };
+
+  addGpx = (gpx1) => {
+    return new Promise((resolve, reject) => {
+      var gpx = new GpxParser();
+      gpx.parse(gpx1);
+
+      /* let track = gpx.tracks[0];
+      console.log("track - ", track); */
+
+      let length = parseInt((gpx.tracks[0].distance.total * 2) / 1000);
+      console.log("LENGTH ", length);
+
+      let max_el = gpx.tracks[0].elevation.max;
+      let min_el = gpx.tracks[0].elevation.min;
+      let ascent = parseInt((max_el - min_el));
+      console.log("ASCENT ", ascent);
+
+      var lat = gpx.tracks[0].points[0].lat;
+      var lon = gpx.tracks[0].points[0].lon;
+
+      let len = gpx.tracks[0].points.length - 1;
+      var lat_end = gpx.tracks[0].points[len].lat;
+      var lon_end = gpx.tracks[0].points[len].lon;
+
+
+      console.log("LATITUDINE START", lat);
+      console.log("LONGITUDINE START", lon);
+      console.log("LATITUDINE END", lat_end);
+      console.log("LONGITUDINE END", lon_end);
+
+    });
+  };
+
+  setVerified = (user_ID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (typeof user_ID !== 'number') {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      let query = "UPDATE user SET verified = 1 WHERE ID=?";
+
+      this.db.run(query, [user_ID], function (err) {
+        if (err)
+          reject(err);
         else {
-          // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
-          const user = {
-            id: row.ID,
-            username: row.mail,
-            name: row.name,
-            role: row.role,
-          };
-          resolve(user);
+          if (this.changes > 0)
+            resolve();
+          else {
+            reject(new Error("User not found!"));
+          }
         }
       });
     });
-  };
+  }
 
   login = (username, password) => {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM user WHERE mail = ? AND verified=1`;
+      const sql = "SELECT * FROM user WHERE mail = ?";
       this.db.get(sql, [username], (err, row) => {
         if (err) {
           resolve(false);
@@ -329,10 +464,11 @@ class Database {
           resolve(false);
         } else {
           const user = {
-            id: row.ID,
+            ID: row.ID,
             username: row.mail,
             name: row.name,
             role: row.role,
+            verified: row.verified,
           };
 
           crypto.scrypt(password, row.salt, 32, function (err, hashedPassword) {

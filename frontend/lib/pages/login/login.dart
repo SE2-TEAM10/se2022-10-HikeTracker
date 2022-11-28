@@ -1,8 +1,10 @@
+import 'package:HikeTracker/common/login_banner.dart';
+import 'package:HikeTracker/common/message.dart';
 import 'package:HikeTracker/models/user.dart';
-import 'package:HikeTracker/pages/login/widget/login_banner.dart';
 import 'package:HikeTracker/pages/login/widget/login_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:layout/layout.dart';
 
 class Login extends StatefulWidget {
@@ -32,12 +34,23 @@ class _LoginState extends State<Login> {
             children: [
               if (context.breakpoint >= LayoutBreakpoint.md)
                 const LoginBanner(),
-              LoginForm(
-                onSubmit: (email, password) => onSubmit(
-                  email: email,
-                  password: password,
+              Expanded(
+                flex: 3,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: LoginForm(
+                        onSubmit: (email, password) => onSubmit(
+                          email: email,
+                          password: password,
+                        ),
+                        onSignupTap: () =>
+                            GoRouter.of(context).replace('/signup'),
+                        isSmall: context.breakpoint <= LayoutBreakpoint.xs,
+                      ),
+                    ),
+                  ],
                 ),
-                isSmall: context.breakpoint <= LayoutBreakpoint.xs,
               ),
             ],
           );
@@ -47,6 +60,9 @@ class _LoginState extends State<Login> {
     required String email,
     required String password,
   }) async {
+    setState(() {
+      isLoading = true;
+    });
     final res = await widget.client.post(
       api: 'sessions',
       body: {
@@ -56,9 +72,27 @@ class _LoginState extends State<Login> {
     );
 
     if (res.body == '"Incorrect username or password."') {
-      widget.onLogged(null);
+      Message(
+        context: context,
+        message: 'Wrong Email or Password',
+        messageType: MessageType.Error,
+      ).show();
+    } else if (res.body == '"User is not verified."') {
+      Message(
+        context: context,
+        message: 'This account has not been verified yet. Check your email.',
+        messageType: MessageType.Error,
+      ).show();
     } else {
-      widget.onLogged(User.fromJson(res.body));
+      final user = User.fromJson(res.body);
+      Message(
+        context: context,
+        message: 'Welcome back ${user.name}',
+      ).show();
+      widget.onLogged(user);
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 }
