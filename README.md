@@ -193,6 +193,8 @@ Table `hike_rf` contains relation between table _hike_ and table _reference_poin
 
 ## Users credentials <a name="usercredentials">
 
+- Local guide
+
 ```
 Email: john.doe@hike.it
 Password: localguide1
@@ -206,6 +208,47 @@ Password: localguide2
 ```
 Email: massimiliano.allegri@hike.it
 Password: localguide3
+```
+
+- Platform manager
+
+```
+Email: sandra.bullock@hike.it
+Password: platformmanager
+```
+
+- Hiker
+
+```
+Email: orlando.bloom@hike.it
+Password: hikerhiker6
+```
+
+```
+Email: julia.roberts@hike.it
+Password: hikerhiker7
+```
+
+```
+Email: tom.cruise@hike.it
+Password: hikerhiker8
+```
+
+- Hut worker
+
+```
+Email: lady.gaga@hike.it
+Password: hutworker9
+```
+
+```
+Email: ed.sheeran@hike.it
+Password: hutworker10
+```
+
+```
+Email: katy.perry@hike.it
+Password: hutworker11
 ```
 
 
