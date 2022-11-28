@@ -42,7 +42,7 @@ class Hike {
     );
 
     return Hike(
-      id: res['id'] ?? 0,
+      id: res['ID'] ?? 0,
       name: res['name'] ?? 'NA',
       length: res['length'] ?? 0,
       expectedTime: res['expected_time'] ?? 'NA',

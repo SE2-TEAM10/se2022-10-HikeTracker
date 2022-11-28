@@ -3,6 +3,7 @@ import 'package:HikeTracker/common/sub_scaffold.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/add_hut/add_hut.dart';
 import 'package:HikeTracker/pages/add_parking/add_parking.dart';
+import 'package:HikeTracker/pages/hike_detail/hike_detail.dart';
 import 'package:HikeTracker/pages/pages.dart';
 import 'package:HikeTracker/pages/signup/signup.dart';
 import 'package:HikeTracker/router/utils.dart';
@@ -128,8 +129,10 @@ GoRouter getRouter({
         path: HIKE_DETAIL,
         builder: (BuildContext context, GoRouterState state) {
           return SubScaffold(
-            child: Center(
-              child: Text('DETAIL PAGE FOR HIKE: ${state.params['hikeID']}'),
+            child: HikeDetail(
+              client: client,
+              hikeID: int.tryParse(state.params['hikeID'] ?? '0') ?? 0,
+              user: currentUser,
             ),
           );
         },

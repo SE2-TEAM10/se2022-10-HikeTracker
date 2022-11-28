@@ -34,5 +34,5 @@ services:
     image: "se2team10/se2hiketracker:fe"
     network_mode: "bridge"
     ports:
-      - "0.0.0.0:8080:80/tcp"
+      - "0.0.0.0:8000:80/tcp"
     tty: true

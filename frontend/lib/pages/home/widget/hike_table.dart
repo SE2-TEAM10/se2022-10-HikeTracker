@@ -1,3 +1,4 @@
+import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/home/models/filter.dart';
 import 'package:HikeTracker/pages/home/widget/hike_card.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -11,11 +12,13 @@ class HikesTable extends StatefulWidget {
   const HikesTable({
     required this.client,
     required this.filter,
+    this.user,
     super.key,
   });
 
   final Filter filter;
   final RestClient client;
+  final User? user;
 
   @override
   State<StatefulWidget> createState() => _HikesTableState();
