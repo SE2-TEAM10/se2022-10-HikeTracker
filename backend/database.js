@@ -421,7 +421,7 @@ class Database {
           typeof user.surname !== 'string' ||
           typeof user.mail !== 'string' ||
           typeof user.role !== 'string' ||
-          typeof user.verified !== 'number'
+          typeof user.password !== 'string'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
@@ -550,7 +550,7 @@ class Database {
 
   login = (username, password) => {
     return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM user WHERE mail = ? AND verified = 1";
+      const sql = "SELECT * FROM user WHERE mail = ?";
       this.db.get(sql, [username], (err, row) => {
         if (err) {
           resolve(false);
@@ -562,6 +562,7 @@ class Database {
             username: row.mail,
             name: row.name,
             role: row.role,
+            verified: row.verified,
           };
 
           crypto.scrypt(password, row.salt, 32, function (err, hashedPassword) {

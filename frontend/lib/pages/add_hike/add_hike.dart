@@ -1,8 +1,10 @@
-import 'package:HikeTracker/pages/add_hike/models/location_controller.dart';
+import 'package:HikeTracker/common/message.dart';
+import 'package:HikeTracker/pages/add_hike/models/new_hike.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/pages/add_hike/widget/map_banner.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gpx/gpx.dart';
 import 'package:layout/layout.dart';
 
@@ -40,22 +42,10 @@ class _AddHikeState extends State<AddHike> {
               ),
               AddHikeForm(
                 onSubmit: (
-                  name,
-                  length,
-                  expected_time,
-                  difficulty,
-                  description,
-                  start,
-                  end,
+                  newHike,
                 ) =>
                     onSubmit(
-                  name: name,
-                  length: length,
-                  expected_time: expected_time,
-                  difficulty: difficulty,
-                  description: description,
-                  start: start,
-                  end: end,
+                  newHike: newHike,
                 ),
                 isSmall: context.breakpoint <= LayoutBreakpoint.xs,
               ),
@@ -64,42 +54,40 @@ class _AddHikeState extends State<AddHike> {
   }
 
   Future<void> onSubmit({
-    required String name,
-    required String length,
-    required String expected_time,
-    required String difficulty,
-    required String description,
-    required Location start,
-    required Location end,
+    required NewHike newHike,
   }) async {
+    if (gpxContent == null) {
+      Message(
+        context: context,
+        message: 'Select a GPX file.',
+      ).show();
+      return;
+    }
+    newHike = newHike.copyWith(gpx: gpxContent);
+
     final res = await widget.client.post(
       api: 'hike',
-      body: {
-        'hike': {
-          'name': name,
-          'length': length,
-          'expected_time': expected_time,
-          'difficulty': difficulty,
-          'description': description,
-        },
-        'startp': {
-          'location_name': start.name?.text,
-          'city': start.city?.text,
-          'province': start.province?.text,
-        },
-        'endp': {
-          'location_name': end.name?.text,
-          'city': end.city?.text,
-          'province': end.province?.text,
-        },
-        'gpx': gpxContent,
-      },
+      body: newHike.toMap(),
     );
 
-    if (res.body == '"Incorrect"') {
-      // TODO
+    if (res.statusCode == 201) {
+      Message(
+        context: context,
+        message: 'Hike added successfully.',
+      ).show();
+      GoRouter.of(context).pop();
+    } else if (res.statusCode == 422) {
+      Message(
+        context: context,
+        message: 'Gpx file error.',
+        messageType: MessageType.Error,
+      ).show();
     } else {
-      // pop
+      Message(
+        context: context,
+        message: 'Internal error.',
+        messageType: MessageType.Error,
+      ).show();
     }
   }
 }

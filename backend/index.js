@@ -1,10 +1,10 @@
 "use strict";
 
 const dayjs = require("dayjs");
-require('dotenv').config();
-const nodemailer = require('nodemailer');
+require("dotenv").config();
+const nodemailer = require("nodemailer");
 const express = require("express");
-const path = require('path');
+const path = require("path");
 const morgan = require("morgan"); // logging middleware
 const cors = require("cors");
 const Database = require("./database.js");
@@ -13,7 +13,7 @@ const passport = require("passport"); // auth middleware
 const LocalStrategy = require("passport-local").Strategy; // username and password for login
 const session = require("express-session"); // enable sessions
 const { check, validationResult, body, param } = require("express-validator"); // validation middleware */
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 
 // set up the "username and password" login strategy
@@ -22,6 +22,7 @@ passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
     const user = await db.login(username, password);
     if (!user) return cb(null, false, "Incorrect username or password.");
+    if (user.verified == 0) return cb(null, false, "User is not verified.");
 
     return cb(null, user);
   })
@@ -53,18 +54,17 @@ const app = express();
 const port = 3001;
 
 // fixing "413 Request Entity Too Large" errors
-app.use(bodyParser.json({ limit: '500mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' }));
+app.use(bodyParser.json({ limit: "500mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "500mb" }));
 
 // set-up the middlewares
 app.use(morgan("common"));
 app.use(express.json());
 const corsOptions = {
-  origin: 'http://localhost:8000',
+  origin: "http://localhost:8000",
   credentials: true,
 };
 app.use(cors(corsOptions));
-
 
 // custom middleware: check if a given request is coming from an authenticated user
 const isLoggedIn = (req, res, next) => {
@@ -117,7 +117,12 @@ app.delete("/api/sessions/current", (req, res) => {
 // check whether the manager is logged in or not
 app.get("/api/sessions/current", (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).json(req.user);
+    res.status(200).json({
+      ID: req.user.ID,
+      name: req.user.name,
+      username: req.user.mail,
+      role: req.user.role,
+    });
   } else res.status(401).json({ error: "Unauthenticated user!" });
 });
 
@@ -180,22 +185,22 @@ app.get("/api/sendEmail", async (req, res) => {
       pass: "wbqwfuybngqfmuqe",
     },
     tls: {
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false,
+    },
   });
 
   let mailOptions = {
-    from: 'Hike Tracker <hiketracker10@gmail.com>',
-    to: 'hiketracker10@gmail.com',
-    subject: 'Confirm Email',
-    text: 'Please,confirm your email to activate the hike tracker account! ',
+    from: "Hike Tracker <hiketracker10@gmail.com>",
+    to: "hiketracker10@gmail.com",
+    subject: "Confirm Email",
+    text: "Please,confirm your email to activate the hike tracker account! ",
   };
 
   transport.sendMail(mailOptions, (error, info) => {
     if (error) {
       return console.log(error);
     }
-    console.log('Message sent: %s', info.messageId);
+    console.log("Message sent: %s", info.messageId);
   });
 });
 
@@ -218,25 +223,35 @@ app.post(
         }*/
 
     try {
-      if (typeof req.body.gpx !== 'string') {
-        res.status(422).json(err);  //UNPROCESSABLE
+      if (typeof req.body.gpx !== "string") {
+        res.status(422).json(err); //UNPROCESSABLE
       }
 
       const gpx_len = req.body.gpx.length;
       console.log("gpx length: ", gpx_len);
       if (gpx_len === 0) {
-        res.status(422).json("Error: the gpx file is empty!");  //UNPROCESSABLE
+        res.status(422).json("Error: the gpx file is empty!"); //UNPROCESSABLE
       }
 
       const result1 = await db.addNewHike(req.body.hike, req.body.gpx);
       console.log("res1 - ", result1);
-      const result2 = await db.addNewLocation(req.body.startp, "startp", result1, req.body.gpx);
+      const result2 = await db.addNewLocation(
+        req.body.startp,
+        "startp",
+        result1,
+        req.body.gpx
+      );
       console.log("res2 - ", result2);
-      const result3 = await db.addNewLocation(req.body.endp, "endp", result1, req.body.gpx);
+      const result3 = await db.addNewLocation(
+        req.body.endp,
+        "endp",
+        result1,
+        req.body.gpx
+      );
       console.log("res3 - ", result3);
       const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
       console.log("res4 - ", result4);
-      const result5 = await db.linkHikeUser(req.user.ID, result1);
+      const result5 = await db.linkHikeUser(result1, req.user.ID );
       console.log("res5 - ", result5);
 
       //console.log(result1);
@@ -247,7 +262,6 @@ app.post(
     }
   }
 );
-
 
 app.post(
   "/api/gpx",
@@ -278,37 +292,33 @@ app.post(
   }
 );
 
-app.post(
-  "/api/addUser",
-  async (req, res) => {
+app.post("/api/addUser", async (req, res) => {
+  //var url = "http://localhost:3000/verify?username=" + token_mail_verification;
 
-    //var url = "http://localhost:3000/verify?username=" + token_mail_verification;
+  try {
+    const result1 = await db.addUser(req.body);
 
-    try {
-      const result1 = await db.addUser(req.body.user);
+    console.log("RESULT", result1);
+    const token_mail_verification = jwt.sign({ id: result1 }, "ourSecretKey", {
+      expiresIn: "1d",
+    });
 
-      console.log("RESULT", result1);
-      const token_mail_verification = jwt.sign({ id: result1 }, 'ourSecretKey', { expiresIn: '1d' });
-
-
-      const message = `http://localhost:3001/api/user/verify/${token_mail_verification}`;
-      //to insert: req.body.user.mail
-      await sendEmail(req.body.user.mail, "Verify Email", message);
-      res.status(201).json(result1);
-
-    } catch (err) {
-      console.error(err);
-      res.status(503).json(err);
-    }
+    const message = `http://localhost:3001/api/user/verify/${token_mail_verification}`;
+    //to insert: req.body.user.mail
+    await sendEmail(req.body.mail, "Verify Email", message);
+    res.status(201).json(result1);
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
   }
-);
+});
 
 //api per la verifica
-app.get('/api/user/verify/:token', (req, res) => {
+app.get("/api/user/verify/:token", (req, res) => {
   const { token } = req.params;
 
   // Verifing the JWT token
-  jwt.verify(token, 'ourSecretKey', async function (err, decoded) {
+  jwt.verify(token, "ourSecretKey", async function (err, decoded) {
     console.log("Decoded", decoded);
     try {
       const userToAdd = await db.getUserByID(decoded.id);
@@ -318,11 +328,10 @@ app.get('/api/user/verify/:token', (req, res) => {
       if (err || verifyToCheck === 1) {
         /* user already registered */
         console.log(err);
-        res.sendFile(path.join(__dirname + '/indexNotVerified.html'));
-      }
-      else if (verifyToCheck === 0) {
-        const result = await db.setVerified(decoded.id)
-        res.sendFile(path.join(__dirname + '/indexVerified.html'));
+        res.sendFile(path.join(__dirname + "/indexNotVerified.html"));
+      } else if (verifyToCheck === 0) {
+        const result = await db.setVerified(decoded.id);
+        res.sendFile(path.join(__dirname + "/indexVerified.html"));
       }
     } catch (error) {
       console.error(error);
@@ -331,25 +340,19 @@ app.get('/api/user/verify/:token', (req, res) => {
   });
 });
 
-
-
 //set a boolean value (verified) to 1
-app.put(
-  '/api/:id/setVerified',
-  async (req, res) => {
-    try {
-      const result1 = await db.setVerified(req.params.id);
+app.put("/api/:id/setVerified", async (req, res) => {
+  try {
+    const result1 = await db.setVerified(req.params.id);
 
-      res.status(201).json(result1);
-    } catch (err) {
-      console.error(err);
-      res.status(503).json(err);
-    }
+    res.status(201).json(result1);
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
   }
-);
+});
 
 const sendEmail = async (email, subject, text) => {
-
   let transport = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -359,26 +362,26 @@ const sendEmail = async (email, subject, text) => {
       pass: "wbqwfuybngqfmuqe",
     },
     tls: {
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false,
+    },
   });
 
   let mailOptions = {
-    from: 'Hike Tracker <hiketracker10@gmail.com>',
+    from: "Hike Tracker <hiketracker10@gmail.com>",
     to: email,
     subject: subject,
-    html: '<h2 style="color:#59ac11;">Hello, Welcome to Hike Tracker!</h2></br><h4>Please confirm your email address by clicking the link below :</h4>' + text
+    html:
+      '<h2 style="color:#59ac11;">Hello, Welcome to Hike Tracker!</h2></br><h4>Please confirm your email address by clicking the link below :</h4>' +
+      text,
   };
 
   transport.sendMail(mailOptions, (error, info) => {
     if (error) {
       return console.log(error);
     }
-    console.log('Message sent: %s', info.messageId);
+    console.log("Message sent: %s", info.messageId);
   });
 };
-
-
 
 // Activate the server
 app.listen(port, () => {
