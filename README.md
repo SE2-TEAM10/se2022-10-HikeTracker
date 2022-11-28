@@ -107,18 +107,39 @@ This command binds the port 5000 configured in the container to the TCP port 808
 
 ## API Server <a name="api">
 
-* GET <a name="get">
+ GET <a name="get">
+
+- ```/api/sessions/current```
+
+- ```/api/hike```
+
+- ```/api/hikesdetails/:hike_ID```
+
+- ```/api/sendEmail```
+
+- ```/api/user/verify/:token```
 
 
-* POST <a name="post">
+
+POST <a name="post">
+
+- ```/api/sessions```
+
+- ```/api/hike```
+
+- ```/api/gpx```
+
+- ```/api/addUser```
 
 
-* PUT <a name="put">
+PUT <a name="put">
+
+- ```/api/id/:setVerified```
 
 
-* DELETE <a name="delete">
+DELETE <a name="delete">
 
-
+- ```/api/sessions/current```
 
 
 ## Database tables <a name="database">
