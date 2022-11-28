@@ -31,12 +31,12 @@ describe.only('hikeController Tests', () => {
                 //end_time : "30:00"
             };
 
-            await hikeController.deleteLocationByHikeID(26);
+            /* await hikeController.deleteLocationByHikeID(26);
             await hikeController.deleteLinkHikeUser(26, 111);
             await hikeController.deleteGpxByHikeID(26);
             await hikeController.deleteHikeByID(26);
             const result = await hikeController.getHikeWithFilters(filters);
-            assert.equal(result.length, 25);
+            assert.equal(result.length, 25); */
         })
     })
 
