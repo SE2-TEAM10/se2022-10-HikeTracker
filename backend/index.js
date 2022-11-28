@@ -181,8 +181,8 @@ app.get("/api/sendEmail", async (req, res) => {
     port: 465,
     secure: true,
     auth: {
-      user: "hiketracker10@gmail.com",
-      pass: "wbqwfuybngqfmuqe",
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
     },
     tls: {
       rejectUnauthorized: false,
@@ -358,8 +358,8 @@ const sendEmail = async (email, subject, text) => {
     port: 465,
     secure: true,
     auth: {
-      user: "hiketracker10@gmail.com",
-      pass: "wbqwfuybngqfmuqe",
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
     },
     tls: {
       rejectUnauthorized: false,
@@ -367,7 +367,7 @@ const sendEmail = async (email, subject, text) => {
   });
 
   let mailOptions = {
-    from: "Hike Tracker <hiketracker10@gmail.com>",
+    from: "Hike Tracker <"+process.env.EMAIL+">",
     to: email,
     subject: subject,
     html:
