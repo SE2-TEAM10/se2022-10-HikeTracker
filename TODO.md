@@ -36,7 +36,7 @@
 ### BACK-END
 > **NEW POST**
 > - NEW TABLE *parking_lot* (ID, name, latitude, longitude, user_ID)
-> - POST on parking_lot
+> - POST on *parking_lot*
 > 
 > - unit tests
 >
@@ -65,14 +65,17 @@
 > > - *a guide can change only her own hikes*
 > - *When I add the hike, the gpx data give me simple coordinates as start and end points. And we save them in the db as simple coordinates, as you told us in the past answers. The work we need to do in story 8 is to display the parking lots/huts ALREADY PRESENT IN THE SYSTEM near the coordinates of the starting point/end point and give the local guide the ability to consider these parking lots/huts and their coordinates as starting/ending points? If yes, could you quantify "near"? Would 1 km from the location indicated by the gpx as starting/ending point be ok?*
 > > - *yes, insted of near I would say nearest, that is in a radius of max 5 km*
-### BACK-END
-> - GET user_ID from user that is logged in
+### BACK-END - TO CHECK
+> - NEW TABLE: hut_start_end (hut_ID, link_type, hike_ID, user_ID)
+> - NEW TABLE: parking_start_end (parking_ID, link_type, hike_ID, user_ID)
+> - GET user_ID from *user* that is logged in
 > - GET hike_ID of the hike that they want to link to the reference point
-> - GET startp and endp from location (with the hike_ID)
+> - GET startp and endp from *location* (with the hike_ID)
 > - analyze each parameter: start_lat, start_lon, end_lat, end_lon
-> - do the radius analysis, through the formula of distance between two points: the points in question are lat (x1) and lon (y1) of the location and lat (x2) and lon (y2) of the reference point
+> - do the radius analysis, through the formula of **distance between two points**: the points in question are lat (x1) and lon (y1) of the location and lat (x2) and lon (y2) of the reference point
 > - save the data (name, type, lat, lon) of the point and the current distance as min_dist
 > - if there is a point for which the distance is less, overwrite the data
+> - POST on hut_start_end/parking_start_end
 ### FRONT-END
 >
 > -
@@ -94,7 +97,7 @@
 > - *Does this mean that hikes, huts, and parking lots can only be modified by the local guide that created them? Or just the hikes?*
 > > - *Guides can change what they created.*
 ### BACK-END
-> 
+> - check if we must use again the distance between two points function
 > - NEW TABLE: *hike_hut_user* (hike_ID, hut_ID, user_ID)
 > - POST on hike_hut_user
 > > - check if the current user is the same of the hut_hike entry - if not, reject the action
@@ -136,9 +139,9 @@
 > -
 > > -
 ### BACK-END
-> - NEW TABLE: hiker_data(name, surname, min_ascent, max_ascent, min_length, max_length, min_time, max_time, pref_diff, user_ID) - prim key (name, user_ID)
+> - NEW TABLE: *hiker*(name, surname, min_ascent, max_ascent, min_length, max_length, min_time, max_time, pref_diff, user_ID) - prim key (name, user_ID)
 > - *ASK FOR CLARIFICATION: ask which are the parameters in detail*
-> - GET of hikes based on preferences given from the form
+> - POST on hiker table to add preferred data (as fields to be filled)
 > -
 ### FRONT-END
 > - Form for insertion of preferences
@@ -155,8 +158,8 @@
 > -
 > > -
 ### BACK-END
-> - get from hiker_data, with restrictions of the ID (getHikerDataFromUserID)
-> -
+> - GET from *hiker*, with restrictions of the ID (getHikerDataFromUserID)
+> - GET from *hikes*, with filter based on hiker preferences
 ### FRONT-END
 >
 > -
@@ -172,12 +175,11 @@
 > -
 > > -
 ### BACK-END
-> - add table "local_guide" (ID, authorized, ..., user_ID)
+> - local guide does the registration with the mail verification part, then he receives a string "please wait: your request has been sent to the platform manager"
 > - add a "platform manager" user, that receives the requests from the new local guides
 > > - he can approve or reject the requests from the local guides
 > > - if he rejects, the entry has to be deleted from the database
-> - add a new column on user table: "authorized" (boolean) - it has to be set to 0 for the local guides, while it is 1 for everyone else
-> > - *CHECK IF WE NEED TO DO IT*
+> - add a new column on user table: "authorized" (boolean) - it has to be set to 0 for the local guides and hut workers, while it is 1 for everyone else
 > -
 ### FRONT-END
 >
@@ -195,8 +197,8 @@
 > > -
 ### BACK-END
 > - retrieve the getAuthorized string
-> > - if "accept", update "authorized" value on the user/local_guide table (with the ID) to 1
-> > - if "decline", delete the entry on user/local_guide table
+> > - if "accept", update "authorized" value on the user table (with the ID) to 1
+> > - if "decline", delete the entry on user table
 ### FRONT-END
 >
 > -
