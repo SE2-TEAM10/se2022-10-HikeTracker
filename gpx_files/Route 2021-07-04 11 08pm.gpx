@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><gpx xmlns="http://www.topografix.com/GPX/1/1" creator="Maps 3D" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"><trk>
+<extensions>
+<Maps3D:TrackExtensions xmlns:Maps3D="http://www.movingworld.de/xmlschemas/GpxExtensions/v1">
+<Maps3D:RouteServer>1</Maps3D:RouteServer>
+<Maps3D:RouteType>5</Maps3D:RouteType>
+<Maps3D:RoutingPoints>7.173057,44.869144,7.173020,44.869236,7.172847,44.869003,7.171103,44.869411,7.169436,44.869904,7.170786,44.868629,7.169655,44.868607,7.169172,44.868336,7.168876,44.865406,7.168195,44.865292,7.167316,44.866615,7.166357,44.867039,7.165750,44.866867,7.164675,44.866615,7.164996,44.866081,7.164088,44.865597,7.164146,44.864780,7.163720,44.864143,7.163257,44.863598,</Maps3D:RoutingPoints>
+</Maps3D:TrackExtensions>
+</extensions>
+<trkseg><trkpt lat="44.869144" lon="7.173057">
+   <ele>1022.217224</ele>
+</trkpt>
+<trkpt lat="44.869236" lon="7.173020">
+   <ele>1025.460449</ele>
+</trkpt>
+<trkpt lat="44.869003" lon="7.172847">
+   <ele>1024.628784</ele>
+</trkpt>
+<trkpt lat="44.869285" lon="7.171643">
+   <ele>1050.529541</ele>
+</trkpt>
+<trkpt lat="44.869411" lon="7.171103">
+   <ele>1059.563599</ele>
+</trkpt>
+<trkpt lat="44.869757" lon="7.169933">
+   <ele>1065.592651</ele>
+</trkpt>
+<trkpt lat="44.869904" lon="7.169436">
+   <ele>1066.868164</ele>
+</trkpt>
+<trkpt lat="44.869185" lon="7.170197">
+   <ele>1086.475952</ele>
+</trkpt>
+<trkpt lat="44.868629" lon="7.170786">
+   <ele>1096.515869</ele>
+</trkpt>
+<trkpt lat="44.868607" lon="7.169655">
+   <ele>1128.397339</ele>
+</trkpt>
+<trkpt lat="44.868336" lon="7.169172">
+   <ele>1154.738281</ele>
+</trkpt>
+<trkpt lat="44.867439" lon="7.169081">
+   <ele>1192.804321</ele>
+</trkpt>
+<trkpt lat="44.866543" lon="7.168991">
+   <ele>1222.447510</ele>
+</trkpt>
+<trkpt lat="44.865647" lon="7.168900">
+   <ele>1241.947388</ele>
+</trkpt>
+<trkpt lat="44.865406" lon="7.168876">
+   <ele>1242.531494</ele>
+</trkpt>
+<trkpt lat="44.865292" lon="7.168195">
+   <ele>1271.928467</ele>
+</trkpt>
+<trkpt lat="44.866105" lon="7.167655">
+   <ele>1283.002319</ele>
+</trkpt>
+<trkpt lat="44.866615" lon="7.167316">
+   <ele>1284.249756</ele>
+</trkpt>
+<trkpt lat="44.867039" lon="7.166357">
+   <ele>1296.352051</ele>
+</trkpt>
+<trkpt lat="44.866867" lon="7.165750">
+   <ele>1316.980591</ele>
+</trkpt>
+<trkpt lat="44.866615" lon="7.164675">
+   <ele>1346.885254</ele>
+</trkpt>
+<trkpt lat="44.866081" lon="7.164996">
+   <ele>1370.518066</ele>
+</trkpt>
+<trkpt lat="44.865597" lon="7.164088">
+   <ele>1389.692871</ele>
+</trkpt>
+<trkpt lat="44.864780" lon="7.164146">
+   <ele>1417.241699</ele>
+</trkpt>
+<trkpt lat="44.864143" lon="7.163720">
+   <ele>1438.074097</ele>
+</trkpt>
+</trkseg></trk></gpx>
