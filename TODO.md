@@ -14,7 +14,7 @@
 >
 ### BACK-END - to check
 > **NEW TABLE** and **NEW POST**
-> - NEW TABLE: *hut* (ID, name, opening_time, closing_time, bed_num, latitude, longitude)
+> - NEW TABLE: *hut* (ID, name, opening_time, closing_time, bed_num, latitude, longitude, city, province)
 > - dataset to be taken from: https://www.dati.piemonte.it/#/catalogodetail/regpie_ckan_ckan2_yucca_sdp_smartdatanet.it_RifugiOpenDa_2296
 > - POST on hut
 > - unit tests
