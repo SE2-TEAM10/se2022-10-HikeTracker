@@ -6,6 +6,7 @@
 > - BE - change *reference_point* table: 
 > > - remove parking and huts, to add them into specific tables
 > > - update coordinates of the points: they have to be taken from the GPX file
+> > - add user_ID, to check who added which point
 
 ----
 
@@ -15,12 +16,12 @@
 > - *About story HT-5 and HT-15, can a hut worker “access” huts that were inserted by a local guide in HT-5? In other words, can a hut worker insert extra info for a hut by clicking a modify button on a hut that was inserted by a local guide?*
 > > - *Yes, after a hut worker has been validate as actually working at a given hut she can add/modify information about that hut*
 >
-### BACK-END - to check
+### BACK-END
 > **NEW TABLE** and **NEW POST**
-> - NEW TABLE: *hut* (ID, name, opening_time, closing_time, bed_num, latitude, longitude, altitude, city, province)
+> - NEW TABLE: *hut* (ID, name, opening_time, closing_time, bed_num, latitude, longitude, altitude, city, province, user_ID) - it also links the user that has added it
 > - dataset to be taken from: https://www.dati.piemonte.it/#/catalogodetail/regpie_ckan_ckan2_yucca_sdp_smartdatanet.it_RifugiOpenDa_2296
-> - POST on hut
-> - NEW TABLE: hut_user (hut_ID, user_ID) - this table links the hut to the user that has added it
+> - POST on hut 
+> > - check if the user that tries to add the hut is a local guide or a hut worker - otherwise reject the action
 > - unit tests
 >
 ### FRONT-END
@@ -34,7 +35,7 @@
 > -
 ### BACK-END
 > **NEW POST**
-> - NEW TABLE parking_lot (ID, name, latitude, longitude)
+> - NEW TABLE *parking_lot* (ID, name, latitude, longitude, user_ID)
 > - POST on parking_lot
 > 
 > - unit tests
@@ -49,7 +50,7 @@
 ### FROM THE FAQ:
 > -
 ### BACK-END
-> - GET with parameters: geographical area, altitude and other things
+> - GET with parameters: city, province, altitude, opening time, closing time - other things
 > -
 ### FRONT-END
 >
@@ -94,7 +95,9 @@
 > > - *Guides can change what they created.*
 ### BACK-END
 > 
-> - NEW TABLE: *hike_hut* (hike_ID, hut_ID)
+> - NEW TABLE: *hike_hut_user* (hike_ID, hut_ID, user_ID)
+> - POST on hike_hut_user
+> > - check if the current user is the same of the hut_hike entry - if not, reject the action
 ### FRONT-END
 >
 > -
@@ -114,10 +117,12 @@
 > > - *A reference point is a point belonging to the trace of hike that is selected and becomes a reference point with a label (e.g. water fountain, half way, bridge, huge rock, etc.)*
 >
 ### BACK-END
-> 
+> - GET from FE of name, type and coordinates of reference point
+> - POST on reference_point table
 > -
 ### FRONT-END
->
+> - restrict user to click a point only on the track
+> - form for adding reference point: name (to be entered), type (selected from a dropdown menu), coordinates (clicked by the user)
 > -
 
 -----
@@ -131,7 +136,7 @@
 > -
 > > -
 ### BACK-END
-> - NEW TABLE: hiker_data(hiker_ID, min_ascent, max_ascent, min_length, max_length, min_time, max_time, pref_diff, user_ID)
+> - NEW TABLE: hiker_data(name, surname, min_ascent, max_ascent, min_length, max_length, min_time, max_time, pref_diff, user_ID) - prim key (name, user_ID)
 > - *ASK FOR CLARIFICATION: ask which are the parameters in detail*
 > - GET of hikes based on preferences given from the form
 > -
