@@ -35,7 +35,8 @@
 ### BACK-END
 > **NEW POST**
 > - NEW TABLE parking_lot (ID, name, latitude, longitude)
-> - POST on hike_ref?
+> - POST on parking_lot
+> 
 > - unit tests
 >
 ### FRONT-END
