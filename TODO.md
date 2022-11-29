@@ -3,6 +3,9 @@
 ## FIX ERRORS
 > - FE - Put password verification (at least 8 characters, etc)
 > - BE & FE - Put more explicit errors
+> - BE - change *reference_point* table: 
+> > - remove parking and huts, to add them into specific tables
+> > - update coordinates of the points: they have to be taken from the GPX file
 
 ----
 
@@ -14,9 +17,10 @@
 >
 ### BACK-END - to check
 > **NEW TABLE** and **NEW POST**
-> - NEW TABLE: *hut* (ID, name, opening_time, closing_time, bed_num, latitude, longitude, city, province)
+> - NEW TABLE: *hut* (ID, name, opening_time, closing_time, bed_num, latitude, longitude, altitude, city, province)
 > - dataset to be taken from: https://www.dati.piemonte.it/#/catalogodetail/regpie_ckan_ckan2_yucca_sdp_smartdatanet.it_RifugiOpenDa_2296
 > - POST on hut
+> - NEW TABLE: hut_user (hut_ID, user_ID) - this table links the hut to the user that has added it
 > - unit tests
 >
 ### FRONT-END
@@ -30,8 +34,8 @@
 > -
 ### BACK-END
 > **NEW POST**
-> - POST on reference_points
-> - POST on hike_ref
+> - NEW TABLE parking_lot (ID, name, latitude, longitude)
+> - POST on hike_ref?
 > - unit tests
 >
 ### FRONT-END
@@ -57,11 +61,16 @@
 ### FROM THE FAQ:
 > - *For stories 8/9/33 can the localguide work with all the hikes or only with those entered by her?*
 > > - *a guide can change only her own hikes*
-> - *When I add the hike, the gpx data give me simple coordinates as start and end points.And we save them in the db as simple coordinates, as you told us in the past answers. The work we need to do in story 8 is to display the parking lots/huts ALREADY PRESENT IN THE SYSTEM near the coordinates of the starting point/end point and give the local guide the ability to consider these parking lots/huts and their coordinates as starting/ending points? If yes, could you quantify "near"? Would 1 km from the location indicated by the gpx as starting/ending point be ok?*
+> - *When I add the hike, the gpx data give me simple coordinates as start and end points. And we save them in the db as simple coordinates, as you told us in the past answers. The work we need to do in story 8 is to display the parking lots/huts ALREADY PRESENT IN THE SYSTEM near the coordinates of the starting point/end point and give the local guide the ability to consider these parking lots/huts and their coordinates as starting/ending points? If yes, could you quantify "near"? Would 1 km from the location indicated by the gpx as starting/ending point be ok?*
 > > - *yes, insted of near I would say nearest, that is in a radius of max 5 km*
 ### BACK-END
-> 
-> -
+> - GET user_ID from user that is logged in
+> - GET hike_ID of the hike that they want to link to the reference point
+> - GET startp and endp from location (with the hike_ID)
+> - analyze each parameter: start_lat, start_lon, end_lat, end_lon
+> - do the radius analysis, through the formula of distance between two points: the points in question are lat (x1) and lon (y1) of the location and lat (x2) and lon (y2) of the reference point
+> - save the data (name, type, lat, lon) of the point and the current distance as min_dist
+> - if there is a point for which the distance is less, overwrite the data
 ### FRONT-END
 >
 > -
