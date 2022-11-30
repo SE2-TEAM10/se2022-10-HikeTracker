@@ -43,7 +43,7 @@ class _HikesTableState extends State<HikesTable> {
           return GridView.builder(
             padding: context.breakpoint < LayoutBreakpoint.md
                 ? const EdgeInsets.symmetric(
-                    vertical: 80.0,
+                    vertical: 16.0,
                     horizontal: 16.0,
                   )
                 : const EdgeInsets.symmetric(
