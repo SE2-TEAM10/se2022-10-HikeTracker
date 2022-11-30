@@ -4,6 +4,7 @@ import 'package:HikeTracker/pages/home/models/filter.dart';
 import 'package:HikeTracker/pages/home/models/hike.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
+import 'package:layout/layout.dart';
 
 class FilterTab extends StatefulWidget {
   const FilterTab({
@@ -39,6 +40,13 @@ class _FilterTab extends State<FilterTab> {
         api: 'hike',
       ),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Expanded(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
         if (snapshot.hasData) {
           final hikes = Hikes.fromJson(snapshot.data!.body).results;
           final minAsc =
@@ -297,6 +305,9 @@ class _FilterTab extends State<FilterTab> {
                             ),
                           ),
                           onPressed: () => setState(() {
+                            if (context.breakpoint <= LayoutBreakpoint.sm) {
+                              Navigator.of(context).pop();
+                            }
                             filter = Filter();
                             widget.filterHikes(filter);
                           }),
@@ -308,7 +319,12 @@ class _FilterTab extends State<FilterTab> {
                             fontSize: 20.0,
                           ),
                         ),
-                        onPressed: () => widget.filterHikes(filter),
+                        onPressed: () {
+                          if (context.breakpoint <= LayoutBreakpoint.sm) {
+                            Navigator.of(context).pop();
+                          }
+                          widget.filterHikes(filter);
+                        },
                       ),
                     ],
                   ),
@@ -316,17 +332,15 @@ class _FilterTab extends State<FilterTab> {
               ),
             ),
           );
-        } else if (snapshot.hasError) {
+        }
+        if (snapshot.hasError) {
           return Center(
             child: Text(
               snapshot.error.toString(),
             ),
           );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
         }
+        return Container();
       },
     );
   }

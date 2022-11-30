@@ -10,11 +10,13 @@ class MapBanner extends StatefulWidget {
   const MapBanner({
     required this.gpx,
     required this.onGpxLoaded,
+    this.dense = false,
     super.key,
   });
 
   final Gpx? gpx;
   final Function(Gpx?, String?) onGpxLoaded;
+  final bool dense;
 
   @override
   State<MapBanner> createState() => _MapBannerState();
@@ -28,13 +30,22 @@ class _MapBannerState extends State<MapBanner> {
     return Expanded(
       flex: 2,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: widget.dense ? EdgeInsets.zero : const EdgeInsets.all(16.0),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
-            borderRadius: const BorderRadius.all(
+            image: DecorationImage(
+              image: const AssetImage('assets/images/contour.png'),
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onPrimary,
+                BlendMode.srcATop,
+              ),
+              opacity: 0.3,
+              fit: BoxFit.cover,
+            ),
+            borderRadius: BorderRadius.all(
               Radius.circular(
-                16.0,
+                widget.dense ? 0 : 16.0,
               ),
             ),
           ),

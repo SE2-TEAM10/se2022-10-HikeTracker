@@ -1,5 +1,6 @@
 import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/common/message.dart';
+import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/pages/add_hike/models/new_hike.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -31,25 +32,24 @@ class _AddHikeState extends State<AddHike> {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : Row(
-            children: [
-              MapBanner(
-                gpx: gpx,
-                onGpxLoaded: (val, text) => setState(() {
-                  gpx = val;
-                  gpxContent = text;
-                }),
+        : TwoColumnsLayout(
+            leftChild: MapBanner(
+              gpx: gpx,
+              onGpxLoaded: (val, text) => setState(() {
+                gpx = val;
+                gpxContent = text;
+              }),
+              dense: context.breakpoint < LayoutBreakpoint.md,
+            ),
+            rightChild: AddHikeForm(
+              onSubmit: (
+                newHike,
+              ) =>
+                  onSubmit(
+                newHike: newHike,
               ),
-              AddHikeForm(
-                onSubmit: (
-                  newHike,
-                ) =>
-                    onSubmit(
-                  newHike: newHike,
-                ),
-                isSmall: context.breakpoint <= LayoutBreakpoint.xs,
-              ),
-            ],
+              isSmall: context.breakpoint <= LayoutBreakpoint.xs,
+            ),
           );
   }
 

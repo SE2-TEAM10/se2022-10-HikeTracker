@@ -155,8 +155,8 @@ class Location {
 
     return Location(
       name: res['name'],
-      latitude: res['latitude'],
-      longitude: res['longitude'],
+      latitude: (res['latitude'] as num).toDouble(),
+      longitude: (res['longitude'] as num).toDouble(),
       city: res['city'],
       province: res['province'],
     );

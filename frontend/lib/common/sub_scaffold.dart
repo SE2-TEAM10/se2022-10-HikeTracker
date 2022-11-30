@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:layout/layout.dart';
 
 class SubScaffold extends StatelessWidget {
   const SubScaffold({
@@ -15,6 +16,7 @@ class SubScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
             final r = GoRouter.of(context);
@@ -26,6 +28,7 @@ class SubScaffold extends StatelessWidget {
           ),
         ),
       ),
+      extendBodyBehindAppBar: context.breakpoint < LayoutBreakpoint.md,
       body: child,
     );
   }
