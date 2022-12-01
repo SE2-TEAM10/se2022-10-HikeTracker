@@ -33,12 +33,17 @@ class _HikesTableState extends State<HikesTable> {
         filter: widget.filter,
       ),
       builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         if (snapshot.hasData) {
           final hikes = Hikes.fromJson(snapshot.data!.body);
           return GridView.builder(
             padding: context.breakpoint < LayoutBreakpoint.md
                 ? const EdgeInsets.symmetric(
-                    vertical: 80.0,
+                    vertical: 16.0,
                     horizontal: 16.0,
                   )
                 : const EdgeInsets.symmetric(
@@ -64,17 +69,15 @@ class _HikesTableState extends State<HikesTable> {
               },
             ),
           );
-        } else if (snapshot.hasError) {
+        }
+        if (snapshot.hasError) {
           return Center(
             child: Text(
               snapshot.error.toString(),
             ),
           );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
         }
+        return Container();
       },
     );
   }

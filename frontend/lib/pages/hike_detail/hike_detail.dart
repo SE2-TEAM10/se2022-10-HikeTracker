@@ -30,6 +30,11 @@ class _HikeDetailState extends State<HikeDetail> {
         api: 'hikesdetails/${widget.hikeID}',
       ),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         if (snapshot.hasError) {
           return Center(
             child: Text(
@@ -56,9 +61,7 @@ class _HikeDetailState extends State<HikeDetail> {
             ],
           );
         }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return Container();
       },
     );
   }

@@ -17,10 +17,10 @@ class NavigationBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final routes = RouteUtils.getNavigationRoutes(currentUser);
 
-    return BottomNavigationBar(
-      items: routes
+    return NavigationBar(
+      destinations: routes
           .map(
-            (e) => BottomNavigationBarItem(
+            (e) => NavigationDestination(
               icon: Icon(
                 e.icon,
               ),
@@ -28,10 +28,10 @@ class NavigationBottomBar extends StatelessWidget {
             ),
           )
           .toList(),
-      onTap: (value) => currentPath != routes[value].path
+      onDestinationSelected: (value) => currentPath != routes[value].path
           ? GoRouter.of(context).push(routes[value].path)
           : null,
-      currentIndex: routes.firstWhere((r) => r.path == currentPath).index,
+      selectedIndex: routes.firstWhere((r) => r.path == currentPath).index,
     );
   }
 }

@@ -26,7 +26,7 @@
 
 > **NEW TABLE** and **NEW POST**
 >
-> - NEW TABLE: *hut* (ID, name, opening_time, closing_time, bed_num, latitude, longitude, altitude, city, province, user_ID) - it also links the user that has added it
+> - NEW TABLE: *hut* (ID, name, description, opening_time, closing_time, bed_num, latitude, longitude, altitude, city, province, phone, email, website, user_ID) - it also links the user that has added it
 > - dataset to be taken from: <https://www.dati.piemonte.it/#/catalogodetail/regpie_ckan_ckan2_yucca_sdp_smartdatanet.it_RifugiOpenDa_2296>
 > - POST on hut
 > >
@@ -46,16 +46,19 @@
 
 ### FROM THE FAQ
 >
-> -
+> - *Does a parking lot has to be related to a specific hike?*
+> > - *No parking lot s are created independently of hikes, then later they can be marked as start/end point for a hike*
+> - *What information is required for a parking lot?*
+> > - *At least: name, position, and capacity (in terms of cars)*
+> - *Do we need to provide information on province and region where the parking lot is located?*
+> > - *It is not mandatory; if you do, you must implement validation: input data must be consistent with the location of the parking lot (e.g., if a parking lot is placed in Abruzzo, the local guide cannot fill the “region” field with Veneto)*
 >
 >
 ### BACK-END
 
 > **NEW POST**
->
-> - NEW TABLE *parking_lot* (ID, name, latitude, longitude, user_ID)
+> - NEW TABLE *parking_lot* (ID, name, capacity, latitude, longitude, user_ID)
 > - POST on *parking_lot*
->
 > - unit tests
 >
 ### FRONT-END
@@ -70,15 +73,13 @@
 
 ### FROM THE FAQ
 >
-> -
->
->
+> - *search criteria for a hut?*
+> > - *The characteristics of the hut: see HT-5*
+> - *Do we need to provide information on province and region where the hut is located?*
+> > - *It is not mandatory; if you do, you must implement validation: input data must be consistent with the location of hut (e.g., if a hut is placed in Abruzzo, the local guide cannot fill the “region” field with Veneto)*
 ### BACK-END
->
-> - GET with parameters: city, province, altitude, opening time, closing time - other things
+> - GET with parameters: opening_time, closing_time, min_bed_num, max_bed_num, min_altitude, max_altitude, city, province
 > -
->
->
 ### FRONT-END
 >
 > -
@@ -90,17 +91,15 @@
 > ### *As a local guide I want to add parking lots and huts as start/arrivals points for hikes*
 
 ### FROM THE FAQ
->
 > - *For stories 8/9/33 can the localguide work with all the hikes or only with those entered by her?*
-> >
 > > - *a guide can change only her own hikes*
-> >
 > - *When I add the hike, the gpx data give me simple coordinates as start and end points. And we save them in the db as simple coordinates, as you told us in the past answers. The work we need to do in story 8 is to display the parking lots/huts ALREADY PRESENT IN THE SYSTEM near the coordinates of the starting point/end point and give the local guide the ability to consider these parking lots/huts and their coordinates as starting/ending points? If yes, could you quantify "near"? Would 1 km from the location indicated by the gpx as starting/ending point be ok?*
-> >
 > > - *yes, insted of near I would say nearest, that is in a radius of max 5 km*
-> >
+> - *When adding a hut/parking lot as start/end point should we extend the trace?*
+> > - *No, it is not required*
+> - *Do we need to provide a list of huts/parking lots near the start/end points?*
+> > - *I would say nearest, that is in a radius of max 5 km*
 ### BACK-END - TO CHECK
->
 > - NEW TABLE: hut_start_end (hut_ID, link_type, hike_ID, user_ID)
 > - NEW TABLE: parking_start_end (parking_ID, link_type, hike_ID, user_ID)
 > - GET user_ID from *user* that is logged in
@@ -123,23 +122,16 @@
 > ### *As a local guide I want to link a hut to a hike So that hikers can better plan their hike*
 
 ### FROM THE FAQ
->
 > - *Can you confirm to me that the work that needs to be done in story 9 is to enter as an hike reference point a hut that is in the vicinity of the hike? Again, if yes, could you quantify "in the vicinity"? Is 1km okay?*
-> >
 > > - *a hut liked to a hike is not necessarily a reference point, it could be just close to the hike but not on the hike. There is no distance threshold but typically is max 5 km from any point in the hike*
-
 > - *What does "link a hut to a hike" mean? Should the hike be a new reference point?*
-> >
 > > - *a hut is linked to a hike if it is close or somehow related to the hike, it may or may not be also a reference point.*
->
 > - *About story 9, can a local guide link huts that were not added by him?*
-> >
 > > - *No, every guide operates on information that he entered*
->
 > - *Does this mean that hikes, huts, and parking lots can only be modified by the local guide that created them? Or just the hikes?*
-> >
 > > - *Guides can change what they created.*
-> >
+> - *This means adding as hike reference point a hut that is in the vicinity of the hike?*
+> > - *a hut linked to a hike is not necessarily a reference point, it could be just close to the hike but not on the hike. There is no distance threshold but typically is max 5 km from any point in the hike*
 ### BACK-END
 >
 > - check if we must use again the distance between two points function
@@ -192,16 +184,8 @@
 > ### *As a hiker I want to record my performance parameters So that I can get personalised recommendations*
 
 ### FROM THE FAQ
->
-> -
-> >
-> > -
->
-> -
-> >
-> > -
-> >
-> >
+> - *do we have to implement manual insert (e.g. a form) or simulating sensors?*
+> > - *It is a form, performance are given through preferences (duration, altitude)*
 ### BACK-END
 >
 > - NEW TABLE: *hiker*(name, surname, min_ascent, max_ascent, min_length, max_length, min_time, max_time, pref_diff, user_ID) - prim key (name, user_ID)
@@ -359,16 +343,12 @@
 > ### *As a hut worker I want to update the condition of a hike linked to the hut So that prospective hikers are informed*
 
 ### FROM THE FAQ
->
-> -
-> >
-> > -
->
-> -
-> >
-> > -
-> >
-> >
+> - *I don't understand what "update the condition" means*
+> > - *if there is e.g. a mudslide on a trail near a (which the hut worker is able to see) she can update the condition of the hikes that go through that trail.*
+> > - *It is just an added warning*
+> > - *Hike condition can be: open / closed / partly blocked / requires special gear*
+> > - *A description about the cause/or providing details (if not open), e.g. a landslide, ice, etc.*
+
 ### BACK-END
 >
 > -
