@@ -5,3 +5,8 @@
 /frontend/.env
 /node_modules
 /.idea
+.DS_Store
+frontend/ios/Podfile
+frontend/ios/Podfile.lock
+frontend/ios/Runner.xcodeproj/project.pbxproj
+frontend/ios/Runner.xcworkspace/contents.xcworkspacedata
