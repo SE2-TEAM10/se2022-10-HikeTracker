@@ -15,6 +15,7 @@ const session = require("express-session"); // enable sessions
 const { check, validationResult, body, param } = require("express-validator"); // validation middleware */
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
+const {request} = require("express");
 
 // set up the "username and password" login strategy
 // by setting a function to verify username and password
@@ -316,7 +317,7 @@ app.post("/api/addUser", async (req, res) => {
 
 //addHut
 app.post(
-    "/api/gpx",
+    "/api/addHut",
     //isLoggedIn,
     [
       /*
@@ -334,7 +335,15 @@ app.post(
           }*/
 
       try {
+        const user_res = await db.getLinkUser(req.body.hike_ID);
+        if(user_res !== req.user.ID){
+          res.status(422).json(err);
+        }else if(req.user.role !== "local guide" || req.user.role !== "hut worker"){
+          res.status(422).json(err);
+        }
+
         const result1 = await db.addHut(req.body);
+        const result2 = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, result1);
 
         res.status(201).json(result1);
       } catch (err) {
