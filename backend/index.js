@@ -313,6 +313,38 @@ app.post("/api/addUser", async (req, res) => {
   }
 });
 
+
+//addHut
+app.post(
+    "/api/gpx",
+    //isLoggedIn,
+    [
+      /*
+          check('name').isLength({ min: 1, max: 100 }),
+          check('length').isInt(),
+          check('expected_time').islength({ min: 5, max: 5 }),
+          check('ascent').isInt(),
+          check('difficulty').islength({ min: 1, max: 2 }),
+        */
+    ],
+    async (req, res) => {
+      /* const errors = validationResult(req).formatWith(errorFormatter); // format error message
+          if (!errors.isEmpty()) {
+              return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+          }*/
+
+      try {
+        const result1 = await db.addHut(req.body);
+
+        res.status(201).json(result1);
+      } catch (err) {
+        console.error(err);
+        res.status(503).json(err);
+      }
+    }
+);
+
+
 //api per la verifica
 app.get("/api/user/verify/:token", (req, res) => {
   const { token } = req.params;
