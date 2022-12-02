@@ -13,12 +13,9 @@
     1. [Frontend](#frontend)
     2. [Backend](#backend)
 2. [Docker Instructions](#docker)
-    1. [Build the backend docker image](#buildbe)
-    2. [Push the image on docker hub](#pushbe)
-    3. [Run the backend image container](#runbe)
-    4. [Build the frontend docker image](#buildfe)
-    5. [Push the image on docker hub](#pushfe)
-    6. [Run the frontend image container](#runfe) 
+    1. [Docker compose](#compose)
+    2. [Backend docker image](#buildbe)
+    3. [Frontend docker image](#buildfe)
 3. [API Server](#api)
     1. [GET](#get)
     2. [POST](#post)
@@ -51,6 +48,11 @@
 
 
 ## Docker Instructions <a name="docker">
+
+### Docker compose <a name="compose">
+
+From the project directory, start up the application by running ```docker compose up``` .
+
 
 ### Build the backend docker image <a name="buildbe">
 
