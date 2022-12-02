@@ -445,6 +445,21 @@ class Database {
     });
   };
 
+  addHut = (hut) => {
+    return new Promise((resolve, reject) => {
+
+      const sql = "INSERT INTO hut(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
+        this.db.run(
+            sql, [user.name, user.surname, user.mail, hashedPassword.toString('hex'), salt.toString('hex'), user.role, 0], function (err) {
+              if (err) reject(err);
+              else {
+                console.log(this.lastID);
+                resolve(this.lastID);
+              }
+            });
+      });
+    };
+
 
   linkHikeUser = (hike_ID, user_ID) => {
     return new Promise((resolve, reject) => {
