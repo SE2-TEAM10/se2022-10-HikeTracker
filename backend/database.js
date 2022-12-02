@@ -448,12 +448,11 @@ class Database {
   addHut = (hut) => {
     return new Promise((resolve, reject) => {
 
-      const sql = "INSERT INTO hut(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
+      const sql = "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         this.db.run(
-            sql, [user.name, user.surname, user.mail, hashedPassword.toString('hex'), salt.toString('hex'), user.role, 0], function (err) {
+            sql, [hut.name,hut.description,hut.opening_time,hut.closing_time,hut.bed_num, hut.altitude,hut.latitude, hut.longitude,hut.city, hut.province, hut.phone,hut.mail,hut.website ], function (err) {
               if (err) reject(err);
               else {
-                console.log(this.lastID);
                 resolve(this.lastID);
               }
             });
