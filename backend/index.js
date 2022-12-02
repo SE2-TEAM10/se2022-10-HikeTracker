@@ -335,15 +335,16 @@ app.post(
           }*/
 
       try {
-        const user_res = await db.getLinkUser(req.body.hike_ID);
+        /* const user_res = await db.getLinkUser(req.body.hike_ID);
+        console.log("USER ID :", req.user.ID);
         if(user_res !== req.user.ID){
           res.status(422).json(err);
         }else if(req.user.role !== "local guide" || req.user.role !== "hut worker"){
           res.status(422).json(err);
-        }
+        } */
 
         const result1 = await db.addHut(req.body);
-        const result2 = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, result1);
+        const result2 = await db.addHikeUserHut(req.body.hike_ID, 1, result1);
 
         res.status(201).json(result1);
       } catch (err) {
