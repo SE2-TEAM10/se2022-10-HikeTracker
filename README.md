@@ -53,7 +53,8 @@
 
 From the project directory, start up the application by running ```docker compose up``` .
 
-
+---
+    
 ### Build the backend docker image <a name="buildbe">
 
 Open the terminal from the backend folder and run the following command:
