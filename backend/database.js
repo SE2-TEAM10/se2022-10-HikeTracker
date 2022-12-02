@@ -224,10 +224,20 @@ class Database {
     });
   };
 
-  getLinkUser = (hike_ID, user_ID) => {
+  getLinkHikeUser = (hike_ID, user_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike_user WHERE hike_ID=? AND user_ID=?";
       this.db.all(sql, [hike_ID, user_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getLinkUser = (hike_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user WHERE hike_ID=? ";
+      this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
@@ -458,6 +468,23 @@ class Database {
             });
       });
     };
+
+  addHikeUserHut = (hike_ID, user_ID, hut_ID) => {
+    return new Promise((resolve, reject) => {
+
+      const sql = "INSERT INTO hike_user_hut(hike_ID, user_ID, hut_ID) VALUES(?,?,?)";
+      this.db.run(
+          sql, [ hike_ID, user_ID, hut_ID], function (err) {
+            if (err) reject(err);
+            else {
+              resolve(true);
+            }
+          });
+    });
+  };
+
+
+
 
 
   linkHikeUser = (hike_ID, user_ID) => {
