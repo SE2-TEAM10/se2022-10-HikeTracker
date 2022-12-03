@@ -1,4 +1,3 @@
-import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/pages/add_parking/widget/add_parking_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -32,13 +31,7 @@ class _AddParkingState extends State<AddParking> {
           )
         : Row(
             children: [
-              MapBanner(
-                gpx: gpx,
-                onGpxLoaded: (val, text) => setState(() {
-                  gpx = val;
-                  gpxContent = text;
-                }),
-              ),
+              Container(),
               AddParkingForm(
                 onSubmit: (parking) => onSubmit(
                   parking: parking,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:HikeTracker/models/HikeMap.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -8,16 +9,18 @@ import 'package:latlong2/latlong.dart';
 
 class MapBanner extends StatefulWidget {
   const MapBanner({
-    required this.gpx,
     required this.onGpxLoaded,
+    this.hikeMap,
     this.onTap,
     this.dense = false,
+    this.selectFromTrack = false,
     super.key,
   });
 
-  final Gpx? gpx;
+  final HikeMap? hikeMap;
   final Function(Gpx?, String?) onGpxLoaded;
   final Function(LatLng)? onTap;
+  final bool selectFromTrack;
   final bool dense;
 
   @override
@@ -27,6 +30,8 @@ class MapBanner extends StatefulWidget {
 class _MapBannerState extends State<MapBanner> {
   bool isLoading = false;
   late MapController controller;
+  HikeTrackPoint? nearestToMouse;
+  LatLng? currentMouse;
 
   @override
   void initState() {
@@ -65,7 +70,7 @@ class _MapBannerState extends State<MapBanner> {
                 CircularProgressIndicator(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
-              if (widget.gpx == null && !isLoading)
+              if (widget.hikeMap == null && !isLoading)
                 TextButton(
                   onPressed: _selectGpx,
                   child: Icon(
@@ -74,22 +79,25 @@ class _MapBannerState extends State<MapBanner> {
                     size: MediaQuery.of(context).size.width * 0.1,
                   ),
                 ),
-              if (widget.gpx != null && !isLoading)
+              if (widget.hikeMap != null && !isLoading)
                 Expanded(
                   child: FlutterMap(
                     mapController: controller,
                     options: MapOptions(
-                      center: LatLng(
-                        (widget.gpx!.wpts.first.lat! +
-                                widget.gpx!.wpts[1].lat!) /
-                            2,
-                        (widget.gpx!.wpts.first.lon! +
-                                widget.gpx!.wpts[1].lon!) /
-                            2,
-                      ),
+                      center: widget.hikeMap!.getTrackCenter(),
                       zoom: 15,
                       onTap: widget.onTap != null
-                          ? (tapPosition, point) => widget.onTap!(point)
+                          ? (tapPosition, point) =>
+                              widget.selectFromTrack && nearestToMouse != null
+                                  ? widget.onTap!(nearestToMouse!.coordinates)
+                                  : widget.onTap!(point)
+                          : null,
+                      onPointerHover: widget.selectFromTrack
+                          ? (event, point) => setState(() {
+                                nearestToMouse =
+                                    widget.hikeMap!.getNearestTrackPoint(point);
+                                currentMouse = point;
+                              })
                           : null,
                     ),
                     children: [
@@ -100,19 +108,71 @@ class _MapBannerState extends State<MapBanner> {
                       PolylineLayer(
                         polylines: [
                           Polyline(
-                            points: widget.gpx!.trks.first.trksegs.first.trkpts
-                                .map((e) => LatLng(e.lat!, e.lon!))
+                            points: widget.hikeMap!.track
+                                .map(
+                                  (e) => LatLng(
+                                    e.coordinates.latitude,
+                                    e.coordinates.longitude,
+                                  ),
+                                )
                                 .toList(),
                             color: Theme.of(context).colorScheme.primary,
                             strokeWidth: 4,
                           ),
+                          if (widget.selectFromTrack && nearestToMouse != null)
+                            Polyline(
+                              points: [
+                                nearestToMouse!.coordinates,
+                                currentMouse!
+                              ],
+                              color: Theme.of(context).colorScheme.onSurface,
+                              strokeWidth: 2,
+                              isDotted: true,
+                            ),
                         ],
                       ),
-                      ...widget.gpx!.wpts.map(
+                      ...[
+                        widget.hikeMap!.startLocation,
+                        widget.hikeMap!.endLocation
+                      ].map(
                         (e) => MarkerLayer(
                           markers: [
+                            if (widget.selectFromTrack &&
+                                nearestToMouse != null) ...[
+                              Marker(
+                                height: 24,
+                                width: 24,
+                                anchorPos: AnchorPos.align(AnchorAlign.center),
+                                point: nearestToMouse!.coordinates,
+                                builder: (context) => DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.4),
+                                  ),
+                                ),
+                              ),
+                              Marker(
+                                height: 16,
+                                width: 16,
+                                anchorPos: AnchorPos.align(AnchorAlign.center),
+                                point: nearestToMouse!.coordinates,
+                                builder: (context) => DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
+                                  ),
+                                ),
+                              ),
+                            ],
                             Marker(
-                              point: LatLng(e.lat!, e.lon!),
+                              point: LatLng(
+                                e.coordinates.latitude,
+                                e.coordinates.longitude,
+                              ),
                               width: 24,
                               height: 24,
                               builder: (context) => Stack(

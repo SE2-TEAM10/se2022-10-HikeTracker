@@ -1,4 +1,3 @@
-import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/pages/add_hut/widget/add_hut_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -32,13 +31,7 @@ class _AddHutState extends State<AddHut> {
           )
         : Row(
             children: [
-              MapBanner(
-                gpx: gpx,
-                onGpxLoaded: (val, text) => setState(() {
-                  gpx = val;
-                  gpxContent = text;
-                }),
-              ),
+              Container(),
               AddHutForm(
                 onSubmit: (hut) => onSubmit(
                   hut: hut,

@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:HikeTracker/common/map_banner.dart';
+import 'package:HikeTracker/models/HikeMap.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:gpx/gpx.dart';
 
 class HikeDetail extends StatefulWidget {
   const HikeDetail({
@@ -49,8 +49,10 @@ class _HikeDetailState extends State<HikeDetail> {
             children: [
               if (widget.user != null)
                 MapBanner(
-                  gpx: GpxReader().fromString(gpx),
+                  hikeMap: HikeMap.fromStringGPX(stringGpx: gpx),
                   onGpxLoaded: (val, text) => {},
+                  onTap: (p) => print(p),
+                  selectFromTrack: true,
                 ),
               Expanded(
                 flex: 3,
