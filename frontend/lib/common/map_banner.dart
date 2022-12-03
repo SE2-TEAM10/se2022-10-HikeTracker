@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:HikeTracker/models/HikeMap.dart';
+import 'package:HikeTracker/models/map_data.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -17,7 +17,7 @@ class MapBanner extends StatefulWidget {
     super.key,
   });
 
-  final HikeMap? hikeMap;
+  final MapData? hikeMap;
   final Function(Gpx?, String?) onGpxLoaded;
   final Function(LatLng)? onTap;
   final bool selectFromTrack;
@@ -30,7 +30,7 @@ class MapBanner extends StatefulWidget {
 class _MapBannerState extends State<MapBanner> {
   bool isLoading = false;
   late MapController controller;
-  HikeTrackPoint? nearestToMouse;
+  MapTrackPoint? nearestToMouse;
   LatLng? currentMouse;
 
   @override

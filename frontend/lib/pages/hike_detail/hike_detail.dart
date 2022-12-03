@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:HikeTracker/common/map_banner.dart';
-import 'package:HikeTracker/models/HikeMap.dart';
+import 'package:HikeTracker/models/map_data.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +49,7 @@ class _HikeDetailState extends State<HikeDetail> {
             children: [
               if (widget.user != null)
                 MapBanner(
-                  hikeMap: HikeMap.fromStringGPX(stringGpx: gpx),
+                  hikeMap: MapData.fromStringGPX(stringGpx: gpx),
                   onGpxLoaded: (val, text) => {},
                   onTap: (p) => print(p),
                   selectFromTrack: true,

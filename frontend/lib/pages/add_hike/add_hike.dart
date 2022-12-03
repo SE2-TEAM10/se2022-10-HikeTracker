@@ -1,7 +1,7 @@
 import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/common/message.dart';
 import 'package:HikeTracker/common/two_columns_layout.dart';
-import 'package:HikeTracker/models/HikeMap.dart';
+import 'package:HikeTracker/models/map_data.dart';
 import 'package:HikeTracker/pages/add_hike/models/new_hike.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -34,7 +34,7 @@ class _AddHikeState extends State<AddHike> {
         : TwoColumnsLayout(
             leftChild: MapBanner(
               hikeMap: gpxContent != null
-                  ? HikeMap.fromStringGPX(stringGpx: gpxContent!)
+                  ? MapData.fromStringGPX(stringGpx: gpxContent!)
                   : null,
               onGpxLoaded: (val, text) => setState(() {
                 gpxContent = text;

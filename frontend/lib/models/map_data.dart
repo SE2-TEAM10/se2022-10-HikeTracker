@@ -3,8 +3,10 @@
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
 
-class HikeMap {
-  HikeMap({
+//This class has the purpose of storing informations coming from a gpx file
+
+class MapData {
+  MapData({
     required this.content,
     required this.gpx,
     required this.startLocation,
@@ -14,27 +16,27 @@ class HikeMap {
     required this.track,
   });
 
-  factory HikeMap.fromStringGPX({
+  factory MapData.fromStringGPX({
     required String stringGpx,
   }) {
     final gpx = GpxReader().fromString(stringGpx);
 
     final slData = gpx.wpts[0];
-    final startLocation = HikeLocation.fromWaypoint(slData);
+    final startLocation = MapLocation.fromWaypoint(slData);
     final elData = gpx.wpts[1];
-    final endLocation = HikeLocation.fromWaypoint(elData);
+    final endLocation = MapLocation.fromWaypoint(elData);
     final trkData = gpx.trks.first.trksegs.first.trkpts;
 
-    return HikeMap(
+    return MapData(
       content: stringGpx,
       gpx: gpx,
       startLocation: startLocation,
       endLocation: endLocation,
       totalLength: 0,
       totalAscent: 0,
-      track: List<HikeTrackPoint>.from(
+      track: List<MapTrackPoint>.from(
         trkData.map(
-          (e) => HikeTrackPoint.fromWaypoint(e),
+          (e) => MapTrackPoint.fromWaypoint(e),
         ),
       ),
     );
@@ -42,11 +44,11 @@ class HikeMap {
 
   final String content;
   final Gpx gpx;
-  final HikeLocation startLocation;
-  final HikeLocation endLocation;
+  final MapLocation startLocation;
+  final MapLocation endLocation;
   final double totalLength;
   final double totalAscent;
-  final List<HikeTrackPoint> track;
+  final List<MapTrackPoint> track;
 
   LatLng getTrackCenter() => LatLng(
         (startLocation.coordinates.latitude +
@@ -57,7 +59,7 @@ class HikeMap {
             2,
       );
 
-  HikeTrackPoint? getNearestTrackPoint(LatLng current) {
+  MapTrackPoint? getNearestTrackPoint(LatLng current) {
     var nearest;
     var min = 1000.0;
     track.forEach((p) {
@@ -70,17 +72,17 @@ class HikeMap {
   }
 }
 
-class HikeLocation {
-  HikeLocation({
+class MapLocation {
+  MapLocation({
     required this.name,
     required this.city,
     required this.province,
     required this.coordinates,
   });
 
-  factory HikeLocation.fromWaypoint(Wpt waypoint) {
+  factory MapLocation.fromWaypoint(Wpt waypoint) {
     final parts = waypoint.desc!.split(',');
-    return HikeLocation(
+    return MapLocation(
       name: parts[0].split('=')[1].trim(),
       city: parts[1].trim(),
       province: parts[2].trim(),
@@ -94,14 +96,14 @@ class HikeLocation {
   final LatLng coordinates;
 }
 
-class HikeTrackPoint {
-  HikeTrackPoint({
+class MapTrackPoint {
+  MapTrackPoint({
     required this.coordinates,
     required this.elevation,
   });
 
-  static HikeTrackPoint fromWaypoint(Wpt waypoint) {
-    return HikeTrackPoint(
+  static MapTrackPoint fromWaypoint(Wpt waypoint) {
+    return MapTrackPoint(
       coordinates: LatLng(waypoint.lat!, waypoint.lon!),
       elevation: waypoint.ele!,
     );
