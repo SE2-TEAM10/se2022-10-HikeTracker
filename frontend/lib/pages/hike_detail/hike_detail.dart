@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:HikeTracker/common/map_banner.dart';
+import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/models/map_data.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -45,19 +46,18 @@ class _HikeDetailState extends State<HikeDetail> {
         if (snapshot.hasData) {
           final hike = jsonDecode(snapshot.data!.body).first;
           final gpx = hike['gpx'];
-          return Row(
-            children: [
-              if (widget.user != null)
-                MapBanner(
-                  mapData: MapData.fromStringGPX(stringGpx: gpx),
-                ),
-              Expanded(
-                flex: 3,
-                child: Details(
-                  hike: hike,
-                ),
-              )
-            ],
+          return TwoColumnsLayout(
+            leftChild: widget.user != null
+                ? MapBanner(
+                    mapData: MapData.fromStringGPX(stringGpx: gpx),
+                  )
+                : Container(),
+            rightChild: Expanded(
+              flex: 3,
+              child: Details(
+                hike: hike,
+              ),
+            ),
           );
         }
         return Container();
@@ -68,8 +68,8 @@ class _HikeDetailState extends State<HikeDetail> {
 
 class Details extends StatelessWidget {
   const Details({
-    super.key,
     required this.hike,
+    super.key,
   });
 
   final Map<String, dynamic> hike;
