@@ -322,7 +322,7 @@ class Database {
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
-      var gpx = new GpxParser();
+      let gpx = new GpxParser();
       gpx.parse(gpx_string);
       let length = parseInt((gpx.tracks[0].distance.total) / 1000);
       let ascent = parseInt((gpx.tracks[0].elevation.max));
@@ -365,12 +365,12 @@ class Database {
       }
       let gpx = new GpxParser();
       gpx.parse(gpx_string);
-      var lat = gpx.tracks[0].points[0].lat;
-      var lon = gpx.tracks[0].points[0].lon;
+      let lat = gpx.tracks[0].points[0].lat;
+      let lon = gpx.tracks[0].points[0].lon;
 
       let len = gpx.tracks[0].points.length - 1;
-      var lat_end = gpx.tracks[0].points[len].lat;
-      var lon_end = gpx.tracks[0].points[len].lon;
+      let lat_end = gpx.tracks[0].points[len].lat;
+      let lon_end = gpx.tracks[0].points[len].lon;
       let latitude, longitude;
       if (position === 'startp') {
         latitude = lat;
