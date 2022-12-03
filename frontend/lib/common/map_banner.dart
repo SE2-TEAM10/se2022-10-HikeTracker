@@ -4,21 +4,20 @@ import 'package:HikeTracker/models/map_data.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
-import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapBanner extends StatefulWidget {
   const MapBanner({
-    required this.onGpxLoaded,
-    this.hikeMap,
+    this.onGpxLoaded,
+    this.mapData,
     this.onTap,
     this.dense = false,
     this.selectFromTrack = false,
     super.key,
   });
 
-  final MapData? hikeMap;
-  final Function(Gpx?, String?) onGpxLoaded;
+  final MapData? mapData;
+  final Function(MapData?)? onGpxLoaded;
   final Function(LatLng)? onTap;
   final bool selectFromTrack;
   final bool dense;
@@ -70,7 +69,9 @@ class _MapBannerState extends State<MapBanner> {
                 CircularProgressIndicator(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
-              if (widget.hikeMap == null && !isLoading)
+              if (widget.mapData == null &&
+                  widget.onGpxLoaded != null &&
+                  !isLoading)
                 TextButton(
                   onPressed: _selectGpx,
                   child: Icon(
@@ -79,12 +80,12 @@ class _MapBannerState extends State<MapBanner> {
                     size: MediaQuery.of(context).size.width * 0.1,
                   ),
                 ),
-              if (widget.hikeMap != null && !isLoading)
+              if (widget.mapData != null && !isLoading)
                 Expanded(
                   child: FlutterMap(
                     mapController: controller,
                     options: MapOptions(
-                      center: widget.hikeMap!.getTrackCenter(),
+                      center: widget.mapData!.getTrackCenter(),
                       zoom: 15,
                       onTap: widget.onTap != null
                           ? (tapPosition, point) =>
@@ -95,7 +96,7 @@ class _MapBannerState extends State<MapBanner> {
                       onPointerHover: widget.selectFromTrack
                           ? (event, point) => setState(() {
                                 nearestToMouse =
-                                    widget.hikeMap!.getNearestTrackPoint(point);
+                                    widget.mapData!.getNearestTrackPoint(point);
                                 currentMouse = point;
                               })
                           : null,
@@ -108,7 +109,7 @@ class _MapBannerState extends State<MapBanner> {
                       PolylineLayer(
                         polylines: [
                           Polyline(
-                            points: widget.hikeMap!.track
+                            points: widget.mapData!.track
                                 .map(
                                   (e) => LatLng(
                                     e.coordinates.latitude,
@@ -132,8 +133,8 @@ class _MapBannerState extends State<MapBanner> {
                         ],
                       ),
                       ...[
-                        widget.hikeMap!.startLocation,
-                        widget.hikeMap!.endLocation
+                        widget.mapData!.startLocation,
+                        widget.mapData!.endLocation
                       ].map(
                         (e) => MarkerLayer(
                           markers: [
@@ -208,18 +209,19 @@ class _MapBannerState extends State<MapBanner> {
                           ],
                         ),
                       ),
-                      Positioned(
-                        top: 16,
-                        right: 16,
-                        child: TextButton(
-                          onPressed: () => widget.onGpxLoaded(null, null),
-                          child: Icon(
-                            Icons.close,
-                            color: Theme.of(context).colorScheme.tertiary,
-                            size: 24,
+                      if (widget.onGpxLoaded != null)
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: TextButton(
+                            onPressed: () => widget.onGpxLoaded!(null),
+                            child: Icon(
+                              Icons.close,
+                              color: Theme.of(context).colorScheme.tertiary,
+                              size: 24,
+                            ),
                           ),
-                        ),
-                      )
+                        )
                     ],
                   ),
                 )
@@ -242,8 +244,8 @@ class _MapBannerState extends State<MapBanner> {
       final platformFile = result.files.single;
       final uploadfile = platformFile.bytes!;
       final gpxContent = utf8.decode(uploadfile);
-      final xmlGpx = GpxReader().fromString(gpxContent);
-      widget.onGpxLoaded(xmlGpx, gpxContent);
+      final mapData = MapData.fromStringGPX(stringGpx: gpxContent);
+      widget.onGpxLoaded!(mapData);
     }
     setState(() {
       isLoading = false;

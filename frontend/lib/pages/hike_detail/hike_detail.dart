@@ -49,10 +49,7 @@ class _HikeDetailState extends State<HikeDetail> {
             children: [
               if (widget.user != null)
                 MapBanner(
-                  hikeMap: MapData.fromStringGPX(stringGpx: gpx),
-                  onGpxLoaded: (val, text) => {},
-                  onTap: (p) => print(p),
-                  selectFromTrack: true,
+                  mapData: MapData.fromStringGPX(stringGpx: gpx),
                 ),
               Expanded(
                 flex: 3,

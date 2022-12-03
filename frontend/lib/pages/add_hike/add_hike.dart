@@ -23,7 +23,7 @@ class AddHike extends StatefulWidget {
 
 class _AddHikeState extends State<AddHike> {
   bool isLoading = false;
-  String? gpxContent;
+  MapData? mapData;
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +33,10 @@ class _AddHikeState extends State<AddHike> {
           )
         : TwoColumnsLayout(
             leftChild: MapBanner(
-              hikeMap: gpxContent != null
-                  ? MapData.fromStringGPX(stringGpx: gpxContent!)
-                  : null,
-              onGpxLoaded: (val, text) => setState(() {
-                gpxContent = text;
-              }),
+              mapData: mapData,
+              onGpxLoaded: (data) => setState(
+                () => mapData = data,
+              ),
               dense: context.breakpoint < LayoutBreakpoint.md,
             ),
             rightChild: AddHikeForm(
@@ -56,14 +54,14 @@ class _AddHikeState extends State<AddHike> {
   Future<void> onSubmit({
     required NewHike newHike,
   }) async {
-    if (gpxContent == null) {
+    if (mapData == null) {
       Message(
         context: context,
         message: 'Select a GPX file.',
       ).show();
       return;
     }
-    newHike = newHike.copyWith(gpx: gpxContent);
+    newHike = newHike.copyWith(gpx: mapData!.content);
 
     final res = await widget.client.post(
       api: 'hike',
