@@ -10,12 +10,14 @@ class MapBanner extends StatefulWidget {
   const MapBanner({
     required this.gpx,
     required this.onGpxLoaded,
+    this.onTap,
     this.dense = false,
     super.key,
   });
 
   final Gpx? gpx;
   final Function(Gpx?, String?) onGpxLoaded;
+  final Function(LatLng)? onTap;
   final bool dense;
 
   @override
@@ -24,6 +26,13 @@ class MapBanner extends StatefulWidget {
 
 class _MapBannerState extends State<MapBanner> {
   bool isLoading = false;
+  late MapController controller;
+
+  @override
+  void initState() {
+    controller = MapController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +77,7 @@ class _MapBannerState extends State<MapBanner> {
               if (widget.gpx != null && !isLoading)
                 Expanded(
                   child: FlutterMap(
+                    mapController: controller,
                     options: MapOptions(
                       center: LatLng(
                         (widget.gpx!.wpts.first.lat! +
@@ -78,6 +88,9 @@ class _MapBannerState extends State<MapBanner> {
                             2,
                       ),
                       zoom: 15,
+                      onTap: widget.onTap != null
+                          ? (tapPosition, point) => widget.onTap!(point)
+                          : null,
                     ),
                     children: [
                       TileLayer(
