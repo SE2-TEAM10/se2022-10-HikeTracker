@@ -320,31 +320,36 @@ app.post(
     "/api/addHut",
     //isLoggedIn,
     [
-      /*
-          check('name').isLength({ min: 1, max: 100 }),
-          check('length').isInt(),
-          check('expected_time').islength({ min: 5, max: 5 }),
-          check('ascent').isInt(),
-          check('difficulty').islength({ min: 1, max: 2 }),
-        */
+        check('name').isString(),
+        check('description').isString(),
+        check('opening_time').isString(),
+        check('closing_time').isString(),
+        check('bed_num').isInt(),
+        check('altitude').isInt(),
+        check('city').isString(),
+        check('province').isString(),
+        check('phone').isString(),
+        check('mail').isString(),
+        check('website').isString(),
     ],
     async (req, res) => {
-      /* const errors = validationResult(req).formatWith(errorFormatter); // format error message
-          if (!errors.isEmpty()) {
-              return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
-          }*/
+       const errors = validationResult(req).formatWith(errorFormatter); // format error message
+       if (!errors.isEmpty()) {
+          return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+       }
 
       try {
-        /* const user_res = await db.getLinkUser(req.body.hike_ID);
+         // check if a user is a local guide or a hut worker
+        const user_res = await db.getLinkUser(req.body.hike_ID);
         console.log("USER ID :", req.user.ID);
         if(user_res !== req.user.ID){
           res.status(422).json(err);
         }else if(req.user.role !== "local guide" || req.user.role !== "hut worker"){
           res.status(422).json(err);
-        } */
+        }
 
         const result1 = await db.addHut(req.body);
-        const result2 = await db.addHikeUserHut(req.body.hike_ID, 1, result1);
+        const result2 = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, result1);
 
         res.status(201).json(result1);
       } catch (err) {
