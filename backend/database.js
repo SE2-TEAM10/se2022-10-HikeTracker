@@ -254,6 +254,26 @@ class Database {
     });
   };
 
+  getHutByID = (hut_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hut WHERE ID = ?";
+      this.db.get(sql, [hut_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getLinkHikeUserHut = (hike_ID, user_ID, hut_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+      this.db.all(sql, [hike_ID, user_ID, hut_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
   deleteHikeByID = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike WHERE ID=?";
@@ -298,6 +318,26 @@ class Database {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM user WHERE ID=?";
       this.db.run(sql, [user_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteHutByID = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hut WHERE ID=?";
+      this.db.run(sql, [ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteLinkHikeUserHut = (hike_ID, user_ID, hut_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+      this.db.run(sql, [hike_ID, user_ID, hut_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });
@@ -440,7 +480,7 @@ class Database {
       }
       let database = this.db;
       let salt = crypto.randomBytes(16);
-      console.log("STRING STRING ", salt.toString('hex'))
+      //console.log("STRING STRING ", salt.toString('hex'))
       crypto.scrypt(user.password, salt.toString('hex'), 32, function (err, hashedPassword) {
         const sql = "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
         database.run(
@@ -460,27 +500,59 @@ class Database {
   addHut = (hut) => {
     return new Promise((resolve, reject) => {
       try {
+        /* console.log("typeof hut.name: ", typeof hut.name);
+      console.log("typeof hut.description: ", typeof hut.description);
+      console.log("typeof hut.opening_time: ", typeof hut.opening_time);
+      console.log("typeof hut.closing_time: ", typeof hut.closing_time);
+      console.log("typeof hut.bed_num: ", typeof hut.bed_num);
+      console.log("typeof hut.altitude: ", typeof hut.altitude);
+      console.log("typeof hut.latitude: ", typeof hut.latitude);
+      console.log("typeof hut.longitude: ", typeof hut.longitude);
+      console.log("typeof hut.city: ", typeof hut.city);
+      console.log("typeof hut.province: ", typeof hut.province);
+      console.log("typeof hut.phone: ", typeof hut.phone);
+      console.log("typeof hut.mail: ", typeof hut.mail);
+      console.log("typeof hut.website: ", typeof hut.website);
+      console.log("typeof hut.hike_ID: ", typeof hut.hike_ID); */
         if (
           typeof hut.name !== 'string' ||
           typeof hut.description !== 'string' ||
           typeof hut.opening_time !== 'string' ||
           typeof hut.closing_time !== 'string' ||
-          typeof hut.bed_num !== 'integer' ||
-          typeof hut.altitude !== 'integer' ||
-          typeof hut.latitude !== 'float' ||
-          typeof hut.longitude !== 'float' ||
+          typeof hut.bed_num !== 'number' ||
+          typeof hut.altitude !== 'number' ||
+          typeof hut.latitude !== 'number' ||
+          typeof hut.longitude !== 'number' ||
           typeof hut.city !== 'string' ||
           typeof hut.province !== 'string' ||
           typeof hut.phone !== 'string' ||
           typeof hut.mail !== 'string' ||
           typeof hut.website !== 'string' ||
-          typeof hut.hike_ID !== 'integer'
+          typeof hut.hike_ID !== 'number'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
+
+      console.log("typeof hut.name: ", typeof hut.name);
+      console.log("typeof hut.description: ", typeof hut.description);
+      console.log("typeof hut.opening_time: ", typeof hut.opening_time);
+      console.log("typeof hut.closing_time: ", typeof hut.closing_time);
+      console.log("typeof hut.bed_num: ", typeof hut.bed_num);
+      console.log("typeof hut.altitude: ", typeof hut.altitude);
+      console.log("typeof hut.latitude: ", typeof hut.latitude);
+      console.log("typeof hut.longitude: ", typeof hut.longitude);
+      console.log("typeof hut.city: ", typeof hut.city);
+      console.log("typeof hut.province: ", typeof hut.province);
+      console.log("typeof hut.phone: ", typeof hut.phone);
+      console.log("typeof hut.mail: ", typeof hut.mail);
+      console.log("typeof hut.website: ", typeof hut.website);
+      console.log("typeof hut.hike_ID: ", typeof hut.hike_ID);
+
+
+
       const sql = "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         this.db.run(
             sql, [hut.name,hut.description,hut.opening_time,hut.closing_time,hut.bed_num, hut.altitude,hut.latitude, hut.longitude,hut.city, hut.province, hut.phone,hut.mail,hut.website ], function (err) {
@@ -496,16 +568,15 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hike_ID !== 'integer' ||
-          typeof user_ID !== 'integer' ||
-          typeof hut_ID !== 'integer' 
+          typeof hike_ID !== 'number' ||
+          typeof user_ID !== 'number' ||
+          typeof hut_ID !== 'number' 
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
-
       const sql = "INSERT INTO hike_user_hut(hike_ID, user_ID, hut_ID) VALUES(?,?,?)";
       this.db.run(
           sql, [ hike_ID, user_ID, hut_ID], function (err) {
