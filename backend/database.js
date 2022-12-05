@@ -457,7 +457,28 @@ class Database {
 
   addHut = (hut) => {
     return new Promise((resolve, reject) => {
-
+      try {
+        if (
+          typeof hut.name !== 'string' ||
+          typeof hut.description !== 'string' ||
+          typeof hut.opening_time !== 'string' ||
+          typeof hut.closing_time !== 'string' ||
+          typeof hut.bed_num !== 'integer' ||
+          typeof hut.altitude !== 'integer' ||
+          typeof hut.latitude !== 'float' ||
+          typeof hut.longitude !== 'float' ||
+          typeof hut.city !== 'string' ||
+          typeof hut.province !== 'string' ||
+          typeof hut.phone !== 'string' ||
+          typeof hut.mail !== 'string' ||
+          typeof hut.website !== 'string' ||
+          typeof hut.hike_ID !== 'integer'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
       const sql = "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         this.db.run(
             sql, [hut.name,hut.description,hut.opening_time,hut.closing_time,hut.bed_num, hut.altitude,hut.latitude, hut.longitude,hut.city, hut.province, hut.phone,hut.mail,hut.website ], function (err) {
@@ -471,6 +492,17 @@ class Database {
 
   addHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike_ID !== 'integer' ||
+          typeof user_ID !== 'integer' ||
+          typeof hut_ID !== 'integer' 
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
 
       const sql = "INSERT INTO hike_user_hut(hike_ID, user_ID, hut_ID) VALUES(?,?,?)";
       this.db.run(
@@ -482,8 +514,6 @@ class Database {
           });
     });
   };
-
-
 
 
 

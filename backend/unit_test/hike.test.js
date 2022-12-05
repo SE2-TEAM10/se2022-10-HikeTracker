@@ -324,5 +324,75 @@ describe.only('hikeController Tests', () => {
         })
     })
     
+    describe('addHut method test', () => {
+        test('successful use of addHut', async () => {
+
+            let reqbody = {
+                name: "testHut",
+                description: "aDesc",
+                opening_time: "09:00",
+                closing_time: "22:00",
+                bed_num: 3,
+                altitude: 1000,
+                latitude: 45.029439,
+                longitude: 7.79784,
+                city: "Lecce",
+                province: "Lecce",
+                phone: "1111111111",
+                mail: "testhut@hut.it",
+                website: "testhut.it",
+                hike_ID : 1
+             };
+
+            const result = await hikeController.getUserByID(4);
+
+            console.log("user result: ", result);
+
+            assert.equal(result.name, reqbody.name);
+            assert.equal(result.description, reqbody.description);
+            assert.equal(result.opening_time, reqbody.opening_time);
+            assert.equal(result.closing_time, reqbody.closing_time);
+            assert.equal(result.bed_num, reqbody.bed_num);
+            assert.equal(result.altitude, reqbody.altitude);
+            assert.equal(result.latitude, reqbody.latitude);
+            assert.equal(result.longitude, reqbody.longitude);
+            assert.equal(result.city, reqbody.city);
+            assert.equal(result.province, reqbody.province);
+            assert.equal(result.phone, reqbody.phone);
+            assert.equal(result.mail, reqbody.mail);
+            assert.equal(result.website, reqbody.website);
+            assert.equal(result.hike_ID, reqbody.hike_ID);
+
+        })
+
+        test('try to add hut with wrong params', async () => {
+            let hut = {
+                name: 33,
+                description: 33,
+                opening_time: "dasda",
+                closing_time: "dasd",
+                bed_num: 3,
+                altitude: 3,
+                latitude: 45.029439,
+                longitude: 7.79784,
+                city: "Lecce",
+                province: "Lecce",
+                phone: "45454",
+                mail: "43434",
+                website: "3434343",
+                hike_ID : 1
+            };
+
+            const result = await hikeController.addUser(hut).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to add hut with empty params', async () => {
+
+            const result = await hikeController.addUser().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+    })
 
 })
