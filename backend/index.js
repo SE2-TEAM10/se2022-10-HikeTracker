@@ -340,14 +340,7 @@ app.post(
 
       try {
          // check if a user is a local guide or a hut worker
-        const user_res = await db.getLinkUser(req.body.hike_ID);
-        console.log("USER ID :", req.user.ID);
-        if(user_res !== req.user.ID){
-          res.status(422).json(err);
-        }else if(req.user.role !== "LocalGuide" || req.user.role !== "HutWorker"){
-          res.status(422).json(err);
-        }
-
+        await getLinkUser();
         const result1 = await db.addHut(req.body);
         const result2 = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, result1);
 
@@ -372,15 +365,8 @@ app.post(
       }
 
       try {
-        // check if a user is a local guide or a hut worker
-        const user_res = await db.getLinkUser(req.body.hike_ID);
-        console.log("USER ID :", req.user.ID);
-        if(user_res !== req.user.ID){
-          res.status(422).json(err);
-        }else if(req.user.role !== "LocalGuide" || req.user.role !== "HutWorker"){
-          res.status(422).json(err);
-        }
 
+        await getLinkUser();
         const result1 = await db.addParking(req.body);
         const result2 = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, result1);
 
@@ -462,6 +448,18 @@ const sendEmail = async (email, subject, text) => {
     console.log("Message sent: %s", info.messageId);
   });
 };
+
+const getLinkUser = async (req,res) => {
+  // check if a user is a local guide or a hut worker
+  const user_res = await db.getLinkUser(req.body.hike_ID);
+  console.log("USER ID :", req.user.ID);
+  if (user_res !== req.user.ID) {
+    res.status(422).json("User and hike not linked");
+  } else if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
+    res.status(422).json("User isnt't a local guide or a hut worker");
+  }
+};
+
 
 // Activate the server
 app.listen(port, () => {
