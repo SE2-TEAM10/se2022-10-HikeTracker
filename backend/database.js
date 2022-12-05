@@ -455,6 +455,8 @@ class Database {
     });
   };
 
+
+  //QUERY FOR HUT
   addHut = (hut) => {
     return new Promise((resolve, reject) => {
       try {
@@ -516,6 +518,58 @@ class Database {
   };
 
 
+  //QUERY FOR PARKING LOT
+  addParking = (parking) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+            typeof parking.name !== 'string' ||
+            typeof parking.capacity !== 'integer' ||
+            typeof parking.latitude !== 'float' ||
+            typeof parking.longitude !== 'float' ||
+            typeof parking.city !== 'string' ||
+            typeof parking.province !== 'string'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "INSERT INTO parking_lot(name,capacity,latitude,longitude,city,province) VALUES(?,?,?,?,?,?)";
+      this.db.run(
+          sql, [parking.name,parking.capacity,parking.latitude, parking.longitude,parking.city, parking.province ], function (err) {
+            if (err) reject(err);
+            else {
+              resolve(this.lastID);
+            }
+          });
+    });
+  };
+
+  addHikeUserParking = (hike_ID, user_ID, parking_ID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+            typeof hike_ID !== 'integer' ||
+            typeof user_ID !== 'integer' ||
+            typeof parking_ID !== 'integer'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+
+      const sql = "INSERT INTO hike_user_parking(hike_ID, user_ID, parking_ID) VALUES(?,?,?)";
+      this.db.run(
+          sql, [ hike_ID, user_ID, parking_ID], function (err) {
+            if (err) reject(err);
+            else {
+              resolve(true);
+            }
+          });
+    });
+  };
 
   linkHikeUser = (hike_ID, user_ID) => {
     return new Promise((resolve, reject) => {

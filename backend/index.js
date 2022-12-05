@@ -318,7 +318,7 @@ app.post("/api/addUser", async (req, res) => {
 //addHut
 app.post(
     "/api/addHut",
-    //isLoggedIn,
+    isLoggedIn,
     [
         check('name').isString(),
         check('description').isString(),
@@ -350,6 +350,39 @@ app.post(
 
         const result1 = await db.addHut(req.body);
         const result2 = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, result1);
+
+        res.status(201).json(result1);
+      } catch (err) {
+        console.error(err);
+        res.status(503).json(err);
+      }
+    }
+);
+
+//addParking
+app.post(
+    "/api/addParking",
+    isLoggedIn,
+    [
+    ],
+    async (req, res) => {
+      const errors = validationResult(req).formatWith(errorFormatter); // format error message
+      if (!errors.isEmpty()) {
+        return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+      }
+
+      try {
+        // check if a user is a local guide or a hut worker
+        const user_res = await db.getLinkUser(req.body.hike_ID);
+        console.log("USER ID :", req.user.ID);
+        if(user_res !== req.user.ID){
+          res.status(422).json(err);
+        }else if(req.user.role !== "LocalGuide" || req.user.role !== "HutWorker"){
+          res.status(422).json(err);
+        }
+
+        const result1 = await db.addParking(req.body);
+        const result2 = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, result1);
 
         res.status(201).json(result1);
       } catch (err) {
