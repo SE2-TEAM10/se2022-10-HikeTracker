@@ -152,7 +152,7 @@ app.get("/api/hike", async (req, res) => {
 app.get("/api/hikesdetails/:hike_ID", /*isLoggedIn,*/ async (req, res) => {
 
    /* let user = await db.getUserByID(req.user.id);
-     if (user.role !== "hiker") {
+     if (user.role !== "Hiker") {
        return res.status(422).json({ error: `not a hiker` }).end();
      }*/
   await db
@@ -344,7 +344,7 @@ app.post(
         console.log("USER ID :", req.user.ID);
         if(user_res !== req.user.ID){
           res.status(422).json(err);
-        }else if(req.user.role !== "local guide" || req.user.role !== "hut worker"){
+        }else if(req.user.role !== "LocalGuide" || req.user.role !== "HutWorker"){
           res.status(422).json(err);
         }
 
