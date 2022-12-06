@@ -33,6 +33,7 @@ class _AddHikeState extends State<AddHike> {
           )
         : TwoColumnsLayout(
             leftChild: MapBanner(
+              client: widget.client,
               mapData: mapData,
               onGpxLoaded: (data) => setState(
                 () => mapData = data,

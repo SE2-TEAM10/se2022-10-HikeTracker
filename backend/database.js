@@ -753,6 +753,16 @@ class Database {
       });
     });
   };
+
+  getBorder = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM border WHERE ID = ?";
+      this.db.get(sql, [ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
 }
 
 module.exports = Database;

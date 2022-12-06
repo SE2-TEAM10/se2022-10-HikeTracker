@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:HikeTracker/models/map_borders.dart';
 import 'package:HikeTracker/models/map_data.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -8,19 +10,25 @@ import 'package:latlong2/latlong.dart';
 
 class MapBanner extends StatefulWidget {
   const MapBanner({
+    required this.client,
     this.onGpxLoaded,
     this.mapData,
     this.onTap,
     this.dense = false,
     this.selectFromTrack = false,
+    this.mapBorders,
+    this.isLoading = false,
     super.key,
   });
 
+  final RestClient client;
   final MapData? mapData;
   final Function(MapData?)? onGpxLoaded;
   final Function(LatLng)? onTap;
   final bool selectFromTrack;
   final bool dense;
+  final MapBorders? mapBorders;
+  final bool isLoading;
 
   @override
   State<MapBanner> createState() => _MapBannerState();
@@ -36,6 +44,10 @@ class _MapBannerState extends State<MapBanner> {
   void initState() {
     controller = MapController();
     super.initState();
+  }
+
+  bool get loading {
+    return isLoading || widget.isLoading;
   }
 
   @override
@@ -65,13 +77,13 @@ class _MapBannerState extends State<MapBanner> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (isLoading)
+              if (loading)
                 CircularProgressIndicator(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
               if (widget.mapData == null &&
                   widget.onGpxLoaded != null &&
-                  !isLoading)
+                  !loading)
                 TextButton(
                   onPressed: _selectGpx,
                   child: Icon(
@@ -80,12 +92,89 @@ class _MapBannerState extends State<MapBanner> {
                     size: MediaQuery.of(context).size.width * 0.1,
                   ),
                 ),
-              if (widget.mapData != null && !isLoading)
+              if (widget.mapData == null &&
+                  widget.mapBorders != null &&
+                  !loading)
                 Expanded(
                   child: FlutterMap(
                     mapController: controller,
                     options: MapOptions(
-                      center: widget.mapData!.getTrackCenter(),
+                      center: widget.mapBorders?.getCenter(),
+                      zoom: 15,
+                      onTap: widget.onTap != null
+                          ? (tapPosition, point) =>
+                              widget.selectFromTrack && nearestToMouse != null
+                                  ? widget.onTap!(nearestToMouse!.coordinates)
+                                  : widget.onTap!(point)
+                          : null,
+                      onPointerHover: (event, point) => setState(() {
+                        currentMouse = point;
+                      }),
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      ),
+                      PolylineLayer(
+                        polylines: [
+                          ...widget.mapBorders!.borders
+                              .map(
+                                (b) => Polyline(
+                                  points: b,
+                                  color: Theme.of(context).colorScheme.error,
+                                  strokeWidth: 4,
+                                ),
+                              )
+                              .toList(),
+                        ],
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          if (currentMouse != null) ...[
+                            Marker(
+                              height: 24,
+                              width: 24,
+                              anchorPos: AnchorPos.align(AnchorAlign.center),
+                              point: widget.selectFromTrack
+                                  ? nearestToMouse!.coordinates
+                                  : currentMouse!,
+                              builder: (context) => DecoratedBox(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.4),
+                                ),
+                              ),
+                            ),
+                            Marker(
+                              height: 16,
+                              width: 16,
+                              anchorPos: AnchorPos.align(AnchorAlign.center),
+                              point: widget.selectFromTrack
+                                  ? nearestToMouse!.coordinates
+                                  : currentMouse!,
+                              builder: (context) => DecoratedBox(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).colorScheme.surface,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              if (widget.mapData != null && !loading)
+                Expanded(
+                  child: FlutterMap(
+                    mapController: controller,
+                    options: MapOptions(
+                      center: widget.mapData?.getTrackCenter(),
                       zoom: 15,
                       onTap: widget.onTap != null
                           ? (tapPosition, point) =>
@@ -130,6 +219,53 @@ class _MapBannerState extends State<MapBanner> {
                               strokeWidth: 2,
                               isDotted: true,
                             ),
+                          if (widget.mapBorders != null)
+                            ...widget.mapBorders!.borders
+                                .map(
+                                  (b) => Polyline(
+                                    points: b,
+                                    color: Theme.of(context).colorScheme.error,
+                                    strokeWidth: 4,
+                                  ),
+                                )
+                                .toList(),
+                        ],
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          if (currentMouse != null) ...[
+                            Marker(
+                              height: 24,
+                              width: 24,
+                              anchorPos: AnchorPos.align(AnchorAlign.center),
+                              point: widget.selectFromTrack
+                                  ? nearestToMouse!.coordinates
+                                  : currentMouse!,
+                              builder: (context) => DecoratedBox(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.4),
+                                ),
+                              ),
+                            ),
+                            Marker(
+                              height: 16,
+                              width: 16,
+                              anchorPos: AnchorPos.align(AnchorAlign.center),
+                              point: widget.selectFromTrack
+                                  ? nearestToMouse!.coordinates
+                                  : currentMouse!,
+                              builder: (context) => DecoratedBox(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).colorScheme.surface,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                       ...[
@@ -138,40 +274,6 @@ class _MapBannerState extends State<MapBanner> {
                       ].map(
                         (e) => MarkerLayer(
                           markers: [
-                            if (currentMouse != null) ...[
-                              Marker(
-                                height: 24,
-                                width: 24,
-                                anchorPos: AnchorPos.align(AnchorAlign.center),
-                                point: widget.selectFromTrack
-                                    ? nearestToMouse!.coordinates
-                                    : currentMouse!,
-                                builder: (context) => DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.4),
-                                  ),
-                                ),
-                              ),
-                              Marker(
-                                height: 16,
-                                width: 16,
-                                anchorPos: AnchorPos.align(AnchorAlign.center),
-                                point: widget.selectFromTrack
-                                    ? nearestToMouse!.coordinates
-                                    : currentMouse!,
-                                builder: (context) => DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                  ),
-                                ),
-                              ),
-                            ],
                             Marker(
                               point: LatLng(
                                 e.coordinates.latitude,

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:HikeTracker/common/city_input_field/city_input_field.dart';
 import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/models/map_data.dart';
@@ -45,27 +44,80 @@ class _HikeDetailState extends State<HikeDetail> {
           );
         }
         if (snapshot.hasData) {
-          final hike = jsonDecode(snapshot.data!.body).first;
-          final gpx = hike['gpx'];
-          return TwoColumnsLayout(
-            leftChild: widget.user != null
-                ? MapBanner(
-                    mapData: MapData.fromStringGPX(stringGpx: gpx),
-                  )
-                : Container(),
-            rightChild: Expanded(
-              flex: 3,
-              child: CityInputField(client: widget.client),
-              // child: Details(
-              //   hike: hike,
-              // ),
-            ),
+          return HikeDetailContent(
+            user: widget.user,
+            client: widget.client,
+            hike: jsonDecode(snapshot.data!.body).first,
           );
         }
         return Container();
       },
     );
   }
+}
+
+class HikeDetailContent extends StatefulWidget {
+  const HikeDetailContent({
+    required this.client,
+    required this.hike,
+    this.user,
+    super.key,
+  });
+
+  final User? user;
+  final RestClient client;
+  final dynamic hike;
+
+  @override
+  State<HikeDetailContent> createState() => _HikeDetailContentState();
+}
+
+class _HikeDetailContentState extends State<HikeDetailContent> {
+  // City? city;
+  // MapBorders? mapBorders;
+  // bool loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final gpx = widget.hike['gpx'];
+    return TwoColumnsLayout(
+      leftChild: widget.user != null
+          ? MapBanner(
+              client: widget.client,
+              mapData: MapData.fromStringGPX(stringGpx: gpx),
+              // mapBorders: mapBorders,
+              // isLoading: loading,
+            )
+          : Container(),
+      rightChild: Expanded(
+        flex: 3,
+        // child: CityInputField(
+        //   client: widget.client,
+        //   onCityChange: (value) async {
+        //     setState(() {
+        //       city = value;
+        //       loading = true;
+        //     });
+
+        //     final b = await getBorders(city!);
+
+        //     setState(() {
+        //       mapBorders = b;
+        //       loading = false;
+        //     });
+        //   },
+        // ),
+        child: Details(
+          hike: widget.hike,
+        ),
+      ),
+    );
+  }
+
+  // Future<MapBorders> getBorders(City city) async {
+  //   final res = await widget.client.get(api: 'border/${city.id}');
+  //   return MapBorders.fromJson(res.body);
+  // }
 }
 
 class Details extends StatelessWidget {

@@ -434,7 +434,7 @@ const sendEmail = async (email, subject, text) => {
   });
 };
 
-//APIs for regions, provinces and municipalities
+//APIs for regions, provinces, municipalities and borders
 
 app.get("/api/regions/", async (req, res) => {
   await db
@@ -477,6 +477,21 @@ app.get("/api/municipalities/:province_ID", async (req, res) => {
       res
         .status(500)
         .json({ error: `Database error while retrieving municipalities` })
+        .end();
+    });
+});
+
+app.get("/api/border/:ID", async (req, res) => {
+  await db
+    .getBorder(req.params.ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving border` })
         .end();
     });
 });
