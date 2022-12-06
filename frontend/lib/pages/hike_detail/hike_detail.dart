@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:HikeTracker/common/city_input_field/city_input_field.dart';
 import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/models/map_data.dart';
@@ -54,9 +55,10 @@ class _HikeDetailState extends State<HikeDetail> {
                 : Container(),
             rightChild: Expanded(
               flex: 3,
-              child: Details(
-                hike: hike,
-              ),
+              child: CityInputField(client: widget.client),
+              // child: Details(
+              //   hike: hike,
+              // ),
             ),
           );
         }
@@ -237,7 +239,6 @@ class Details extends StatelessWidget {
             )
           ],
         ),
-        const Spacer(),
       ],
     );
   }

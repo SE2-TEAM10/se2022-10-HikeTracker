@@ -61,7 +61,7 @@ class MapData {
 
   MapTrackPoint? getNearestTrackPoint(LatLng current) {
     var nearest;
-    var min = 1000.0;
+    var min = double.infinity;
     track.forEach((p) {
       if (p.coordinates.distanceFrom(current) < min) {
         nearest = p;

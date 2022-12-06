@@ -93,13 +93,13 @@ class _MapBannerState extends State<MapBanner> {
                                   ? widget.onTap!(nearestToMouse!.coordinates)
                                   : widget.onTap!(point)
                           : null,
-                      onPointerHover: widget.selectFromTrack
-                          ? (event, point) => setState(() {
-                                nearestToMouse =
-                                    widget.mapData!.getNearestTrackPoint(point);
-                                currentMouse = point;
-                              })
-                          : null,
+                      onPointerHover: (event, point) => setState(() {
+                        if (widget.selectFromTrack) {
+                          nearestToMouse =
+                              widget.mapData!.getNearestTrackPoint(point);
+                        }
+                        currentMouse = point;
+                      }),
                     ),
                     children: [
                       TileLayer(
@@ -138,13 +138,14 @@ class _MapBannerState extends State<MapBanner> {
                       ].map(
                         (e) => MarkerLayer(
                           markers: [
-                            if (widget.selectFromTrack &&
-                                nearestToMouse != null) ...[
+                            if (currentMouse != null) ...[
                               Marker(
                                 height: 24,
                                 width: 24,
                                 anchorPos: AnchorPos.align(AnchorAlign.center),
-                                point: nearestToMouse!.coordinates,
+                                point: widget.selectFromTrack
+                                    ? nearestToMouse!.coordinates
+                                    : currentMouse!,
                                 builder: (context) => DecoratedBox(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -159,7 +160,9 @@ class _MapBannerState extends State<MapBanner> {
                                 height: 16,
                                 width: 16,
                                 anchorPos: AnchorPos.align(AnchorAlign.center),
-                                point: nearestToMouse!.coordinates,
+                                point: widget.selectFromTrack
+                                    ? nearestToMouse!.coordinates
+                                    : currentMouse!,
                                 builder: (context) => DecoratedBox(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
