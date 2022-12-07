@@ -348,14 +348,14 @@ describe.only('hikeController Tests', () => {
             const hike_true = await hikeController.getHikeByID(reqbody.hike_ID);
 
             expect(hike_true).not.to.be.undefined;
-            console.log("hike_true- SHOULD BE SOMETHING DEFINED: ", hike_true);
+            //console.log("hike_true- SHOULD BE SOMETHING DEFINED: ", hike_true);
 
             const hut_ID = await hikeController.addHut(reqbody);
 
-            console.log("hut_ID - SHOULD BE 20: ", hut_ID);
+            //console.log("hut_ID - SHOULD BE 20: ", hut_ID);
             const result = await hikeController.getHutByID(hut_ID);
 
-            console.log("hut result: ", result);
+            //console.log("hut result: ", result);
 
             assert.equal(result.name, reqbody.name);
             assert.equal(result.description, reqbody.description);
@@ -475,7 +475,7 @@ describe.only('hikeController Tests', () => {
             const parking_lot_ID = await hikeController.addParking(reqbody);
 
 
-            console.log("hut_ID - SHOULD BE 4: ", parking_lot_ID);
+            console.log("parking_lot_ID - SHOULD BE 4: ", parking_lot_ID);
 
             const result = await hikeController.getParkingLotByID(parking_lot_ID);
 
@@ -491,7 +491,7 @@ describe.only('hikeController Tests', () => {
 
             await hikeController.addHikeUserParking(50, 3, parking_lot_ID);
             const result2 = await hikeController.getLinkHikeUserParkingLot(50, 3, parking_lot_ID);
-            console.log("rrrrresult2: ", result2)
+            console.log("result2: ", result2)
             assert.equal(result2.length, 1);
 
         })

@@ -601,7 +601,7 @@ class Database {
         return reject(503); // 503 - UNAVAILABLE
       }
 
-      console.log("typeof hut.name: ", typeof hut.name);
+      /* console.log("typeof hut.name: ", typeof hut.name);
       console.log("typeof hut.description: ", typeof hut.description);
       console.log("typeof hut.opening_time: ", typeof hut.opening_time);
       console.log("typeof hut.closing_time: ", typeof hut.closing_time);
@@ -614,7 +614,7 @@ class Database {
       console.log("typeof hut.phone: ", typeof hut.phone);
       console.log("typeof hut.mail: ", typeof hut.mail);
       console.log("typeof hut.website: ", typeof hut.website);
-      console.log("typeof hut.hike_ID: ", typeof hut.hike_ID);
+      console.log("typeof hut.hike_ID: ", typeof hut.hike_ID); */
 
 
 
@@ -657,14 +657,14 @@ class Database {
   //QUERY FOR PARKING LOT
   addParking = (parking) => {
     return new Promise((resolve, reject) => {
-      console.log("datebase.js:", parking);
-         console.log("parking.name type: :", typeof parking.name)
-         console.log("parking.capacity type: :", typeof parking.capacity)
-         console.log("parking.latitude type: :", typeof parking.latitude)
-         console.log("parking.longitude type: :", typeof parking.longitude)
-         console.log("parking.city type: :", typeof parking.city)
-         console.log("parking.pro type: :", typeof parking.province)
       try {
+        console.log("datebase.js:", parking);
+        console.log("parking.name type - SHOULD BE STRING: :", typeof parking.name)
+        console.log("parking.capacity type - SHOULD BE NUMBER: :", typeof parking.capacity)
+        console.log("parking.latitude type - SHOULD BE NUMBER: :", typeof parking.latitude)
+        console.log("parking.longitude type - SHOULD BE NUMBER: :", typeof parking.longitude)
+        console.log("parking.city type - SHOULD BE STRING: :", typeof parking.city)
+        console.log("parking.pro type - SHOULD BE STRING: :", typeof parking.province)
         if (
           typeof parking.name !== 'string' ||
           typeof parking.capacity !== 'number' ||
@@ -693,9 +693,9 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hike_ID !== 'integer' ||
-          typeof user_ID !== 'integer' ||
-          typeof parking_ID !== 'integer'
+          typeof hike_ID !== 'number' ||
+          typeof user_ID !== 'number' ||
+          typeof parking_ID !== 'number'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
