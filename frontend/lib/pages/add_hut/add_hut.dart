@@ -57,10 +57,10 @@ class _AddHutState extends State<AddHut> {
     }
     newHike = newHike.copyWith(gpx: mapData!.content);
     */
-
+    var a = newHut.toMap();
     final res = await widget.client.post(
-      api: 'Hut',
       body: newHut.toMap(),
+      api: 'Hut',
     );
 
     if (res.statusCode == 201) {

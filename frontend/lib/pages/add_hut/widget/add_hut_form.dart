@@ -134,7 +134,7 @@ class _AddHutFormState extends State<AddHutForm> {
           InputField(
             label: 'Website',
             onChange: (value) => setState(
-              () => hut = hut.copyWith(phone: value),
+              () => hut = hut.copyWith(website: value),
             ),
           ),
           const SizedBox(
