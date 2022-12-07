@@ -776,6 +776,48 @@ class Database {
       });
     });
   };
+
+
+
+  getRegions = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM region";
+      this.db.all(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getProvinces = (region_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM province WHERE region_ID = ?";
+      this.db.all(sql, [region_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getMunicipalities = (province_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM municipality WHERE province_ID = ?";
+      this.db.all(sql, [province_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getBorder = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM border WHERE ID = ?";
+      this.db.get(sql, [ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
 }
 
 module.exports = Database;

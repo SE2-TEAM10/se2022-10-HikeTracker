@@ -15,7 +15,7 @@ const session = require("express-session"); // enable sessions
 const { check, validationResult, body, param } = require("express-validator"); // validation middleware */
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
-const {request} = require("express");
+const { request } = require("express");
 
 // set up the "username and password" login strategy
 // by setting a function to verify username and password
@@ -148,14 +148,14 @@ app.get("/api/hike", async (req, res) => {
     });
 });
 
-
-app.get("/api/hikesdetails/:hike_ID", /*isLoggedIn,*/ async (req, res) => {
-
-   /* let user = await db.getUserByID(req.user.id);
+app.get(
+  "/api/hikesdetails/:hike_ID",
+  /*isLoggedIn,*/ async (req, res) => {
+    /* let user = await db.getUserByID(req.user.id);
      if (user.role !== "Hiker") {
        return res.status(422).json({ error: `not a hiker` }).end();
      }*/
-  await db
+    await db
       .getHikesDetailsByHikeID(req.params.hike_ID)
       .then((lists) => {
         lists.map((row) => {
@@ -168,13 +168,12 @@ app.get("/api/hikesdetails/:hike_ID", /*isLoggedIn,*/ async (req, res) => {
       .catch((err) => {
         console.log(err);
         res
-            .status(500)
-            .json({ error: `Database error while retrieving hike` })
-            .end();
+          .status(500)
+          .json({ error: `Database error while retrieving hike` })
+          .end();
       });
-
-});
-
+  }
+);
 
 app.get("/api/sendEmail", async (req, res) => {
   let transport = nodemailer.createTransport({
@@ -252,7 +251,7 @@ app.post(
       console.log("res3 - ", result3);
       const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
       console.log("res4 - ", result4);
-      const result5 = await db.linkHikeUser(result1, req.user.ID );
+      const result5 = await db.linkHikeUser(result1, req.user.ID);
       console.log("res5 - ", result5);
 
       //console.log(result1);
@@ -314,42 +313,55 @@ app.post("/api/addUser", async (req, res) => {
   }
 });
 
-
 //addHut
 app.post(
-    "/api/addHut",
-    isLoggedIn,
-    [
-        check('name').isString(),
-        check('description').isString(),
-        check('opening_time').isString(),
-        check('closing_time').isString(),
-        check('bed_num').isInt(),
-        check('altitude').isInt(),
-        check('city').isString(),
-        check('province').isString(),
-        check('phone').isString(),
-        check('mail').isString(),
-        check('website').isString(),
-    ],
-    async (req, res) => {
-       const errors = validationResult(req).formatWith(errorFormatter); // format error message
-       if (!errors.isEmpty()) {
-          return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
-       }
-
-      try {
-         // check if a user is a local guide or a hut worker
-        await getLinkUser();
-        const result1 = await db.addHut(req.body);
-        const result2 = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, result1);
-
-        res.status(201).json(result1);
-      } catch (err) {
-        console.error(err);
-        res.status(503).json(err);
-      }
+  "/api/addHut",
+  //isLoggedIn,
+  [
+    check("name").isString(),
+    check("description").isString(),
+    check("opening_time").isString(),
+    check("closing_time").isString(),
+    check("bed_num").isInt(),
+    check("altitude").isInt(),
+    check("city").isString(),
+    check("province").isString(),
+    check("phone").isString(),
+    check("mail").isString(),
+    check("website").isString(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req).formatWith(errorFormatter); // format error message
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
     }
+
+    try {
+      // check if a user is a local guide or a hut worker
+      const user_res = await db.getLinkUser(req.body.hike_ID);
+      console.log("USER ID :", req.user.ID);
+      if (user_res !== req.user.ID) {
+        res.status(422).json(err);
+      } else if (
+        req.user.role !== "LocalGuide" ||
+        req.user.role !== "HutWorker"
+      ) {
+        res.status(422).json(err);
+      }
+
+      const result1 = await db.addHut(req.body);
+      const result2 = await db.addHikeUserHut(
+        req.body.hike_ID,
+        req.user.ID,
+        result1
+      );
+
+      res.status(201).json(result1);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  }
 );
 
 //addParking
@@ -433,7 +445,7 @@ const sendEmail = async (email, subject, text) => {
   });
 
   let mailOptions = {
-    from: "Hike Tracker <"+process.env.EMAIL+">",
+    from: "Hike Tracker <" + process.env.EMAIL + ">",
     to: email,
     subject: subject,
     html:
@@ -460,6 +472,68 @@ const getLinkUser = async (req,res) => {
   }
 };
 
+
+//APIs for regions, provinces, municipalities and borders
+
+app.get("/api/regions/", async (req, res) => {
+  await db
+    .getRegions()
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving regions` })
+        .end();
+    });
+});
+
+app.get("/api/provinces/:region_ID", async (req, res) => {
+  await db
+    .getProvinces(req.params.region_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving provinces` })
+        .end();
+    });
+});
+
+app.get("/api/municipalities/:province_ID", async (req, res) => {
+  await db
+    .getMunicipalities(req.params.province_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving municipalities` })
+        .end();
+    });
+});
+
+app.get("/api/border/:ID", async (req, res) => {
+  await db
+    .getBorder(req.params.ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving border` })
+        .end();
+    });
+});
 
 // Activate the server
 app.listen(port, () => {
