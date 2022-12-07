@@ -496,7 +496,7 @@ describe.only('hikeController Tests', () => {
 
         })
 
-        /*test('try to add parking lot with wrong params', async () => {
+        test('try to add parking lot with wrong params', async () => {
             let reqbody2 = {
                 name: "Parking lot testing",
                 capacity: 100,
@@ -551,7 +551,7 @@ describe.only('hikeController Tests', () => {
             
             const result = await hikeController.addHikeUserParking().catch(() => { });
             expect(result).to.be.undefined;
-        })*/
+        })
     })
 
 })
