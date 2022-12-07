@@ -5,6 +5,30 @@ const crypto = require("crypto");
 const dayjs = require("dayjs");
 const GpxParser = require("gpxparser");
 
+function checkPassword(password) {
+
+  let count = 0;
+
+  if(!(password.length < 8)){
+    count +=1;
+  }
+
+  //UpperCase
+  if( /[A-Z]/.test(password) ) {
+    count += 1;
+  }
+  //Lowercase
+  if( /[a-z]/.test(password) ) {
+    count += 1;
+  }
+  //Numbers
+  if( /\d/.test(password) ) {
+    count += 1;
+  }
+
+  return count;
+}
+
 
 class Database {
   constructor(dbName) {
@@ -428,6 +452,12 @@ class Database {
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
+
+      let countCheck = checkPassword(user.password);
+      if (countCheck < 4) {
+        return reject(new Error("Password doesn't match all the criterias!"));
+      }
+
       let database = this.db;
       let salt = crypto.randomBytes(16);
       console.log("STRING STRING ", salt.toString('hex'))
