@@ -73,51 +73,27 @@ class HikeDetailContent extends StatefulWidget {
 }
 
 class _HikeDetailContentState extends State<HikeDetailContent> {
-  // City? city;
-  // MapBorders? mapBorders;
-  // bool loading = false;
-
   @override
   Widget build(BuildContext context) {
     final gpx = widget.hike['gpx'];
     return TwoColumnsLayout(
       leftChild: widget.user != null
-          ? MapBanner(
-              client: widget.client,
-              mapData: MapData.fromStringGPX(stringGpx: gpx),
-              // mapBorders: mapBorders,
-              // isLoading: loading,
+          ? Expanded(
+              flex: 2,
+              child: MapBanner(
+                client: widget.client,
+                mapData: MapData.fromStringGPX(stringGpx: gpx),
+              ),
             )
           : Container(),
       rightChild: Expanded(
         flex: 3,
-        // child: CityInputField(
-        //   client: widget.client,
-        //   onCityChange: (value) async {
-        //     setState(() {
-        //       city = value;
-        //       loading = true;
-        //     });
-
-        //     final b = await getBorders(city!);
-
-        //     setState(() {
-        //       mapBorders = b;
-        //       loading = false;
-        //     });
-        //   },
-        // ),
         child: Details(
           hike: widget.hike,
         ),
       ),
     );
   }
-
-  // Future<MapBorders> getBorders(City city) async {
-  //   final res = await widget.client.get(api: 'border/${city.id}');
-  //   return MapBorders.fromJson(res.body);
-  // }
 }
 
 class Details extends StatelessWidget {

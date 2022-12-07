@@ -47,63 +47,59 @@ class _CityInputFieldState extends State<CityInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AutocompleteInputField(
-              label: 'Region',
-              disabled: regionsList == null,
-              items: regionsList
-                  ?.map((e) => AutocompleteItem(value: e.id, label: e.name))
-                  .toList(),
-              onSelect: (item) async {
-                setState(() {
-                  region = regionsList!.firstWhere((e) => e.id == item.value);
-                });
-                widget.onRegionChange?.call(region!);
-                final res = await repo.getProvinces(region!.id);
-                setState(() {
-                  provincesList = res;
-                });
-              },
-            ),
-            AutocompleteInputField(
-              label: 'Province',
-              items: provincesList
-                  ?.map((e) => AutocompleteItem(value: e.id, label: e.name))
-                  .toList(),
-              disabled: provincesList == null,
-              onSelect: (item) async {
-                setState(() {
-                  province =
-                      provincesList!.firstWhere((e) => e.id == item.value);
-                });
-                widget.onProvinceChange?.call(province!);
-                final res = await repo.getCities(province!.id);
-                setState(() {
-                  citiesList = res;
-                });
-              },
-            ),
-            AutocompleteInputField(
-              label: 'City',
-              items: citiesList
-                  ?.map((e) => AutocompleteItem(value: e.id, label: e.name))
-                  .toList(),
-              disabled: citiesList == null,
-              onSelect: (item) async {
-                setState(() {
-                  city = citiesList!.firstWhere((e) => e.id == item.value);
-                });
-                widget.onCityChange?.call(city!);
-              },
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutocompleteInputField(
+            label: 'Region',
+            disabled: regionsList == null,
+            items: regionsList
+                ?.map((e) => AutocompleteItem(value: e.id, label: e.name))
+                .toList(),
+            onSelect: (item) async {
+              setState(() {
+                region = regionsList!.firstWhere((e) => e.id == item.value);
+              });
+              widget.onRegionChange?.call(region!);
+              final res = await repo.getProvinces(region!.id);
+              setState(() {
+                provincesList = res;
+              });
+            },
+          ),
+          AutocompleteInputField(
+            label: 'Province',
+            items: provincesList
+                ?.map((e) => AutocompleteItem(value: e.id, label: e.name))
+                .toList(),
+            disabled: provincesList == null,
+            onSelect: (item) async {
+              setState(() {
+                province = provincesList!.firstWhere((e) => e.id == item.value);
+              });
+              widget.onProvinceChange?.call(province!);
+              final res = await repo.getCities(province!.id);
+              setState(() {
+                citiesList = res;
+              });
+            },
+          ),
+          AutocompleteInputField(
+            label: 'City',
+            items: citiesList
+                ?.map((e) => AutocompleteItem(value: e.id, label: e.name))
+                .toList(),
+            disabled: citiesList == null,
+            onSelect: (item) async {
+              setState(() {
+                city = citiesList!.firstWhere((e) => e.id == item.value);
+              });
+              widget.onCityChange?.call(city!);
+            },
+          ),
+        ],
       ),
     );
   }

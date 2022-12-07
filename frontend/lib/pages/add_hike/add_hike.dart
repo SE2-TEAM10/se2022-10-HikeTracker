@@ -32,13 +32,16 @@ class _AddHikeState extends State<AddHike> {
             child: CircularProgressIndicator(),
           )
         : TwoColumnsLayout(
-            leftChild: MapBanner(
-              client: widget.client,
-              mapData: mapData,
-              onGpxLoaded: (data) => setState(
-                () => mapData = data,
+            leftChild: Expanded(
+              flex: 2,
+              child: MapBanner(
+                client: widget.client,
+                mapData: mapData,
+                onGpxLoaded: (data) => setState(
+                  () => mapData = data,
+                ),
+                dense: context.breakpoint < LayoutBreakpoint.md,
               ),
-              dense: context.breakpoint < LayoutBreakpoint.md,
             ),
             rightChild: AddHikeForm(
               onSubmit: (
