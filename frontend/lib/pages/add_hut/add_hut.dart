@@ -95,6 +95,15 @@ class _AddHutState extends State<AddHut> {
   Future<void> onSubmit({
     required NewHut newHut,
   }) async {
+    if (selectedCoordinate == null) {
+      Message(
+        context: context,
+        message: 'Select the hut position from the map',
+        messageType: MessageType.Error,
+      ).show();
+      return;
+    }
+
     /*
     if (mapData == null) {
       Message(
@@ -105,7 +114,15 @@ class _AddHutState extends State<AddHut> {
     }
     newHike = newHike.copyWith(gpx: mapData!.content);
     */
-    var a = newHut.toMap();
+
+    //Insert selected coordiantes into the hut
+    newHut = newHut.copyWith(
+      latitude: selectedCoordinate!.latitude.toString(),
+      longitude: selectedCoordinate!.longitude.toString(),
+    );
+
+    final a = newHut.toMap();
+
     final res = await widget.client.post(
       body: newHut.toMap(),
       api: 'addHut',
