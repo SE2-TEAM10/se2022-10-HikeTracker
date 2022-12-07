@@ -60,7 +60,7 @@ class _AddHutState extends State<AddHut> {
     var a = newHut.toMap();
     final res = await widget.client.post(
       body: newHut.toMap(),
-      api: 'Hut',
+      api: 'addHut',
     );
 
     if (res.statusCode == 201) {
