@@ -1,10 +1,17 @@
+import 'package:HikeTracker/common/city_input_field/city_input_field.dart';
+import 'package:HikeTracker/common/city_input_field/models.dart';
+import 'package:HikeTracker/common/map_banner.dart';
+import 'package:HikeTracker/common/two_columns_layout.dart';
+import 'package:HikeTracker/models/map_borders.dart';
+import 'package:HikeTracker/pages/add_hut/models/new_hut.dart';
 import 'package:HikeTracker/pages/add_hut/widget/add_hut_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:gpx/gpx.dart';
+import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:layout/layout.dart';
 
-import 'models/hut_controller.dart';
+import '../../common/message.dart';
 
 class AddHut extends StatefulWidget {
   const AddHut({
@@ -20,8 +27,8 @@ class AddHut extends StatefulWidget {
 
 class _AddHutState extends State<AddHut> {
   bool isLoading = false;
-  String? gpxContent;
-  Gpx? gpx;
+  LatLng? selectedCoordinate;
+  MapBorders? mapBorders;
 
   @override
   Widget build(BuildContext context) {
@@ -29,33 +36,116 @@ class _AddHutState extends State<AddHut> {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : Row(
-            children: [
-              Container(),
-              AddHutForm(
-                onSubmit: (hut) => onSubmit(
-                  hut: hut,
-                ),
-                isSmall: context.breakpoint <= LayoutBreakpoint.xs,
+        : TwoColumnsLayout(
+            leftChild: Expanded(
+              flex: 2,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: MapBanner(
+                      client: widget.client,
+                      mapBorders: mapBorders,
+                      onTap: (value) {
+                        setState(() {
+                          selectedCoordinate = value;
+                        });
+                      },
+                      selectedCoordinates: selectedCoordinate != null
+                          ? [selectedCoordinate!]
+                          : null,
+                    ),
+                  ),
+                  Positioned(
+                    top: 32,
+                    left: 32,
+                    right: 32,
+                    child: Card(
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      child: CityInputField(
+                        client: widget.client,
+                        onCityChange: (city) async {
+                          final b = await getBorders(city);
+                          setState(() {
+                            mapBorders = b;
+                          });
+                        },
+                      ),
+                    ),
+                  )
+                ],
               ),
-            ],
+            ),
+            rightChild: AddHutForm(
+              onSubmit: (
+                newHut,
+              ) =>
+                  onSubmit(
+                newHut: newHut,
+              ),
+              isSmall: context.breakpoint <= LayoutBreakpoint.xs,
+            ),
           );
   }
 
-  Future<void> onSubmit({required Hut hut}) async {
-    final res = await widget.client.post(
-      api: 'hike',
-      body: {
-        'hut': {
-          'name': hut.name?.text,
-        }
-      },
+  Future<MapBorders> getBorders(City city) async {
+    final res = await widget.client.get(api: 'border/${city.id}');
+    return MapBorders.fromJson(res.body);
+  }
+
+  Future<void> onSubmit({
+    required NewHut newHut,
+  }) async {
+    if (selectedCoordinate == null) {
+      Message(
+        context: context,
+        message: 'Select the hut position from the map',
+        messageType: MessageType.Error,
+      ).show();
+      return;
+    }
+
+    /*
+    if (mapData == null) {
+      Message(
+        context: context,
+        message: 'Select a GPX file.',
+      ).show();
+      return;
+    }
+    newHike = newHike.copyWith(gpx: mapData!.content);
+    */
+
+    //Insert selected coordiantes into the hut
+    newHut = newHut.copyWith(
+      latitude: selectedCoordinate!.latitude.toString(),
+      longitude: selectedCoordinate!.longitude.toString(),
     );
 
-    if (res.body == '"Incorrect"') {
-      // TODO
+    final a = newHut.toMap();
+
+    final res = await widget.client.post(
+      body: newHut.toMap(),
+      api: 'addHut',
+    );
+
+    if (res.statusCode == 201) {
+      Message(
+        context: context,
+        message: 'Hike added successfully.',
+      ).show();
+      GoRouter.of(context).pop();
+    } else if (res.statusCode == 422) {
+      Message(
+        context: context,
+        message: 'Gpx file error.',
+        messageType: MessageType.Error,
+      ).show();
     } else {
-      // pop
+      Message(
+        context: context,
+        message: 'Internal error.',
+        messageType: MessageType.Error,
+      ).show();
     }
   }
 }
