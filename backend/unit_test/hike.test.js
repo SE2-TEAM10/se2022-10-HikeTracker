@@ -32,7 +32,6 @@ describe.only('hikeController Tests', () => {
             };
 
             await hikeController.deleteLocationByHikeID(51);
-            await hikeController.deleteLinkHikeUser(51, 3);
             await hikeController.deleteGpxByHikeID(51);
             await hikeController.deleteHikeByID(51);
             const result = await hikeController.getHikeWithFilters(filters);
@@ -65,25 +64,14 @@ describe.only('hikeController Tests', () => {
 
             };
 
-            const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx);
-
-            //console.log("hike ID - SHOULD BE 51", hike_ID);
+            let user_ID = 3;
+            const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx, user_ID);
 
             const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "startp", hike_ID, reqbody.gpx);
 
-            //console.log("startLoc - SHOULD BE TRUE", newStartpLocation);
-
             const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "endp", hike_ID, reqbody.gpx);
 
-            //console.log("endLoc - SHOULD BE TRUE", newEndpLocation);
-
             const hikeGPX_ID = await hikeController.addNewHikeGPX(reqbody.gpx, hike_ID);
-
-            //console.log("hikeGPX_ID - SHOULD BE 51", hikeGPX_ID);
-
-            const newLinkHikeUser = await hikeController.linkHikeUser(hike_ID, 3);
-
-            //console.log("linkUser - SHOULD BE TRUE", newLinkHikeUser);
 
             const result1 = await hikeController.getHikeByID(hike_ID);
 
@@ -91,6 +79,7 @@ describe.only('hikeController Tests', () => {
             assert.equal(result1.expected_time, reqbody.hike.expected_time);
             assert.equal(result1.difficulty, reqbody.hike.difficulty);
             assert.equal(result1.description, reqbody.hike.description);
+            assert.equal(result1.user_ID, 3);
 
             const result2 = await hikeController.getLocationByHikeID(hike_ID);
 
@@ -103,13 +92,7 @@ describe.only('hikeController Tests', () => {
             assert.equal(result2[1].city, reqbody.endp.city);
             assert.equal(result2[1].province, reqbody.endp.province);
 
-
-            const result3 = await hikeController.getLinkUser(hike_ID, 3);
-            //console.log("res3 length - ", result3.length);
-            assert.equal(result3.length, 1);
-
             const result4 = await hikeController.getGpxByHikeID(hike_ID);
-            //console.log("res4 length - ", result4.length);
             assert.equal(result4.length, 1);
 
         })
@@ -131,10 +114,8 @@ describe.only('hikeController Tests', () => {
 
             };
 
-            const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx).catch(() => { });
+            const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx, "userID").catch(() => { });
             const result = await hikeController.getHikeByID(hike_ID).catch(() => { });
-
-            //console.log("----try to insert a hike with wrong params-----",result);
 
             expect(result).to.be.undefined;
 
@@ -162,23 +143,6 @@ describe.only('hikeController Tests', () => {
         })
 
         test('try to insert a location with empty params', async () => {
-
-            const result = await hikeController.addNewLocation().catch(() => { });
-            expect(result).to.be.undefined;
-
-        })
-
-        test('try to link user and hike with wrong params', async () => {
-
-            let hike_ID = "hike_ID";
-            let user_ID = "user_ID"
-
-            const result = await hikeController.linkHikeUser(hike_ID, user_ID).catch(() => { });
-            expect(result).to.be.undefined;
-
-        })
-
-        test('try to link user and hike with empty params', async () => {
 
             const result = await hikeController.addNewLocation().catch(() => { });
             expect(result).to.be.undefined;
@@ -219,8 +183,6 @@ describe.only('hikeController Tests', () => {
             await hikeController.addUser(reqbody);
 
             const result = await hikeController.getUserByID(11);
-
-            //console.log("user result: ", result);
 
             /*password and salt cannot be tested, since they are crypted and they will never match the ones in the JSON */
             assert.equal(result.name, reqbody.name);
@@ -338,24 +300,16 @@ describe.only('hikeController Tests', () => {
                 province: "Lecce",
                 phone: "1111111111",
                 mail: "testhut@hut.it",
-                website: "testhut.it",
-                hike_ID: 50
+                website: "testhut.it"
             };
 
-            await hikeController.deleteLinkHikeUserHut(50, 3, 20);
             await hikeController.deleteHutByID(20);
 
-            const hike_true = await hikeController.getHikeByID(reqbody.hike_ID);
+            let user_ID = 3;
 
-            expect(hike_true).not.to.be.undefined;
-            //console.log("hike_true- SHOULD BE SOMETHING DEFINED: ", hike_true);
+            const hut_ID = await hikeController.addHut(reqbody, user_ID);
 
-            const hut_ID = await hikeController.addHut(reqbody);
-
-            //console.log("hut_ID - SHOULD BE 20: ", hut_ID);
             const result = await hikeController.getHutByID(hut_ID);
-
-            //console.log("hut result: ", result);
 
             assert.equal(result.name, reqbody.name);
             assert.equal(result.description, reqbody.description);
@@ -370,11 +324,6 @@ describe.only('hikeController Tests', () => {
             assert.equal(result.phone, reqbody.phone);
             assert.equal(result.mail, reqbody.mail);
             assert.equal(result.website, reqbody.website);
-            //assert.equal(result.hike_ID, reqbody.hike_ID);
-
-            await hikeController.addHikeUserHut(50, 3, hut_ID);
-            const result2 = await hikeController.getLinkHikeUserHut(50, 3, hut_ID);
-            assert.equal(result2.length, 1);
 
         })
 
@@ -392,11 +341,10 @@ describe.only('hikeController Tests', () => {
                 province: "Lecce",
                 phone: "45454",
                 mail: "43434",
-                website: "3434343",
-                hike_ID: 1
+                website: "3434343"
             };
 
-            const result = await hikeController.addHut(hut).catch(() => { });
+            const result = await hikeController.addHut(hut, "user").catch(() => { });
             expect(result).to.be.undefined;
         })
 
@@ -407,47 +355,6 @@ describe.only('hikeController Tests', () => {
 
         })
 
-        test('try to add hut to a non existing hike', async () => {
-
-            let reqbody = {
-                name: "testHut",
-                description: "aDesc",
-                opening_time: "09:00",
-                closing_time: "22:00",
-                bed_num: 3,
-                altitude: 1000,
-                latitude: 45.029439,
-                longitude: 7.79784,
-                city: "Lecce",
-                province: "Lecce",
-                phone: "1111111111",
-                mail: "testhut@hut.it",
-                website: "testhut.it",
-                hike_ID: 500
-            };
-
-            const hike_true = await hikeController.getHikeByID(reqbody.hike_ID);
-
-            expect(hike_true).to.be.undefined;
-
-        })
-
-        test('try to link hike-user-hut with wrong params', async () => {
-            let reqbody = {
-                hike_ID: "hike1",
-                user_ID: "user1",
-                hut_ID: "hut1"
-            };
-
-            const result = await hikeController.addHikeUserHut(reqbody).catch(() => { });
-            expect(result).to.be.undefined;
-        })
-
-        test('try to link hike-user-hut with empty params', async () => {
-
-            const result = await hikeController.addHikeUserHut().catch(() => { });
-            expect(result).to.be.undefined;
-        })
     })
 
 
@@ -460,26 +367,15 @@ describe.only('hikeController Tests', () => {
                 latitude: 45.111111,
                 longitude: 7.22222,
                 city: "Lecce",
-                province: "Lecce",
-                hike_ID: 50
+                province: "Lecce"
             };
 
-            await hikeController.deleteLinkHikeUserParking(50, 3, 4);
             await hikeController.deleteParkingLotByID(4);
 
-            const hike_true = await hikeController.getHikeByID(reqbody.hike_ID);
-
-            expect(hike_true).not.to.be.undefined;
-            console.log("hike_true- SHOULD BE SOMETHING DEFINED: ", hike_true);
-
-            const parking_lot_ID = await hikeController.addParking(reqbody);
-
-
-            console.log("parking_lot_ID - SHOULD BE 4: ", parking_lot_ID);
+            let user_ID = 3;
+            const parking_lot_ID = await hikeController.addParking(reqbody, user_ID);
 
             const result = await hikeController.getParkingLotByID(parking_lot_ID);
-
-            console.log("parking lot result: ", result);
 
             assert.equal(result.name, reqbody.name);
             assert.equal(result.capacity, reqbody.capacity);
@@ -487,12 +383,6 @@ describe.only('hikeController Tests', () => {
             assert.equal(result.longitude, reqbody.longitude);
             assert.equal(result.city, reqbody.city);
             assert.equal(result.province, reqbody.province);
-
-
-            await hikeController.addHikeUserParking(50, 3, parking_lot_ID);
-            const result2 = await hikeController.getLinkHikeUserParkingLot(50, 3, parking_lot_ID);
-            console.log("result2: ", result2)
-            assert.equal(result2.length, 1);
 
         })
 
@@ -503,11 +393,10 @@ describe.only('hikeController Tests', () => {
                 latitude: 45.111111,
                 longitude: 7.22222,
                 city: 40,
-                province: 41,
-                hike_ID : "id"
-             };
+                province: 41
+            };
 
-            const result = await hikeController.addParking(reqbody2).catch(() => { });
+            const result = await hikeController.addParking(reqbody2, "user").catch(() => { });
             expect(result).to.be.undefined;
         })
 
@@ -518,40 +407,6 @@ describe.only('hikeController Tests', () => {
 
         })
 
-        test('try to add parking to a non existing hike', async () => {
-
-            let reqbody3 = {
-                name: "Parking lot testing",
-                capacity:100,
-                latitude: 45.111111,
-                longitude: 7.22222,
-                city: "Lecce",
-                province: "Lecce",
-                hike_ID : 500
-             };
-
-            const hike_true = await hikeController.getHikeByID(reqbody3.hike_ID);
-
-            expect(hike_true).to.be.undefined;
-
-        })
-
-        test('try to link hike-user-parking with wrong params', async () => {
-            let reqbody4 = {
-                hike_ID: "hike1",
-                user_ID: "user1",
-                parking_ID: "parking1"
-            };
-
-            const result = await hikeController.addHikeUserParking(reqbody4).catch(() => { });
-            expect(result).to.be.undefined;
-        })
-
-        test('try to link hike-user-parking with empty params', async () => {
-            
-            const result = await hikeController.addHikeUserParking().catch(() => { });
-            expect(result).to.be.undefined;
-        })
     })
 
 })
