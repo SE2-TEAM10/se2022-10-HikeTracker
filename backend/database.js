@@ -635,11 +635,12 @@ class Database {
   //QUERY FOR PARKING LOT
   addParking = (parking, user_ID) => {
     return new Promise((resolve, reject) => {
+
         if (
           typeof parking.name !== 'string' ||
-          typeof parking.capacity !== 'string' ||
-          typeof parking.latitude !== 'number' ||
-          typeof parking.longitude !== 'number' ||
+          typeof parking.capacity !== 'number' ||
+          typeof parking.latitude !== 'string' ||
+          typeof parking.longitude !== 'string' ||
           typeof parking.city !== 'string' ||
           typeof parking.province !== 'string' ||
           typeof user_ID !== 'number'
