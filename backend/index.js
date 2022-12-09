@@ -228,12 +228,11 @@ app.post(
       }
 
       const gpx_len = req.body.gpx.length;
-      console.log("gpx length: ", gpx_len);
       if (gpx_len === 0) {
         res.status(422).json("Error: the gpx file is empty!"); //UNPROCESSABLE
       }
 
-      const result1 = await db.addNewHike(req.body.hike, req.body.gpx);
+      const result1 = await db.addNewHike(req.body.hike, req.body.gpx, req.user.ID);
       console.log("res1 - ", result1);
       const result2 = await db.addNewLocation(
         req.body.startp,
@@ -251,8 +250,6 @@ app.post(
       console.log("res3 - ", result3);
       const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
       console.log("res4 - ", result4);
-      const result5 = await db.linkHikeUser(result1, req.user.ID);
-      console.log("res5 - ", result5);
 
       //console.log(result1);
       res.status(201).json("Hike " + result1 + " correctly created!");
@@ -338,23 +335,16 @@ app.post(
 
     try {
       // check if a user is a local guide or a hut worker
-      const user_res = await db.getLinkUser(req.body.hike_ID);
-      console.log("USER ID :", req.user.ID);
-      if (user_res !== req.user.ID) {
-        res.status(422).json(err);
-      } else if (
-        req.user.role !== "LocalGuide" ||
-        req.user.role !== "HutWorker"
-      ) {
-        res.status(422).json(err);
+      if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
+        res.status(422).json("User isnt't a local guide or a hut worker");
       }
 
-      const result1 = await db.addHut(req.body);
-      const result2 = await db.addHikeUserHut(
+      const result1 = await db.addHut(req.body, req.user.ID);
+      /* const result2 = await db.addHikeUserHut(
         req.body.hike_ID,
         req.user.ID,
         result1
-      );
+      ); */
 
       res.status(201).json(result1);
     } catch (err) {
@@ -363,6 +353,36 @@ app.post(
     }
   }
 );
+
+//addParking
+app.post(
+  "/api/addParking",
+  isLoggedIn,
+  [
+  ],
+  async (req, res) => {
+    const errors = validationResult(req).formatWith(errorFormatter); // format error message
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+    }
+
+    try {
+
+      //await getLinkUser();
+      if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
+        res.status(422).json("User isnt't a local guide or a hut worker");
+      }
+      const result1 = await db.addParking(req.body, req.user.ID);
+      //const result2 = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, result1);
+
+      res.status(201).json(result1);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  }
+);
+
 
 //api per la verifica
 app.get("/api/user/verify/:token", (req, res) => {
@@ -433,6 +453,18 @@ const sendEmail = async (email, subject, text) => {
     console.log("Message sent: %s", info.messageId);
   });
 };
+
+/* const getLinkUser = async (req,res) => {
+  // check if a user is a local guide or a hut worker
+  const user_res = await db.getLinkUser(req.body.hike_ID);
+  console.log("USER ID :", req.user.ID);
+  if (user_res !== req.user.ID) {
+    res.status(422).json("User and hike not linked");
+  } else if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
+    res.status(422).json("User isnt't a local guide or a hut worker");
+  }
+}; */
+
 
 //APIs for regions, provinces, municipalities and borders
 
