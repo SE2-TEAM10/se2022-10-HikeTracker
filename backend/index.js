@@ -313,13 +313,13 @@ app.post("/api/addUser", async (req, res) => {
 //addHut
 app.post(
   "/api/addHut",
-  //isLoggedIn,
+  isLoggedIn,
   [
     check("name").isString(),
     check("description").isString(),
     check("opening_time").isString(),
     check("closing_time").isString(),
-    check("bed_num").isInt(),
+    check("bed_num").isString(),
     check("altitude").isInt(),
     check("city").isString(),
     check("province").isString(),
@@ -333,20 +333,22 @@ app.post(
       return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
     }
 
+    console.log("TYPE USER", req.user.role);
+    console.log("USER ID", req.user.ID);
+
     try {
+      
       // check if a user is a local guide or a hut worker
-      if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
-        res.status(422).json("User isnt't a local guide or a hut worker");
-      }
+      if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
+        const result1 = await db.addHut(req.body, req.user.ID);
+        /* const result2 = await db.addHikeUserHut(
+          req.body.hike_ID,
+          req.user.ID,
+          result1
+        ); */
 
-      const result1 = await db.addHut(req.body, req.user.ID);
-      /* const result2 = await db.addHikeUserHut(
-        req.body.hike_ID,
-        req.user.ID,
-        result1
-      ); */
-
-      res.status(201).json(result1);
+        res.status(201).json(result1);
+      }      
     } catch (err) {
       console.error(err);
       res.status(503).json(err);
