@@ -26,10 +26,10 @@ class _AddHutFormState extends State<AddHutForm> {
   @override
   void initState() {
     hut = NewHut(
-      hhOp: 0,
-      mmOp: 0,
-      hhEd: 0,
-      mmEd: 0,
+      hhOp: TimeOfDay.now().hour,
+      mmOp: TimeOfDay.now().minute,
+      hhEd: TimeOfDay.now().hour,
+      mmEd: TimeOfDay.now().minute,
     );
     super.initState();
   }
@@ -84,6 +84,9 @@ class _AddHutFormState extends State<AddHutForm> {
                   },
                 ),
               ),
+              const SizedBox(
+                width: 8,
+              ),
               Expanded(
                 child: TimeField(
                   label: 'Closing time',
@@ -100,15 +103,36 @@ class _AddHutFormState extends State<AddHutForm> {
           const SizedBox(
             height: 32,
           ),
-          InputField(
-            label: 'Beds',
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
+          Row(
+            children: [
+              Expanded(
+                child: InputField(
+                  label: 'Beds',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  onChange: (value) => setState(
+                    () => hut = hut.copyWith(bednum: value),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: InputField(
+                  label: 'Altitude',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  onChange: (value) => setState(
+                    () => hut = hut.copyWith(altitude: value),
+                  ),
+                ),
+              ),
             ],
-            onChange: (value) => setState(
-              () => hut = hut.copyWith(bednum: value),
-            ),
           ),
           const SizedBox(
             height: 32,

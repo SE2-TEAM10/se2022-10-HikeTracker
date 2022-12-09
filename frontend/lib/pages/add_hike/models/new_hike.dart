@@ -38,7 +38,9 @@ class NewHike {
       difficulty != null &&
       description != null &&
       startp != null &&
+      startp!.isFull() &&
       endp != null &&
+      endp!.isFull() &&
       gpx != null;
 
   NewHike copyWith({

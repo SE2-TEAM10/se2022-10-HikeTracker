@@ -29,6 +29,8 @@ class _AddHutState extends State<AddHut> {
   bool isLoading = false;
   LatLng? selectedCoordinate;
   MapBorders? mapBorders;
+  Province? selectedProvince;
+  City? selectedCity;
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +65,18 @@ class _AddHutState extends State<AddHut> {
                       color: Theme.of(context).colorScheme.surfaceVariant,
                       child: CityInputField(
                         client: widget.client,
+                        onProvinceChange: (province) => {
+                          setState(() {
+                            selectedProvince = province;
+                          })
+                        },
                         onCityChange: (city) async {
                           final b = await getBorders(city);
                           setState(() {
                             mapBorders = b;
+                          });
+                          setState(() {
+                            selectedCity = city;
                           });
                         },
                       ),
@@ -104,24 +114,13 @@ class _AddHutState extends State<AddHut> {
       return;
     }
 
-    /*
-    if (mapData == null) {
-      Message(
-        context: context,
-        message: 'Select a GPX file.',
-      ).show();
-      return;
-    }
-    newHike = newHike.copyWith(gpx: mapData!.content);
-    */
-
     //Insert selected coordiantes into the hut
     newHut = newHut.copyWith(
       latitude: selectedCoordinate!.latitude.toString(),
       longitude: selectedCoordinate!.longitude.toString(),
+      city: selectedCity!.name,
+      province: selectedProvince!.name,
     );
-
-    final a = newHut.toMap();
 
     final res = await widget.client.post(
       body: newHut.toMap(),
@@ -137,13 +136,13 @@ class _AddHutState extends State<AddHut> {
     } else if (res.statusCode == 422) {
       Message(
         context: context,
-        message: 'Gpx file error.',
+        message: res.body,
         messageType: MessageType.Error,
       ).show();
     } else {
       Message(
         context: context,
-        message: 'Internal error.',
+        message: res.body,
         messageType: MessageType.Error,
       ).show();
     }
