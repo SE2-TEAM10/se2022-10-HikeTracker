@@ -635,10 +635,9 @@ class Database {
   //QUERY FOR PARKING LOT
   addParking = (parking, user_ID) => {
     return new Promise((resolve, reject) => {
-      try {
         if (
           typeof parking.name !== 'string' ||
-          typeof parking.capacity !== 'number' ||
+          typeof parking.capacity !== 'string' ||
           typeof parking.latitude !== 'number' ||
           typeof parking.longitude !== 'number' ||
           typeof parking.city !== 'string' ||
@@ -647,9 +646,7 @@ class Database {
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
-      } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
-      }
+
       const sql = "INSERT INTO parking_lot(name,capacity,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
         sql, [parking.name, parking.capacity, parking.latitude, parking.longitude, parking.city, parking.province, user_ID], function (err) {
