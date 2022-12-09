@@ -563,16 +563,29 @@ class Database {
   //QUERY FOR HUT
   addHut = (hut, user_ID) => {
     return new Promise((resolve, reject) => {
-      try {
+      console.log(typeof hut.name)
+      console.log(typeof hut.description)
+      console.log(typeof hut.opening_time)
+      console.log(typeof hut.closing_time)
+      console.log(typeof hut.bed_num)
+      console.log(typeof hut.altitude)
+      console.log(typeof hut.name)
+      console.log(typeof hut.latitude)
+      console.log(typeof hut.longitude)
+      console.log(typeof hut.city)
+      console.log(typeof hut.province)
+      console.log(typeof hut.phone)
+      console.log(typeof hut.mail)
+      console.log(typeof hut.website)
         if (
           typeof hut.name !== 'string' ||
           typeof hut.description !== 'string' ||
           typeof hut.opening_time !== 'string' ||
           typeof hut.closing_time !== 'string' ||
-          typeof hut.bed_num !== 'number' ||
+          typeof hut.bed_num !== 'string' ||
           typeof hut.altitude !== 'number' ||
-          typeof hut.latitude !== 'number' ||
-          typeof hut.longitude !== 'number' ||
+          typeof hut.latitude !== 'string' ||
+          typeof hut.longitude !== 'string' ||
           typeof hut.city !== 'string' ||
           typeof hut.province !== 'string' ||
           typeof hut.phone !== 'string' ||
@@ -582,9 +595,6 @@ class Database {
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
-      } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
-      }
       const sql = "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website, user_ID) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       this.db.run(
         sql, [hut.name, hut.description, hut.opening_time, hut.closing_time, hut.bed_num, hut.altitude, hut.latitude, hut.longitude, hut.city, hut.province, hut.phone, hut.mail, hut.website, user_ID], function (err) {
