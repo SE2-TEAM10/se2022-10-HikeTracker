@@ -582,8 +582,8 @@ class Database {
           typeof hut.description !== 'string' ||
           typeof hut.opening_time !== 'string' ||
           typeof hut.closing_time !== 'string' ||
-          typeof hut.bed_num !== 'string' ||
-          typeof hut.altitude !== 'string' ||
+          typeof hut.bed_num !== 'number' ||
+          typeof hut.altitude !== 'number' ||
           typeof hut.latitude !== 'string' ||
           typeof hut.longitude !== 'string' ||
           typeof hut.city !== 'string' ||

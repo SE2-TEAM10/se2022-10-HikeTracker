@@ -130,7 +130,7 @@ class _AddHutState extends State<AddHut> {
     if (res.statusCode == 201) {
       Message(
         context: context,
-        message: 'Hike added successfully.',
+        message: 'Hut added successfully.',
       ).show();
       GoRouter.of(context).pop();
     } else if (res.statusCode == 422) {
