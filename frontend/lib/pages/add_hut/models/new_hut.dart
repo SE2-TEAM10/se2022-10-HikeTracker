@@ -22,14 +22,14 @@ class NewHut {
   final int? mmOp;
   final int? hhEd;
   final int? mmEd;
-  final String? bednum;
+  final int? bednum;
   final String? phone;
   final String? description;
   final String? mail;
   final String? website;
   final String? city;
   final String? province;
-  final String? altitude;
+  final int? altitude;
   final String? latitude;
   final String? longitude;
 
@@ -89,14 +89,14 @@ class NewHut {
         mmOp: mmOp ?? this.mmOp,
         hhEd: hhEd ?? this.hhEd,
         mmEd: mmEd ?? this.mmEd,
-        bednum: bednum ?? this.bednum,
+        bednum: bednum != null ? int.parse(bednum) : this.bednum,
         description: description ?? this.description,
         phone: phone ?? this.phone,
         mail: mail ?? this.mail,
         website: website ?? this.website,
         city: city ?? this.city,
         province: province ?? this.province,
-        altitude: altitude ?? this.altitude,
+        altitude: altitude != null ? int.parse(altitude) : this.altitude,
         latitude: latitude ?? this.latitude,
         longitude: longitude ?? this.longitude,
       );
