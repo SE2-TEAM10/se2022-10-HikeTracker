@@ -3,11 +3,14 @@ import 'package:HikeTracker/common/city_input_field/models.dart';
 import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/models/map_borders.dart';
+import 'package:HikeTracker/pages/add_parking/models/new_parking.dart';
 import 'package:HikeTracker/pages/add_parking/widget/add_parking_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:layout/layout.dart';
+import 'package:go_router/go_router.dart';
+
 
 import '../../common/message.dart';
 
@@ -75,9 +78,11 @@ class _AddParkingState extends State<AddParking> {
             ),
             rightChild: AddParkingForm(
               onSubmit: (
-                newHut,
+                newParking,
               ) =>
-                  onSubmit(),
+                  onSubmit(
+                    newParking: newParking,
+                  ),
               isSmall: context.breakpoint <= LayoutBreakpoint.xs,
             ),
           );
@@ -88,14 +93,60 @@ class _AddParkingState extends State<AddParking> {
     return MapBorders.fromJson(res.body);
   }
 
-  Future<void> onSubmit() async {
+  Future<void> onSubmit({
+    required NewParking newParking,
+  }) async {
     if (selectedCoordinate == null) {
       Message(
         context: context,
-        message: 'Select the hut position from the map',
+        message: 'Select the parking position from the map',
         messageType: MessageType.Error,
       ).show();
       return;
+    }
+
+    /*
+    if (mapData == null) {
+      Message(
+        context: context,
+        message: 'Select a GPX file.',
+      ).show();
+      return;
+    }
+    newHike = newHike.copyWith(gpx: mapData!.content);
+    */
+
+    //Insert selected coordiantes into the parking
+    newParking = newParking.copyWith(
+      latitude: selectedCoordinate!.latitude.toString(),
+      longitude: selectedCoordinate!.longitude.toString(),
+    );
+
+    final a = newParking.toMap();
+
+    final res = await widget.client.post(
+      body: newParking.toMap(),
+      api: 'addParking',
+    );
+
+    if (res.statusCode == 201) {
+      Message(
+        context: context,
+        message: 'Parking added successfully.',
+      ).show();
+      GoRouter.of(context).pop();
+    } else if (res.statusCode == 422) {
+      Message(
+        context: context,
+        message: 'Gpx file error.',
+        messageType: MessageType.Error,
+      ).show();
+    } else {
+      Message(
+        context: context,
+        message: 'Internal error.',
+        messageType: MessageType.Error,
+      ).show();
     }
   }
 }
