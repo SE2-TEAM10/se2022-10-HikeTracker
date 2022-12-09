@@ -24,6 +24,7 @@ class _AddParkingFormState extends State<AddParkingForm> {
 
   @override
   void initState() {
+    parking = NewParking();
     super.initState();
   }
 
@@ -51,7 +52,7 @@ class _AddParkingFormState extends State<AddParkingForm> {
           InputField(
             label: 'Name',
             onChange: (value) => setState(
-                  () => parking = parking.copyWith(name: value),
+              () => parking = parking.copyWith(name: value),
             ),
           ),
           const SizedBox(
@@ -64,7 +65,7 @@ class _AddParkingFormState extends State<AddParkingForm> {
               FilteringTextInputFormatter.digitsOnly
             ],
             onChange: (value) => setState(
-                  () => parking = parking.copyWith(capacity: value),
+              () => parking = parking.copyWith(capacity: value),
             ),
           ),
           const SizedBox(
