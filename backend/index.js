@@ -392,6 +392,19 @@ app.post(
   }
 );
 
+app.get("/api/hutWithFilters", async (req, res) => {
+  await db.getHutsWithFilters(req.query).then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
+});
+
 
 //api per la verifica
 app.get("/api/user/verify/:token", (req, res) => {
