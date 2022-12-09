@@ -24,6 +24,14 @@ class NewParking {
         'province': province,
       };
 
+  bool isFull() =>
+      name != null &&
+      city != null &&
+      province != null &&
+      capacity != null &&
+      latitude != null &&
+      longitude != null;
+
   NewParking copyWith({
     String? name,
     String? capacity,

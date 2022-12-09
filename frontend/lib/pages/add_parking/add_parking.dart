@@ -122,6 +122,14 @@ class _AddParkingState extends State<AddParking> {
       province: selectedProvince!.name,
     );
 
+    if (newParking.isFull() == false) {
+      Message(
+        context: context,
+        message: 'Fill all the fields',
+      ).show();
+      return;
+    }
+
     final res = await widget.client.post(
       body: newParking.toMap(),
       api: 'addParking',
@@ -136,7 +144,7 @@ class _AddParkingState extends State<AddParking> {
     } else if (res.statusCode == 422) {
       Message(
         context: context,
-        message: 'Gpx file error.',
+        message: 'Request error',
         messageType: MessageType.Error,
       ).show();
     } else {
