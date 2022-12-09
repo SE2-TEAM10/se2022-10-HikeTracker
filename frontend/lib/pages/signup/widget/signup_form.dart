@@ -117,6 +117,7 @@ class _LoginFormState extends State<SignupForm> {
               uppercaseCharCount: 1,
               numericCharCount: 1,
               normalCharCount: 1,
+              specialCharCount: 1,
               width: 350,
               height: 150,
               onSuccess: () => '',
