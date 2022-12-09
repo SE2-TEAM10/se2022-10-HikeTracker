@@ -39,29 +39,33 @@ class NewHut {
         'closing_time': '$hhEd:$mmEd',
         'bed_num': bednum,
         'description': description,
-        'altitude': 3,
+        'altitude': altitude,
         'latitude': latitude,
         'longitude': longitude,
-        'city': 'Agra',
-        'province': 'Varese',
+        'city': city,
+        'province': province,
         'phone': phone,
         'mail': mail,
         'website': website,
       };
 
-/*
   bool isFull() =>
       name != null &&
       hhOp != null &&
       mmOp != null &&
       hhEd != null &&
       mmEd != null &&
-      difficulty != null &&
+      bednum != null &&
       description != null &&
-      startp != null &&
-      endp != null &&
-      gpx != null;
-*/
+      phone != null &&
+      mail != null &&
+      website != null &&
+      city != null &&
+      province != null &&
+      altitude != null &&
+      latitude != null &&
+      longitude != null;
+
   NewHut copyWith({
     String? name,
     int? hhOp,

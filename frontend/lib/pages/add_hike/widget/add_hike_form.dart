@@ -69,19 +69,6 @@ class _AddHikeFormState extends State<AddHikeForm> {
           const SizedBox(
             height: 32,
           ),
-          // InputField(
-          //   label: 'Length',
-          //   keyboardType: TextInputType.number,
-          //   inputFormatters: <TextInputFormatter>[
-          //     FilteringTextInputFormatter.digitsOnly
-          //   ],
-          //    onChange: (value) => setState(
-          //     () => hike = hike.copyWith(length: value),
-          //   ),
-          // ),
-          // const SizedBox(
-          //   height: 32,
-          // ),
           Row(
             children: [
               Expanded(
