@@ -2,6 +2,7 @@ import 'package:HikeTracker/common/input_field.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/signup/models/new_user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({
@@ -29,6 +30,9 @@ class _LoginFormState extends State<SignupForm> {
     user = NewUser(role: UserRole.LocalGuide);
     super.initState();
   }
+
+  final _passwordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +104,24 @@ class _LoginFormState extends State<SignupForm> {
             child: InputField(
               onChange: (value) =>
                   setState(() => user = user.copyWith(password: value)),
+              controller: _passwordController,
               label: 'Password',
               isPassword: true,
             ),
+          ),SizedBox(
+            height: widget.isSmall ? 8 : 32,
+          ),
+          FlutterPwValidator(
+              controller: _passwordController,
+              minLength: 8,
+              uppercaseCharCount: 1,
+              numericCharCount: 1,
+              normalCharCount: 1,
+              specialCharCount: 1,
+              width: 350,
+              height: 150,
+              onSuccess: () => '',
+              onFail: () => ''
           ),
           SizedBox(
             height: widget.isSmall ? 8 : 32,
@@ -115,9 +134,6 @@ class _LoginFormState extends State<SignupForm> {
               label: 'Confirm Password',
               isPassword: true,
             ),
-          ),
-          SizedBox(
-            height: widget.isSmall ? 8 : 32,
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
