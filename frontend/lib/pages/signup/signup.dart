@@ -73,6 +73,13 @@ class _SignupState extends State<Signup> {
         messageType: MessageType.Error,
       ).show();
       return;
+    } else if(!user.isPasswordValid()){
+      Message(
+        context: context,
+        message: 'Password does not match all the criterias' ,
+        messageType: MessageType.Error,
+      ).show();
+      return;
     }
 
     setState(() {
