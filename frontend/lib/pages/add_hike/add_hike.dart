@@ -66,6 +66,13 @@ class _AddHikeState extends State<AddHike> {
       return;
     }
     newHike = newHike.copyWith(gpx: mapData!.content);
+    if (newHike.isFull() == false) {
+      Message(
+        context: context,
+        message: 'Fill all the fields',
+      ).show();
+      return;
+    }
 
     final res = await widget.client.post(
       api: 'hike',
