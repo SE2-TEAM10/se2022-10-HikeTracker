@@ -11,7 +11,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:layout/layout.dart';
 import 'package:go_router/go_router.dart';
 
-
 import '../../common/message.dart';
 
 class AddParking extends StatefulWidget {
@@ -30,6 +29,8 @@ class _AddParkingState extends State<AddParking> {
   bool isLoading = false;
   LatLng? selectedCoordinate;
   MapBorders? mapBorders;
+  Province? selectedProvince;
+  City? selectedCity;
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +65,18 @@ class _AddParkingState extends State<AddParking> {
                       color: Theme.of(context).colorScheme.surfaceVariant,
                       child: CityInputField(
                         client: widget.client,
+                        onProvinceChange: (province) => {
+                          setState(() {
+                            selectedProvince = province;
+                          })
+                        },
                         onCityChange: (city) async {
                           final b = await getBorders(city);
                           setState(() {
                             mapBorders = b;
+                          });
+                          setState(() {
+                            selectedCity = city;
                           });
                         },
                       ),
@@ -81,8 +90,8 @@ class _AddParkingState extends State<AddParking> {
                 newParking,
               ) =>
                   onSubmit(
-                    newParking: newParking,
-                  ),
+                newParking: newParking,
+              ),
               isSmall: context.breakpoint <= LayoutBreakpoint.xs,
             ),
           );
@@ -105,24 +114,13 @@ class _AddParkingState extends State<AddParking> {
       return;
     }
 
-    /*
-    if (mapData == null) {
-      Message(
-        context: context,
-        message: 'Select a GPX file.',
-      ).show();
-      return;
-    }
-    newHike = newHike.copyWith(gpx: mapData!.content);
-    */
-
     //Insert selected coordiantes into the parking
     newParking = newParking.copyWith(
       latitude: selectedCoordinate!.latitude.toString(),
       longitude: selectedCoordinate!.longitude.toString(),
+      city: selectedCity!.name,
+      province: selectedProvince!.name,
     );
-
-    final a = newParking.toMap();
 
     final res = await widget.client.post(
       body: newParking.toMap(),

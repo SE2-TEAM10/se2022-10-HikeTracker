@@ -376,7 +376,7 @@ app.post(
       
       // check if a user is a local guide or a hut worker
       if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
-        const result1 = await db.addHut(req.body, req.user.ID);
+        const result1 = await db.addParking(req.body, req.user.ID);
         /* const result2 = await db.addHikeUserHut(
           req.body.hike_ID,
           req.user.ID,

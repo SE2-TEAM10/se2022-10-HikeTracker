@@ -9,20 +9,20 @@ class NewParking {
   });
 
   final String? name;
-  final String? capacity;
+  final int? capacity;
   final String? city;
   final String? province;
   final String? latitude;
   final String? longitude;
 
   Map<String, dynamic> toMap() => {
-    'name': name,
-    'capacity': capacity,
-    'latitude': latitude,
-    'longitude': longitude,
-    'city': 'Agra',
-    'province': 'Varese',
-  };
+        'name': name,
+        'capacity': capacity,
+        'latitude': latitude,
+        'longitude': longitude,
+        'city': city,
+        'province': province,
+      };
 
   NewParking copyWith({
     String? name,
@@ -36,7 +36,7 @@ class NewParking {
         name: name ?? this.name,
         city: city ?? this.city,
         province: province ?? this.province,
-        capacity: capacity ?? this.capacity,
+        capacity: capacity != null ? int.parse(capacity) : this.capacity,
         latitude: latitude ?? this.latitude,
         longitude: longitude ?? this.longitude,
       );
