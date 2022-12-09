@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:HikeTracker/common/map_banner.dart';
+import 'package:HikeTracker/common/two_columns_layout.dart';
+import 'package:HikeTracker/models/map_data.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:gpx/gpx.dart';
 
 class HikeDetail extends StatefulWidget {
   const HikeDetail({
@@ -43,22 +44,10 @@ class _HikeDetailState extends State<HikeDetail> {
           );
         }
         if (snapshot.hasData) {
-          final hike = jsonDecode(snapshot.data!.body).first;
-          final gpx = hike['gpx'];
-          return Row(
-            children: [
-              if (widget.user != null)
-                MapBanner(
-                  gpx: GpxReader().fromString(gpx),
-                  onGpxLoaded: (val, text) => {},
-                ),
-              Expanded(
-                flex: 3,
-                child: Details(
-                  hike: hike,
-                ),
-              )
-            ],
+          return HikeDetailContent(
+            user: widget.user,
+            client: widget.client,
+            hike: jsonDecode(snapshot.data!.body).first,
           );
         }
         return Container();
@@ -67,10 +56,50 @@ class _HikeDetailState extends State<HikeDetail> {
   }
 }
 
+class HikeDetailContent extends StatefulWidget {
+  const HikeDetailContent({
+    required this.client,
+    required this.hike,
+    this.user,
+    super.key,
+  });
+
+  final User? user;
+  final RestClient client;
+  final dynamic hike;
+
+  @override
+  State<HikeDetailContent> createState() => _HikeDetailContentState();
+}
+
+class _HikeDetailContentState extends State<HikeDetailContent> {
+  @override
+  Widget build(BuildContext context) {
+    final gpx = widget.hike['gpx'];
+    return TwoColumnsLayout(
+      leftChild: widget.user != null
+          ? Expanded(
+              flex: 2,
+              child: MapBanner(
+                client: widget.client,
+                mapData: MapData.fromStringGPX(stringGpx: gpx),
+              ),
+            )
+          : Container(),
+      rightChild: Expanded(
+        flex: 3,
+        child: Details(
+          hike: widget.hike,
+        ),
+      ),
+    );
+  }
+}
+
 class Details extends StatelessWidget {
   const Details({
-    super.key,
     required this.hike,
+    super.key,
   });
 
   final Map<String, dynamic> hike;
@@ -238,7 +267,6 @@ class Details extends StatelessWidget {
             )
           ],
         ),
-        const Spacer(),
       ],
     );
   }

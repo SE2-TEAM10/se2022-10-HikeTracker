@@ -1,12 +1,12 @@
 import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/common/message.dart';
 import 'package:HikeTracker/common/two_columns_layout.dart';
+import 'package:HikeTracker/models/map_data.dart';
 import 'package:HikeTracker/pages/add_hike/models/new_hike.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gpx/gpx.dart';
 import 'package:layout/layout.dart';
 
 class AddHike extends StatefulWidget {
@@ -23,8 +23,7 @@ class AddHike extends StatefulWidget {
 
 class _AddHikeState extends State<AddHike> {
   bool isLoading = false;
-  String? gpxContent;
-  Gpx? gpx;
+  MapData? mapData;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +32,16 @@ class _AddHikeState extends State<AddHike> {
             child: CircularProgressIndicator(),
           )
         : TwoColumnsLayout(
-            leftChild: MapBanner(
-              gpx: gpx,
-              onGpxLoaded: (val, text) => setState(() {
-                gpx = val;
-                gpxContent = text;
-              }),
-              dense: context.breakpoint < LayoutBreakpoint.md,
+            leftChild: Expanded(
+              flex: 2,
+              child: MapBanner(
+                client: widget.client,
+                mapData: mapData,
+                onGpxLoaded: (data) => setState(
+                  () => mapData = data,
+                ),
+                dense: context.breakpoint < LayoutBreakpoint.md,
+              ),
             ),
             rightChild: AddHikeForm(
               onSubmit: (
@@ -56,14 +58,21 @@ class _AddHikeState extends State<AddHike> {
   Future<void> onSubmit({
     required NewHike newHike,
   }) async {
-    if (gpxContent == null) {
+    if (mapData == null) {
       Message(
         context: context,
         message: 'Select a GPX file.',
       ).show();
       return;
     }
-    newHike = newHike.copyWith(gpx: gpxContent);
+    newHike = newHike.copyWith(gpx: mapData!.content);
+    if (newHike.isFull() == false) {
+      Message(
+        context: context,
+        message: 'Fill all the fields',
+      ).show();
+      return;
+    }
 
     final res = await widget.client.post(
       api: 'hike',

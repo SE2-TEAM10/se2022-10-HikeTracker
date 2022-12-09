@@ -10,6 +10,7 @@ class InputField extends StatelessWidget {
     this.keyboardType,
     this.inputFormatters,
     this.multiline = false,
+    this.disabled = false,
     super.key,
   });
 
@@ -20,6 +21,7 @@ class InputField extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final bool multiline;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,9 @@ class InputField extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 16.0,
-            color: Theme.of(context).colorScheme.outline,
+            color: disabled
+                ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+                : Theme.of(context).colorScheme.outline,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -40,7 +44,9 @@ class InputField extends StatelessWidget {
         DecoratedBox(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline,
+              color: disabled
+                  ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+                  : Theme.of(context).colorScheme.outline,
             ),
             borderRadius: const BorderRadius.all(
               Radius.circular(8.0),
@@ -58,6 +64,7 @@ class InputField extends StatelessWidget {
                 border: InputBorder.none,
               ),
               maxLines: multiline ? 3 : 1,
+              enabled: !disabled,
             ),
           ),
         ),
