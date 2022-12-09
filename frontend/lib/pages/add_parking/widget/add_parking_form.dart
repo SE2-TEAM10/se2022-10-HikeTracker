@@ -1,6 +1,7 @@
+import 'package:HikeTracker/common/input_field.dart';
+import 'package:HikeTracker/pages/add_parking/models/new_parking.dart';
 import 'package:flutter/material.dart';
-
-import '../models/parking_controller.dart';
+import 'package:flutter/services.dart';
 
 class AddParkingForm extends StatefulWidget {
   const AddParkingForm({
@@ -10,20 +11,20 @@ class AddParkingForm extends StatefulWidget {
   });
 
   final bool isSmall;
-  final Function(Parking) onSubmit;
+  final Function(NewParking) onSubmit;
 
   @override
   State<AddParkingForm> createState() => _AddParkingFormState();
 }
 
 class _AddParkingFormState extends State<AddParkingForm> {
-  late Parking parking = Parking();
+  late NewParking parking;
 
   String? gpxContent;
 
   @override
   void initState() {
-    parking.name = TextEditingController(text: 'prova');
+    parking = NewParking();
     super.initState();
   }
 
@@ -31,31 +32,68 @@ class _AddParkingFormState extends State<AddParkingForm> {
   Widget build(BuildContext context) {
     return Expanded(
       flex: 3,
-      child: Padding(
+      child: ListView(
+        shrinkWrap: true,
         padding: EdgeInsets.symmetric(
           vertical: 16,
           horizontal: widget.isSmall ? 16 : 128,
         ),
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(20.0),
-          children: [
-            const Text(
-              'Add Parking',
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-              ),
+        children: [
+          const Text(
+            'Add parking lot',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
             ),
-            const Text(
-              'Add your favourite parking',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontStyle: FontStyle.italic,
-              ),
+          ),
+          const SizedBox(
+            height: 32,
+          ),
+          InputField(
+            label: 'Name',
+            onChange: (value) => setState(
+              () => parking = parking.copyWith(name: value),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 32,
+          ),
+          InputField(
+            label: 'Capacity',
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
+            onChange: (value) => setState(
+              () => parking = parking.copyWith(capacity: value),
+            ),
+          ),
+          const SizedBox(
+            height: 32,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton.icon(
+                onPressed: () => widget.onSubmit(
+                  parking,
+                ),
+                icon: const Icon(Icons.login),
+                label: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Confirm',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+        ],
       ),
     );
   }

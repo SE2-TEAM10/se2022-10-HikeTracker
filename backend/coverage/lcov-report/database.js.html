@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">62.04% </span>
+                <span class="strong">61.84% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>237/382</span>
+                <span class='fraction'>235/380</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.47% </span>
+                <span class="strong">66.27% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>230/346</span>
+                <span class='fraction'>228/344</span>
             </div>
         
             
@@ -875,7 +875,17 @@
 <a name='L810'></a><a href='#L810'>810</a>
 <a name='L811'></a><a href='#L811'>811</a>
 <a name='L812'></a><a href='#L812'>812</a>
-<a name='L813'></a><a href='#L813'>813</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L813'></a><a href='#L813'>813</a>
+<a name='L814'></a><a href='#L814'>814</a>
+<a name='L815'></a><a href='#L815'>815</a>
+<a name='L816'></a><a href='#L816'>816</a>
+<a name='L817'></a><a href='#L817'>817</a>
+<a name='L818'></a><a href='#L818'>818</a>
+<a name='L819'></a><a href='#L819'>819</a>
+<a name='L820'></a><a href='#L820'>820</a>
+<a name='L821'></a><a href='#L821'>821</a>
+<a name='L822'></a><a href='#L822'>822</a>
+<a name='L823'></a><a href='#L823'>823</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -1440,8 +1450,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1455,9 +1478,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -2252,7 +2272,20 @@ class Database {
   //QUERY FOR HUT
   addHut = (hut, user_ID) =&gt; {
     return new Promise((resolve, reject) =&gt; {
-      try {
+      /* console.log(typeof hut.name)
+      console.log(typeof hut.description)
+      console.log(typeof hut.opening_time)
+      console.log(typeof hut.closing_time)
+      console.log(typeof hut.bed_num)
+      console.log(typeof hut.altitude)
+      console.log(typeof hut.name)
+      console.log(typeof hut.latitude)
+      console.log(typeof hut.longitude)
+      console.log(typeof hut.city)
+      console.log(typeof hut.province)
+      console.log(typeof hut.phone)
+      console.log(typeof hut.mail)
+      console.log(typeof hut.website) */
         if (
           typeof hut.name !== 'string' ||
           typeof hut.description !== 'string' ||
@@ -2271,9 +2304,6 @@ class Database {
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
-      } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
-      }
       const sql = "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website, user_ID) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       this.db.run(
         sql, [hut.name, hut.description, hut.opening_time, hut.closing_time, hut.bed_num, hut.altitude, hut.latitude, hut.longitude, hut.city, hut.province, hut.phone, hut.mail, hut.website, user_ID], function (err) {
@@ -2506,7 +2536,7 @@ module.exports = Database;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-12-08T16:32:36.844Z
+                at 2022-12-09T16:24:20.573Z
             </div>
         <script src="prettify.js"></script>
         <script>

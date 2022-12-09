@@ -3,11 +3,13 @@ import 'package:HikeTracker/common/city_input_field/models.dart';
 import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/models/map_borders.dart';
+import 'package:HikeTracker/pages/add_parking/models/new_parking.dart';
 import 'package:HikeTracker/pages/add_parking/widget/add_parking_form.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:layout/layout.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/message.dart';
 
@@ -27,6 +29,8 @@ class _AddParkingState extends State<AddParking> {
   bool isLoading = false;
   LatLng? selectedCoordinate;
   MapBorders? mapBorders;
+  Province? selectedProvince;
+  City? selectedCity;
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +65,18 @@ class _AddParkingState extends State<AddParking> {
                       color: Theme.of(context).colorScheme.surfaceVariant,
                       child: CityInputField(
                         client: widget.client,
+                        onProvinceChange: (province) => {
+                          setState(() {
+                            selectedProvince = province;
+                          })
+                        },
                         onCityChange: (city) async {
                           final b = await getBorders(city);
                           setState(() {
                             mapBorders = b;
+                          });
+                          setState(() {
+                            selectedCity = city;
                           });
                         },
                       ),
@@ -75,9 +87,11 @@ class _AddParkingState extends State<AddParking> {
             ),
             rightChild: AddParkingForm(
               onSubmit: (
-                newHut,
+                newParking,
               ) =>
-                  onSubmit(),
+                  onSubmit(
+                newParking: newParking,
+              ),
               isSmall: context.breakpoint <= LayoutBreakpoint.xs,
             ),
           );
@@ -88,14 +102,57 @@ class _AddParkingState extends State<AddParking> {
     return MapBorders.fromJson(res.body);
   }
 
-  Future<void> onSubmit() async {
+  Future<void> onSubmit({
+    required NewParking newParking,
+  }) async {
     if (selectedCoordinate == null) {
       Message(
         context: context,
-        message: 'Select the hut position from the map',
+        message: 'Select the parking position from the map',
         messageType: MessageType.Error,
       ).show();
       return;
+    }
+
+    //Insert selected coordiantes into the parking
+    newParking = newParking.copyWith(
+      latitude: selectedCoordinate!.latitude.toString(),
+      longitude: selectedCoordinate!.longitude.toString(),
+      city: selectedCity!.name,
+      province: selectedProvince!.name,
+    );
+
+    if (newParking.isFull() == false) {
+      Message(
+        context: context,
+        message: 'Fill all the fields',
+      ).show();
+      return;
+    }
+
+    final res = await widget.client.post(
+      body: newParking.toMap(),
+      api: 'addParking',
+    );
+
+    if (res.statusCode == 201) {
+      Message(
+        context: context,
+        message: 'Parking added successfully.',
+      ).show();
+      GoRouter.of(context).pop();
+    } else if (res.statusCode == 422) {
+      Message(
+        context: context,
+        message: 'Request error',
+        messageType: MessageType.Error,
+      ).show();
+    } else {
+      Message(
+        context: context,
+        message: 'Internal error.',
+        messageType: MessageType.Error,
+      ).show();
     }
   }
 }
