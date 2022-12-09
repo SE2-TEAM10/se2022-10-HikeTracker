@@ -320,7 +320,7 @@ app.post(
     check("opening_time").isString(),
     check("closing_time").isString(),
     check("bed_num").isString(),
-    check("altitude").isInt(),
+    check("altitude").isString(),
     check("city").isString(),
     check("province").isString(),
     check("phone").isString(),

@@ -583,7 +583,7 @@ class Database {
           typeof hut.opening_time !== 'string' ||
           typeof hut.closing_time !== 'string' ||
           typeof hut.bed_num !== 'string' ||
-          typeof hut.altitude !== 'number' ||
+          typeof hut.altitude !== 'string' ||
           typeof hut.latitude !== 'string' ||
           typeof hut.longitude !== 'string' ||
           typeof hut.city !== 'string' ||
