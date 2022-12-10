@@ -62,14 +62,16 @@ class _FilterTab extends State<FilterTab> {
             ...hikes.map((e) => e.difficulty).toSet().toList()
           ];
           final cities = hikes
-              .map((e) => [e.startLocation?.city, e.endLocation?.city])
+              .map((e) => e.locations)
               .expand((e) => e)
+              .map((e) => e.city)
               .whereType<String>()
               .toSet()
               .toList();
           final provinces = hikes
-              .map((e) => [e.startLocation?.province, e.endLocation?.province])
+              .map((e) => e.locations)
               .expand((e) => e)
+              .map((e) => e.province)
               .whereType<String>()
               .toSet()
               .toList();
