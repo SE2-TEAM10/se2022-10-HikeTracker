@@ -108,24 +108,22 @@ function deg2rad(deg) {
 }*/
 
 //This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
-function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2)
-{
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   var R = 6371; // km
-  var dLat = toRad(lat2-lat1);
-  var dLon = toRad(lon2-lon1);
+  var dLat = toRad(lat2 - lat1);
+  var dLon = toRad(lon2 - lon1);
   var lat1 = toRad(lat1);
   var lat2 = toRad(lat2);
 
-  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var d = R * c;
   return d;
 }
 
 // Converts numeric degrees to radians
-function toRad(Value)
-{
+function toRad(Value) {
   return Value * Math.PI / 180;
 }
 
@@ -170,10 +168,6 @@ app.get("/api/sessions/current", (req, res) => {
 
 // EXAMPLE OF URL: http://localhost:3001/api/hike?difficulty=T&start_asc=300
 app.get("/api/hike", async (req, res) => {
-  let distance = getDistanceFromLatLonInKm(45.376307,7.277089,45.376045,7.277025);
-  console.log("DISTANCE", distance);
-
-
   await db
     .getHikeWithFilters(req.query)
     .then((lists) => {
@@ -193,20 +187,13 @@ app.get("/api/hike", async (req, res) => {
     });
 });
 
-app.get("/api/distance", async (req, res) => {
+/* app.get("/api/distance", async (req, res) => {
 
   let parking = [];
   try {
     let array = await db.getCoordinatesHike();
     await db.getCoordinatesParking().then((coordinates) => {
       coordinates.map((row) => {
-        /*console.log("ARRAY",array)
-       const list1 = array.map((e) => ({
-          latitude: e.latitude,
-          longitude: e.longitude,
-        }));
-        console.log("LIST LIST",list1)
-        array.map((row1) => {*/
           let distance = getDistanceFromLatLonInKm(44.699197, 7.156556, row.latitude, row.longitude);
           if (distance < 45) {
             console.log("DISTANCE", distance);
@@ -229,9 +216,7 @@ app.get("/api/distance", async (req, res) => {
     console.error(err);
     res.status(503).json(err);
   }
-
-
-});
+}); */
 
 app.get(
   "/api/hikesdetails/:hike_ID",
@@ -422,7 +407,7 @@ app.post(
     console.log("USER ID", req.user.ID);
 
     try {
-      
+
       // check if a user is a local guide or a hut worker
       if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
         const result1 = await db.addHut(req.body, req.user.ID);
@@ -433,7 +418,7 @@ app.post(
         ); */
 
         res.status(201).json(result1);
-      }      
+      }
     } catch (err) {
       console.error(err);
       res.status(503).json(err);
@@ -453,12 +438,12 @@ app.post(
       return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
     }
 
-   
+
     console.log("TYPE USER", req.user.role);
     console.log("USER ID", req.user.ID);
 
     try {
-      
+
       // check if a user is a local guide or a hut worker
       if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
         const result1 = await db.addParking(req.body, req.user.ID);
@@ -469,7 +454,7 @@ app.post(
         ); */
 
         res.status(201).json(result1);
-      }      
+      }
     } catch (err) {
       console.error(err);
       res.status(503).json(err);
@@ -479,8 +464,8 @@ app.post(
 
 app.get("/api/hutWithFilters", async (req, res) => {
   await db.getHutsWithFilters(req.query).then((lists) => {
-      res.json(lists);
-    })
+    res.json(lists);
+  })
     .catch((err) => {
       console.log(err);
       res
@@ -493,17 +478,17 @@ app.get("/api/hutWithFilters", async (req, res) => {
 //api get parking from hike_ID
 app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
   await db
-      .getParkingFromHike(req.params.hike_ID)
-      .then((lists) => {
-        res.json(lists);
-      })
-      .catch((err) => {
-        console.log(err);
-        res
-            .status(500)
-            .json({ error: `Database error while retrieving hike` })
-            .end();
-      });
+    .getParkingFromHike(req.params.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
 });
 
 
@@ -588,6 +573,88 @@ const sendEmail = async (email, subject, text) => {
   }
 }; */
 
+app.get("/api/locationToLinkHutOrParking", async (req, res) => {
+  try {
+    const loc = await db.getLocationToLink(req.body.hike_ID, req.body.start_end);
+    if (req.body.ref === "hut") {
+      let final_huts = [];
+      const huts = await db.getHutsByProvince(loc.province);
+      huts.map((h) => {
+        let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, h.latitude, h.longitude);
+        if (distance < 5) {
+          console.log("HUTS - DISTANCE: ", distance);
+          final_huts.push({
+            ID: h.ID,
+            name: h.name,
+            description: h.description,
+            opening_time: h.opening_time,
+            closing_time: h.closing_time,
+            bed_num: h.bed_num,
+            altitude: h.altitude,
+            latitude: h.latitude,
+            longitude: h.longitude,
+            city: h.city,
+            province: h.province,
+            phone: h.phone,
+            mail: h.mail,
+            website: h.website
+          })
+          return final_huts;
+        }
+      })
+      res.json(final_huts);
+    } else if (req.body.ref === "p_lot") {
+      let final_parks = [];
+      const parks = await db.getParkingsByProvince(loc.province);
+      parks.map((p) => {
+        let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, p.latitude, p.longitude);
+        if (distance < 5) {
+          console.log("PARKING LOTS - DISTANCE: ", distance);
+          final_parks.push({
+            ID: p.ID,
+            name: p.name,
+            capacity: p.capacity,
+            latitude: p.latitude,
+            longitude: p.longitude,
+            city: p.city,
+            province: p.province
+          })
+          return final_parks;
+        }
+      })
+      res.json(final_parks);
+    } else {
+      res.status(422).json("The reference point is not defined correctly!");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
+/*index.js - link hut to the hike*/
+app.post("/api/linkHut", isLoggedIn, [],
+  async (req, res) => {
+    try {
+      const result = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, req.body.hut_ID, req.body.ref_type);
+      res.status(201).json(result);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  });
+
+/*index.js - link parking lot to the hike*/
+app.post("/api/linkParking", isLoggedIn, [],
+  async (req, res) => {
+    try {
+      const result = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, req.body.parking_ID, req.body.ref_type);
+      res.status(201).json(result);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  });
 
 //APIs for regions, provinces, municipalities and borders
 
