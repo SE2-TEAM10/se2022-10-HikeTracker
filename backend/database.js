@@ -689,6 +689,37 @@ class Database {
     });
   };
 
+  getParkingFromHike = (hike_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM parking_lot INNER JOIN hike_user_parking ON parking_lot.ID = hike_user_parking.parking_ID WHERE hike_ID = ?";
+      this.db.all(sql, [hike_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getCoordinatesHike = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT latitude,longitude FROM location WHERE hike_ID = 1";
+      this.db.all(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getCoordinatesParking = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM parking_lot";
+      this.db.all(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+
   //TO BE USED IN A FOLLOWING STORY
   /* addHikeUserParking = (hike_ID, user_ID, parking_ID) => {
     return new Promise((resolve, reject) => {
