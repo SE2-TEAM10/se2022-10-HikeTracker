@@ -32,6 +32,18 @@ GoRouter getRouter({
           );
         },
       ),
+      GoRoute(
+        path: HUTS,
+        builder: (BuildContext context, GoRouterState state) {
+          return MainScaffold(
+            currentPath: state.path!,
+            currentUser: currentUser,
+            child: HutsPage(
+              client: client,
+            ),
+          );
+        },
+      ),
       if (currentUser == null)
         GoRoute(
           path: LOGIN,
