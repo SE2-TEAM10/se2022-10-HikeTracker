@@ -596,20 +596,6 @@ class Database {
   //QUERY FOR HUT
   addHut = (hut, user_ID) => {
     return new Promise((resolve, reject) => {
-      /* console.log(typeof hut.name)
-      console.log(typeof hut.description)
-      console.log(typeof hut.opening_time)
-      console.log(typeof hut.closing_time)
-      console.log(typeof hut.bed_num)
-      console.log(typeof hut.altitude)
-      console.log(typeof hut.name)
-      console.log(typeof hut.latitude)
-      console.log(typeof hut.longitude)
-      console.log(typeof hut.city)
-      console.log(typeof hut.province)
-      console.log(typeof hut.phone)
-      console.log(typeof hut.mail)
-      console.log(typeof hut.website) */
       if (
         typeof hut.name !== 'string' ||
         typeof hut.description !== 'string' ||

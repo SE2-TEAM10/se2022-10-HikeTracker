@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1670791452153" clover="3.2.0">
-  <project timestamp="1670791452153" name="All files">
+<coverage generated="1670794620875" clover="3.2.0">
+  <project timestamp="1670794620875" name="All files">
     <metrics statements="402" coveredstatements="252" conditionals="225" coveredconditionals="99" methods="117" coveredmethods="84" elements="744" coveredelements="435" complexity="0" loc="402" ncloc="402" packages="1" files="1" classes="1"/>
     <file name="database.js" path="C:\Users\giovy\Documents\se2022-10-HikeTracker\backend\database.js">
       <metrics statements="402" coveredstatements="252" conditionals="225" coveredconditionals="99" methods="117" coveredmethods="84"/>
