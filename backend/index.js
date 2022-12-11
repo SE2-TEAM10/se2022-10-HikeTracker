@@ -263,25 +263,12 @@ app.post(
 app.post(
   "/api/gpx",
   //isLoggedIn,
-  [
-    /*
-        check('name').isLength({ min: 1, max: 100 }),
-        check('length').isInt(),
-        check('expected_time').islength({ min: 5, max: 5 }),
-        check('ascent').isInt(),
-        check('difficulty').islength({ min: 1, max: 2 }),
-      */
-  ],
+  [],
   async (req, res) => {
-    /* const errors = validationResult(req).formatWith(errorFormatter); // format error message
-        if (!errors.isEmpty()) {
-            return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
-        }*/
-
     try {
       const result5 = await db.addGpx(req.body.gpx);
 
-      res.status(201).json(result1);
+      res.status(201).json(result5);
     } catch (err) {
       console.error(err);
       res.status(503).json(err);
@@ -290,7 +277,6 @@ app.post(
 );
 
 app.post("/api/addUser", async (req, res) => {
-  //var url = "http://localhost:3000/verify?username=" + token_mail_verification;
 
   try {
     const result1 = await db.addUser(req.body);
@@ -410,7 +396,7 @@ app.get("/api/user/verify/:token", (req, res) => {
         console.log(err);
         res.sendFile(path.join(__dirname + "/indexNotVerified.html"));
       } else if (verifyToCheck === 0) {
-        const result = await db.setVerified(decoded.id);
+        await db.setVerified(decoded.id);
         res.sendFile(path.join(__dirname + "/indexVerified.html"));
       }
     } catch (error) {
@@ -462,18 +448,6 @@ const sendEmail = async (email, subject, text) => {
     console.log("Message sent: %s", info.messageId);
   });
 };
-
-/* const getLinkUser = async (req,res) => {
-  // check if a user is a local guide or a hut worker
-  const user_res = await db.getLinkUser(req.body.hike_ID);
-  console.log("USER ID :", req.user.ID);
-  if (user_res !== req.user.ID) {
-    res.status(422).json("User and hike not linked");
-  } else if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
-    res.status(422).json("User isnt't a local guide or a hut worker");
-  }
-}; */
-
 
 //APIs for regions, provinces, municipalities and borders
 
