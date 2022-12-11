@@ -501,17 +501,19 @@ class Database {
       let lat_end = gpx.tracks[0].points[len].lat;
       let lon_end = gpx.tracks[0].points[len].lon;
       let latitude, longitude;
-      if (position === 'startp') {
+      if (position === 'start') {
         latitude = lat;
         longitude = lon;
-      } else if (position === 'endp') {
+        position = "start";
+      } else if (position === 'end') {
         latitude = lat_end;
         longitude = lon_end;
+        position = "end";
       } else {
         return reject(422); //UNPROCESSABLE
       }
       const sql =
-        "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
+        "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID, start_end) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
         sql,
         [
@@ -521,6 +523,7 @@ class Database {
           loc.city,
           loc.province,
           hike_ID,
+          position,
         ],
         function (err) {
           if (err) reject(err);
