@@ -501,17 +501,19 @@ class Database {
       let lat_end = gpx.tracks[0].points[len].lat;
       let lon_end = gpx.tracks[0].points[len].lon;
       let latitude, longitude;
-      if (position === 'startp') {
+      if (position === 'start') {
         latitude = lat;
         longitude = lon;
-      } else if (position === 'endp') {
+        position = "start";
+      } else if (position === 'end') {
         latitude = lat_end;
         longitude = lon_end;
+        position = "end";
       } else {
         return reject(422); //UNPROCESSABLE
       }
       const sql =
-        "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
+        "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID, start_end) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
         sql,
         [
@@ -521,6 +523,7 @@ class Database {
           loc.city,
           loc.province,
           hike_ID,
+          position,
         ],
         function (err) {
           if (err) reject(err);
@@ -593,20 +596,6 @@ class Database {
   //QUERY FOR HUT
   addHut = (hut, user_ID) => {
     return new Promise((resolve, reject) => {
-      /* console.log(typeof hut.name)
-      console.log(typeof hut.description)
-      console.log(typeof hut.opening_time)
-      console.log(typeof hut.closing_time)
-      console.log(typeof hut.bed_num)
-      console.log(typeof hut.altitude)
-      console.log(typeof hut.name)
-      console.log(typeof hut.latitude)
-      console.log(typeof hut.longitude)
-      console.log(typeof hut.city)
-      console.log(typeof hut.province)
-      console.log(typeof hut.phone)
-      console.log(typeof hut.mail)
-      console.log(typeof hut.website) */
       if (
         typeof hut.name !== 'string' ||
         typeof hut.description !== 'string' ||

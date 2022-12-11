@@ -67,9 +67,9 @@ describe.only('hikeController Tests', () => {
             let user_ID = 3;
             const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx, user_ID);
 
-            const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "startp", hike_ID, reqbody.gpx);
+            const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "start", hike_ID, reqbody.gpx);
 
-            const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "endp", hike_ID, reqbody.gpx);
+            const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "end", hike_ID, reqbody.gpx);
 
             const hikeGPX_ID = await hikeController.addNewHikeGPX(reqbody.gpx, hike_ID);
 
