@@ -1,4 +1,4 @@
-/*import 'package:HikeTracker/pages/huts/models/hut.dart';
+import 'package:HikeTracker/pages/huts/models/hut.dart';
 import 'package:HikeTracker/utils/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -90,7 +90,7 @@ class HutCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Distance: ',
+                              'Altitude: ',
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -99,7 +99,7 @@ class HutCard extends StatelessWidget {
                             ),
                             Expanded(
                               child: Text(
-                                '${hut.altitude} Km',
+                                '${hut.altitude} m',
                                 style: TextStyle(
                                   color: Theme.of(context)
                                       .colorScheme
@@ -110,7 +110,7 @@ class HutCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Duration: ',
+                              'City: ',
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -143,4 +143,3 @@ class HutCard extends StatelessWidget {
     );
   }
 }
-*/

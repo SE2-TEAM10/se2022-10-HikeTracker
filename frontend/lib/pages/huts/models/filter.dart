@@ -1,4 +1,4 @@
-/*class Filter {
+class Filter {
   Filter();
 
   String? minbed;
@@ -30,4 +30,3 @@
 
   bool isEmpty() => toQueryParameters().entries.isEmpty;
 }
-*/

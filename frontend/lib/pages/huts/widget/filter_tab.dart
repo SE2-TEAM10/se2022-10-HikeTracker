@@ -1,7 +1,6 @@
-/*
 import 'dart:math';
 
-import 'package:HikeTracker/common/time_field.dart';
+//import 'package:HikeTracker/common/time_field.dart';
 import 'package:HikeTracker/pages/huts/models/filter.dart';
 import 'package:HikeTracker/pages/huts/models/hut.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -114,7 +113,7 @@ class _FilterTab extends State<FilterTab> {
                         ),
                       ),
                       Text(
-                        'from ${filter.minbed ?? minBed}km to ${filter.maxbed ?? maxBed}km',
+                        'from ${filter.minbed ?? minBed} to ${filter.maxbed ?? maxBed}',
                       ),
                     ],
                   ),
@@ -133,7 +132,7 @@ class _FilterTab extends State<FilterTab> {
                     ),
                   ),
                   const Divider(),
-                  
+                  /*
                   Expanded(
                     child: TimeField(
                       label: 'Minimum Opening time',
@@ -157,7 +156,7 @@ class _FilterTab extends State<FilterTab> {
                       },
                     ),
                   ),
-                  
+                  */
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -310,4 +309,3 @@ class _FilterTab extends State<FilterTab> {
     );
   }
 }
-*/

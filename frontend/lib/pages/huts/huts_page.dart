@@ -1,9 +1,8 @@
-/*
 import 'package:HikeTracker/common/filtered_cards_layout.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/huts/models/filter.dart';
 import 'package:HikeTracker/pages/huts/widget/filter_tab.dart';
-import 'package:HikeTracker/pages/huts/widget/hike_table.dart';
+import 'package:HikeTracker/pages/huts/widget/hut_table.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 
@@ -50,4 +49,3 @@ class _HutsState extends State<HutsPage> {
     );
   }
 }
-*/

@@ -11,6 +11,7 @@ const PROFILE = '/profile';
 const HIKE_ADD = '/hike/add';
 const HUT_ADD = '/hut/add';
 const PARKING_ADD = '/parking/add';
+const HUTS = '/huts';
 
 class Route {
   Route({
@@ -92,5 +93,11 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
     label: 'Add Parking',
     path: PARKING_ADD,
     icon: Icons.local_parking,
-  )
+  ),
+  Route(
+    index: 5,
+    label: 'Huts',
+    path: HUTS,
+    icon: Icons.home_work,
+  ),
 ];

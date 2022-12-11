@@ -1,4 +1,4 @@
-/*import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/huts/models/filter.dart';
 import 'package:HikeTracker/pages/huts/widget/hut_card.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -30,7 +30,7 @@ class _HutsTableState extends State<HutsTable> {
     return FutureBuilder(
       future: widget.client.get(
         api: 'hutWithFilters',
-        //filter: widget.filter,
+        filter: widget.filter,
       ),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -82,4 +82,3 @@ class _HutsTableState extends State<HutsTable> {
     );
   }
 }
-*/
