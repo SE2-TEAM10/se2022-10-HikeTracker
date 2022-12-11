@@ -10,12 +10,9 @@ class Hike {
     required this.expectedTime,
     required this.ascent,
     required this.difficulty,
-    required this.startPoint,
-    required this.endPoint,
     required this.description,
     required this.hikeID,
-    this.startLocation,
-    this.endLocation,
+    required this.locations,
   });
 
   final int id;
@@ -24,11 +21,8 @@ class Hike {
   final String expectedTime;
   final int ascent;
   final String difficulty;
-  final String startPoint;
-  final String endPoint;
   final String description;
-  final Location? startLocation;
-  final Location? endLocation;
+  final List<Location> locations;
   final int hikeID;
 
   static Hike fromJson(String jsonString) {
@@ -48,22 +42,9 @@ class Hike {
       expectedTime: res['expected_time'] ?? 'NA',
       ascent: res['ascent'] ?? 0,
       difficulty: res['difficulty'] ?? 'NA',
-      startPoint: res['start_point'] ?? 'NA',
-      endPoint: res['end_point'] ?? 'NA',
       description: res['description'] ?? 'NA',
       hikeID: res['hike_ID'] ?? 0,
-      endLocation: ls.isNotEmpty
-          ? ls.firstWhere(
-              (e) => e.name == res['end_point'],
-              orElse: () => Location(),
-            )
-          : null,
-      startLocation: ls.isNotEmpty
-          ? ls.firstWhere(
-              (e) => e.name == res['start_point'],
-              orElse: () => Location(),
-            )
-          : null,
+      locations: ls,
     );
   }
 

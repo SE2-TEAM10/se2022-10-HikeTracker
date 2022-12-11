@@ -9,20 +9,20 @@ function checkPassword(password) {
 
   let count = 0;
 
-  if(!(password.length < 8)){
-    count +=1;
+  if (!(password.length < 8)) {
+    count += 1;
   }
 
   //UpperCase
-  if( /[A-Z]/.test(password) ) {
+  if (/[A-Z]/.test(password)) {
     count += 1;
   }
   //Lowercase
-  if( /[a-z]/.test(password) ) {
+  if (/[a-z]/.test(password)) {
     count += 1;
   }
   //Numbers
-  if( /\d/.test(password) ) {
+  if (/\d/.test(password)) {
     count += 1;
   }
 
@@ -501,17 +501,19 @@ class Database {
       let lat_end = gpx.tracks[0].points[len].lat;
       let lon_end = gpx.tracks[0].points[len].lon;
       let latitude, longitude;
-      if (position === 'startp') {
+      if (position === 'start') {
         latitude = lat;
         longitude = lon;
-      } else if (position === 'endp') {
+        position = "start";
+      } else if (position === 'end') {
         latitude = lat_end;
         longitude = lon_end;
+        position = "end";
       } else {
         return reject(422); //UNPROCESSABLE
       }
       const sql =
-        "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID) VALUES(?,?,?,?,?,?)";
+        "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID, start_end) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
         sql,
         [
@@ -521,6 +523,7 @@ class Database {
           loc.city,
           loc.province,
           hike_ID,
+          position,
         ],
         function (err) {
           if (err) reject(err);
@@ -607,24 +610,24 @@ class Database {
       console.log(typeof hut.phone)
       console.log(typeof hut.mail)
       console.log(typeof hut.website) */
-        if (
-          typeof hut.name !== 'string' ||
-          typeof hut.description !== 'string' ||
-          typeof hut.opening_time !== 'string' ||
-          typeof hut.closing_time !== 'string' ||
-          typeof hut.bed_num !== 'number' ||
-          typeof hut.altitude !== 'number' ||
-          typeof hut.latitude !== 'string' ||
-          typeof hut.longitude !== 'string' ||
-          typeof hut.city !== 'string' ||
-          typeof hut.province !== 'string' ||
-          typeof hut.phone !== 'string' ||
-          typeof hut.mail !== 'string' ||
-          typeof hut.website !== 'string' ||
-          typeof user_ID !== 'number'
-        ) {
-          return reject(422); // 422 - UNPROCESSABLE
-        }
+      if (
+        typeof hut.name !== 'string' ||
+        typeof hut.description !== 'string' ||
+        typeof hut.opening_time !== 'string' ||
+        typeof hut.closing_time !== 'string' ||
+        typeof hut.bed_num !== 'number' ||
+        typeof hut.altitude !== 'number' ||
+        typeof hut.latitude !== 'number' ||
+        typeof hut.longitude !== 'number' ||
+        typeof hut.city !== 'string' ||
+        typeof hut.province !== 'string' ||
+        typeof hut.phone !== 'string' ||
+        typeof hut.mail !== 'string' ||
+        typeof hut.website !== 'string' ||
+        typeof user_ID !== 'number'
+      ) {
+        return reject(422); // 422 - UNPROCESSABLE
+      }
       const sql = "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website, user_ID) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       this.db.run(
         sql, [hut.name, hut.description, hut.opening_time, hut.closing_time, hut.bed_num, hut.altitude, hut.latitude, hut.longitude, hut.city, hut.province, hut.phone, hut.mail, hut.website, user_ID], function (err) {
@@ -666,17 +669,17 @@ class Database {
   addParking = (parking, user_ID) => {
     return new Promise((resolve, reject) => {
 
-        if (
-          typeof parking.name !== 'string' ||
-          typeof parking.capacity !== 'number' ||
-          typeof parking.latitude !== 'string' ||
-          typeof parking.longitude !== 'string' ||
-          typeof parking.city !== 'string' ||
-          typeof parking.province !== 'string' ||
-          typeof user_ID !== 'number'
-        ) {
-          return reject(422); // 422 - UNPROCESSABLE
-        }
+      if (
+        typeof parking.name !== 'string' ||
+        typeof parking.capacity !== 'number' ||
+        typeof parking.latitude !== 'number' ||
+        typeof parking.longitude !== 'number' ||
+        typeof parking.city !== 'string' ||
+        typeof parking.province !== 'string' ||
+        typeof user_ID !== 'number'
+      ) {
+        return reject(422); // 422 - UNPROCESSABLE
+      }
 
       const sql = "INSERT INTO parking_lot(name,capacity,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
@@ -688,6 +691,95 @@ class Database {
         });
     });
   };
+
+  getHutsWithFilters = (filters) => {
+
+    return new Promise((resolve, reject) => {
+      let query =
+        "SELECT * FROM hut";
+      let query2 = "";
+      if (!(Object.entries(filters) == 0)) {
+        query2 = query.concat(" WHERE ");
+        for (let entry of Object.entries(filters)) {
+          let key = entry[0];
+          let value = entry[1];
+          if (key == "min_altitude" || key == "max_altitude") {
+            value = parseInt(value);
+          }
+          if (key == "min_bed_num" || key == "max_bed_num") {
+            value = parseInt(value);
+          }
+          if (typeof value === "string" || value instanceof String) {
+            if (key.length !== 0) {
+              if (key == "min_opening_time") {
+                query2 = query2.concat(
+                  "opening_time",
+                  " > ",
+                  "'" + value + "'"
+                );
+              } else if (key == "max_opening_time") {
+                query2 = query2.concat("opening_time", "<", "'" + value + "'");
+              }
+              else if (key == "min_closing_time") {
+                query2 = query2.concat(
+                  "closing_time",
+                  " > ",
+                  "'" + value + "'"
+                );
+              } else if (key == "max_closing_time") {
+                query2 = query2.concat("closing_time", "<", "'" + value + "'");
+              } else {
+                query2 = query2.concat(key, "=", "'" + value + "'");	//city, province
+              }
+            }
+          } else if (typeof value === "number" || value instanceof Number) {
+            if (key == "min_altitude") {	//min_altitude
+              query2 = query2.concat("altitude", " > ", value);	//altitude
+            } else if (key == "max_altitude") {	//max_altitude
+              query2 = query2.concat("altitude", " < ", value);	//altitude
+            } else if (key == "min_bed_num") {	//min_bed_num
+              query2 = query2.concat("bed_num", " > ", value);	//bed_num
+            } else if (key == "max_bed_num") {	//max_bed_num
+              query2 = query2.concat("bed_num", " < ", value);	//bed_num
+            }
+          }
+          query2 = query2.concat(" AND ");
+        }
+        query2 = query2.slice(0, query2.length - 4);
+        console.log(query2);
+      } else {
+        query2 = query2.concat(query);
+        console.log(query2);
+      }
+
+      console.log("final query: ", query2);
+      this.db.all(query2, [], (err, rows) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        const list = rows.map((e) => ({
+          ID: e.ID,
+          name: e.name,
+          description: e.description,
+          opening_time: e.opening_time,
+          closing_time: e.closing_time,
+          bed_num: e.bed_num,
+          altitude: e.altitude,
+          latitude: e.latitude,
+          longitude: e.longitude,
+          city: e.city,
+          province: e.province,
+          phone: e.phone,
+          mail: e.mail,
+          website: e.website
+        }));
+
+        return resolve(list);
+      });
+    });
+  };
+
 
   getParkingFromHike = (hike_ID) => {
     return new Promise((resolve, reject) => {

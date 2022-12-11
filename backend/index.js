@@ -321,14 +321,14 @@ app.post(
       console.log("res1 - ", result1);
       const result2 = await db.addNewLocation(
         req.body.startp,
-        "startp",
+        "start",
         result1,
         req.body.gpx
       );
       console.log("res2 - ", result2);
       const result3 = await db.addNewLocation(
         req.body.endp,
-        "endp",
+        "end",
         result1,
         req.body.gpx
       );
@@ -476,6 +476,19 @@ app.post(
     }
   }
 );
+
+app.get("/api/hutWithFilters", async (req, res) => {
+  await db.getHutsWithFilters(req.query).then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
+});
 
 //api get parking from hike_ID
 app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
