@@ -1,6 +1,6 @@
 import 'dart:math';
 
-//import 'package:HikeTracker/common/time_field.dart';
+import 'package:HikeTracker/common/time_field.dart';
 import 'package:HikeTracker/pages/huts/models/filter.dart';
 import 'package:HikeTracker/pages/huts/models/hut.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -132,31 +132,72 @@ class _FilterTab extends State<FilterTab> {
                     ),
                   ),
                   const Divider(),
-                  /*
-                  Expanded(
-                    child: TimeField(
-                      label: 'Minimum Opening time',
-                      onChange: (newTime) => {
-                        setState(() {
-                          filter.minOpTime = newTime.format(context);
-                        })
-                      },
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: TimeField(
+                          label: 'Minimum Opening time',
+                          startingTime: filter.minOpTime,
+                          onChange: (newTime) => {
+                            setState(() {
+                              filter.minOpTime =
+                                  '${newTime.hour}:${newTime.minute}';
+                            })
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Expanded(
+                        child: TimeField(
+                          label: 'Maximum Opening time',
+                          startingTime: filter.maxOpTime,
+                          onChange: (newTime) => {
+                            setState(() {
+                              filter.maxOpTime =
+                                  '${newTime.hour}:${newTime.minute}';
+                            })
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 8,
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: TimeField(
+                          label: 'Minimum Closing time',
+                          startingTime: filter.minEdTime,
+                          onChange: (newTime) => {
+                            setState(() {
+                              filter.minEdTime =
+                                  '${newTime.hour}:${newTime.minute}';
+                            })
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Expanded(
+                        child: TimeField(
+                          label: 'Maximum Closing time',
+                          startingTime: filter.maxEdTime,
+                          onChange: (newTime) => {
+                            setState(() {
+                              filter.maxEdTime =
+                                  '${newTime.hour}:${newTime.minute}';
+                            })
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: TimeField(
-                      label: 'Maximum Opening time',
-                      onChange: (newTime) => {
-                        setState(() {
-                          filter.maxOpTime = newTime.format(context);
-                        })
-                      },
-                    ),
-                  ),
-                  */
+                  const Divider(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

@@ -26,12 +26,6 @@ class HutCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => onTap(),
-          borderRadius: const BorderRadius.all(
-            Radius.circular(
-              16.0,
-            ),
-          ),
           child: Stack(
             children: [
               Column(
