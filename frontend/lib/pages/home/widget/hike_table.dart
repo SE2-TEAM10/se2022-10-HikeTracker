@@ -1,3 +1,4 @@
+import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/home/models/filter.dart';
 import 'package:HikeTracker/pages/home/widget/hike_card.dart';
@@ -5,8 +6,6 @@ import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:layout/layout.dart';
-
-import '../models/hike.dart';
 
 class HikesTable extends StatefulWidget {
   const HikesTable({

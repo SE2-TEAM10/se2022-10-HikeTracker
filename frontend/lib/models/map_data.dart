@@ -29,7 +29,7 @@ class MapData {
               gpx.wpts.first,
             )
           : null,
-      endLocation: gpx.wpts.isNotEmpty
+      endLocation: gpx.wpts.length > 1
           ? MapLocation.fromWaypoint(
               gpx.wpts.elementAt(1),
             )
@@ -80,11 +80,11 @@ class MapLocation {
   });
 
   factory MapLocation.fromWaypoint(Wpt waypoint) {
-    final parts = waypoint.desc!.split(',');
+    final parts = waypoint.desc?.split(',');
     return MapLocation(
-      name: parts[0].split('=')[1].trim(),
-      city: parts[1].trim(),
-      province: parts[2].trim(),
+      name: parts?[0].split('=')[1].trim() ?? 'NA',
+      city: parts?[1].trim() ?? 'NA',
+      province: parts?[2].trim() ?? 'NA',
       coordinates: LatLng(waypoint.lat!, waypoint.lon!),
     );
   }

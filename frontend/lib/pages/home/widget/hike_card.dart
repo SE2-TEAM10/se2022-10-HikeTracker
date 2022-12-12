@@ -1,4 +1,4 @@
-import 'package:HikeTracker/pages/home/models/hike.dart';
+import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/utils/constants.dart';
 import 'package:flutter/material.dart';
 

@@ -157,7 +157,7 @@ app.get("/api/hikesdetails/:hike_ID", async (req, res) => {
           row.location = [row.location];
         return row;
       });
-      res.json(lists);
+      res.json(lists[0]);
     })
     .catch((err) => {
       console.log(err);
