@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const dayjs = require("dayjs");
 const GpxParser = require("gpxparser");
 
-/*function checkPassword(password) {
+function checkPassword(password) {
   let count = 0;
 
   if (password.length >= 8) {
@@ -26,7 +26,7 @@ const GpxParser = require("gpxparser");
   }
 
   return count;
-}*/
+}
 
 class Database {
   constructor(dbName) {
@@ -542,26 +542,9 @@ class Database {
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
-let count = 0;
-      //let countCheck = checkPassword(user.password);
-      if (password.length >= 8) {
-        count += 1;
-      }
 
-      //UpperCase
-      if (/[A-Z]/.test(password)) {
-        count += 1;
-      }
-      //Lowercase
-      if (/[a-z]/.test(password)) {
-        count += 1;
-      }
-      //Numbers
-      if (/\d/.test(password)) {
-        count += 1;
-      }
-
-      if (count < 4) {
+      let countCheck = checkPassword(user.password);
+      if (countCheck < 4) {
         return reject(new Error("Password doesn't match all the criterias!"));
       }
 
