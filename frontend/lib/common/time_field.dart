@@ -6,18 +6,31 @@ class TimeField extends StatefulWidget {
     this.onChange,
     this.disabled = false,
     super.key,
+    this.startingTime,
   });
 
   final void Function(TimeOfDay)? onChange;
   final String label;
   final bool disabled;
+  final startingTime;
 
   @override
   State<TimeField> createState() => _TimeField();
 }
 
 class _TimeField extends State<TimeField> {
-  TimeOfDay time = TimeOfDay.now();
+  late TimeOfDay time;
+
+  @override
+  void initState() {
+    time = widget.startingTime != null
+        ? TimeOfDay(
+            hour: int.parse(widget.startingTime.split(':')[0]),
+            minute: int.parse(widget.startingTime.split(':')[1]),
+          )
+        : TimeOfDay.now();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

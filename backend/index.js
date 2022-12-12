@@ -148,32 +148,25 @@ app.get("/api/hike", async (req, res) => {
     });
 });
 
-app.get(
-  "/api/hikesdetails/:hike_ID",
-  /*isLoggedIn,*/ async (req, res) => {
-    /* let user = await db.getUserByID(req.user.id);
-     if (user.role !== "Hiker") {
-       return res.status(422).json({ error: `not a hiker` }).end();
-     }*/
-    await db
-      .getHikesDetailsByHikeID(req.params.hike_ID)
-      .then((lists) => {
-        lists.map((row) => {
-          if (row.location !== null && !Array.isArray(row.location))
-            row.location = [row.location];
-          return row;
-        });
-        res.json(lists);
-      })
-      .catch((err) => {
-        console.log(err);
-        res
-          .status(500)
-          .json({ error: `Database error while retrieving hike` })
-          .end();
+app.get("/api/hikesdetails/:hike_ID", async (req, res) => {
+  await db
+    .getHikesDetailsByHikeID(req.params.hike_ID)
+    .then((lists) => {
+      lists.map((row) => {
+        if (row.location !== null && !Array.isArray(row.location))
+          row.location = [row.location];
+        return row;
       });
-  }
-);
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
+});
 
 app.get("/api/sendEmail", async (req, res) => {
   let transport = nodemailer.createTransport({
@@ -204,61 +197,47 @@ app.get("/api/sendEmail", async (req, res) => {
   });
 });
 
-app.post(
-  "/api/hike",
-  isLoggedIn,
-  [
-    /*
-        check('name').isLength({ min: 1, max: 100 }),
-        check('length').isInt(),
-        check('expected_time').islength({ min: 5, max: 5 }),
-        check('ascent').isInt(),
-        check('difficulty').islength({ min: 1, max: 2 }),
-      */
-  ],
-  async (req, res) => {
-    /* const errors = validationResult(req).formatWith(errorFormatter); // format error message
-        if (!errors.isEmpty()) {
-            return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
-        }*/
-
-    try {
-      if (typeof req.body.gpx !== "string") {
-        res.status(422).json(err); //UNPROCESSABLE
-      }
-
-      const gpx_len = req.body.gpx.length;
-      if (gpx_len === 0) {
-        res.status(422).json("Error: the gpx file is empty!"); //UNPROCESSABLE
-      }
-
-      const result1 = await db.addNewHike(req.body.hike, req.body.gpx, req.user.ID);
-      console.log("res1 - ", result1);
-      const result2 = await db.addNewLocation(
-        req.body.startp,
-        "startp",
-        result1,
-        req.body.gpx
-      );
-      console.log("res2 - ", result2);
-      const result3 = await db.addNewLocation(
-        req.body.endp,
-        "endp",
-        result1,
-        req.body.gpx
-      );
-      console.log("res3 - ", result3);
-      const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
-      console.log("res4 - ", result4);
-
-      //console.log(result1);
-      res.status(201).json("Hike " + result1 + " correctly created!");
-    } catch (err) {
-      console.error(err);
-      res.status(503).json(err);
+app.post("/api/hike", isLoggedIn, [], async (req, res) => {
+  try {
+    if (typeof req.body.gpx !== "string") {
+      res.status(422).json(err); //UNPROCESSABLE
     }
+
+    const gpx_len = req.body.gpx.length;
+    if (gpx_len === 0) {
+      res.status(422).json("Error: the gpx file is empty!"); //UNPROCESSABLE
+    }
+
+    const result1 = await db.addNewHike(
+      req.body.hike,
+      req.body.gpx,
+      req.user.ID
+    );
+    console.log("res1 - ", result1);
+    const result2 = await db.addNewLocation(
+      req.body.startp,
+      "start",
+      result1,
+      req.body.gpx
+    );
+    console.log("res2 - ", result2);
+    const result3 = await db.addNewLocation(
+      req.body.endp,
+      "end",
+      result1,
+      req.body.gpx
+    );
+    console.log("res3 - ", result3);
+    const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
+    console.log("res4 - ", result4);
+
+    //console.log(result1);
+    res.status(201).json("Hike " + result1 + " correctly created!");
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
   }
-);
+});
 
 app.post(
   "/api/gpx",
@@ -277,7 +256,6 @@ app.post(
 );
 
 app.post("/api/addUser", async (req, res) => {
-
   try {
     const result1 = await db.addUser(req.body);
 
@@ -323,18 +301,12 @@ app.post(
     console.log("USER ID", req.user.ID);
 
     try {
-      
       // check if a user is a local guide or a hut worker
       if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
         const result1 = await db.addHut(req.body, req.user.ID);
-        /* const result2 = await db.addHikeUserHut(
-          req.body.hike_ID,
-          req.user.ID,
-          result1
-        ); */
 
         res.status(201).json(result1);
-      }      
+      }
     } catch (err) {
       console.error(err);
       res.status(503).json(err);
@@ -343,41 +315,42 @@ app.post(
 );
 
 //addParking
-app.post(
-  "/api/addParking",
-  isLoggedIn,
-  [
-  ],
-  async (req, res) => {
-    const errors = validationResult(req).formatWith(errorFormatter); // format error message
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
-    }
-
-   
-    console.log("TYPE USER", req.user.role);
-    console.log("USER ID", req.user.ID);
-
-    try {
-      
-      // check if a user is a local guide or a hut worker
-      if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
-        const result1 = await db.addParking(req.body, req.user.ID);
-        /* const result2 = await db.addHikeUserHut(
-          req.body.hike_ID,
-          req.user.ID,
-          result1
-        ); */
-
-        res.status(201).json(result1);
-      }      
-    } catch (err) {
-      console.error(err);
-      res.status(503).json(err);
-    }
+app.post("/api/addParking", isLoggedIn, [], async (req, res) => {
+  const errors = validationResult(req).formatWith(errorFormatter); // format error message
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
   }
-);
 
+  console.log("TYPE USER", req.user.role);
+  console.log("USER ID", req.user.ID);
+
+  try {
+    // check if a user is a local guide or a hut worker
+    if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
+      const result1 = await db.addParking(req.body, req.user.ID);
+
+      res.status(201).json(result1);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
+app.get("/api/hutWithFilters", async (req, res) => {
+  await db
+    .getHutsWithFilters(req.query)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
+});
 
 //api per la verifica
 app.get("/api/user/verify/:token", (req, res) => {

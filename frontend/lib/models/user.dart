@@ -28,9 +28,9 @@ class User {
 
   static UserRole toRole(String value) {
     switch (value) {
-      case 'local guide':
+      case 'LocalGuide':
         return UserRole.LocalGuide;
-      case 'hiker':
+      case 'Hiker':
         return UserRole.Hiker;
       default:
         return UserRole.LocalGuide;
