@@ -220,11 +220,11 @@ app.get("/api/hike", async (req, res) => {
 
 app.get(
   "/api/hikesdetails/:hike_ID",
-  /*isLoggedIn,*/ async (req, res) => {
-    /* let user = await db.getUserByID(req.user.id);
-     if (user.role !== "Hiker") {
-       return res.status(422).json({ error: `not a hiker` }).end();
-     }*/
+  isLoggedIn, async (req, res) => {
+    let thisuser = await db.getUserByID(req.user.ID);
+    if (thisuser.role !== "Hiker") {
+      return res.status(422).json({ error: `the logged in user is not a hiker` }).end();
+    }
     await db
       .getHikesDetailsByHikeID(req.params.hike_ID)
       .then((lists) => {
@@ -276,6 +276,10 @@ app.get("/api/sendEmail", async (req, res) => {
 
 app.post("/api/hike", isLoggedIn, [], async (req, res) => {
   try {
+    let thisuser = await db.getUserByID(req.user.ID);
+    if (thisuser.role !== "Local Guide") {
+      return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
+    }
     if (typeof req.body.gpx !== "string") {
       res.status(422).json(err); //UNPROCESSABLE
     }
@@ -318,10 +322,14 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
 
 app.post(
   "/api/gpx",
-  //isLoggedIn,
+  isLoggedIn,
   [],
   async (req, res) => {
     try {
+      let thisuser = await db.getUserByID(req.user.ID);
+      if (thisuser.role !== "Local Guide") {
+        return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
+      }
       const result5 = await db.addGpx(req.body.gpx);
 
       res.status(201).json(result5);
@@ -418,8 +426,8 @@ app.get("/api/hutWithFilters", async (req, res) => {
   await db
     .getHutsWithFilters(req.query)
     .then((lists) => {
-    res.json(lists);
-  })
+      res.json(lists);
+    })
     .catch((err) => {
       console.log(err);
       res
