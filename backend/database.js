@@ -248,16 +248,6 @@ class Database {
     });
   };
 
-  /* getLinkHikeUser = (hike_ID, user_ID) => {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM hike_user WHERE hike_ID=? AND user_ID=?";
-      this.db.all(sql, [hike_ID, user_ID], function (err, rows) {
-        if (err) reject(err);
-        else resolve(rows);
-      });
-    });
-  }; */
-
   getLinkUser = (hike_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT user_ID FROM hike WHERE hike_ID=? ";
@@ -338,15 +328,6 @@ class Database {
     });
   };
 
-  /* deleteLinkHikeUser = (hike_ID, user_ID) => {
-    return new Promise((resolve, reject) => {
-      const sql = "DELETE FROM hike_user WHERE hike_ID=? AND user_ID=?";
-      this.db.run(sql, [hike_ID, user_ID], function (err) {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
-  }; */
 
   deleteGpxByHikeID = (ID) => {
     return new Promise((resolve, reject) => {
@@ -625,30 +606,7 @@ class Database {
     });
   };
 
-  //TO BE USED IN A FOLLOWING STORY
-  /* addHikeUserHut = (hike_ID, user_ID, hut_ID) => {
-    return new Promise((resolve, reject) => {
-      try {
-        if (
-          typeof hike_ID !== 'number' ||
-          typeof user_ID !== 'number' ||
-          typeof hut_ID !== 'number'
-        ) {
-          return reject(422); // 422 - UNPROCESSABLE
-        }
-      } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
-      }
-      const sql = "INSERT INTO hike_user_hut(hike_ID, user_ID, hut_ID) VALUES(?,?,?)";
-      this.db.run(
-        sql, [hike_ID, user_ID, hut_ID], function (err) {
-          if (err) reject(err);
-          else {
-            resolve(true);
-          }
-        });
-    });
-  }; */
+
 
 
   //QUERY FOR PARKING LOT
@@ -782,21 +740,12 @@ class Database {
         return reject(503); // 503 - UNAVAILABLE
       }
 
-      const sql = "INSERT INTO hike_user_parking(hike_ID, user_ID, parking_ID) VALUES(?,?,?)";
-      this.db.run(
-        sql, [hike_ID, user_ID, parking_ID], function (err) {
-          if (err) reject(err);
-          else {
-            resolve(true);
-          }
-        });
-    });
-  }; */
+      */
 
 
   addGpx = (gpx1) => {
     return new Promise((resolve, reject) => {
-      var gpx = new GpxParser();
+      let gpx = new GpxParser();
       gpx.parse(gpx1);
 
       let length = parseInt((gpx.tracks[0].distance.total * 2) / 1000);
@@ -807,12 +756,12 @@ class Database {
       let ascent = parseInt((max_el - min_el));
       console.log("ASCENT ", ascent);
 
-      var lat = gpx.tracks[0].points[0].lat;
-      var lon = gpx.tracks[0].points[0].lon;
+      let lat = gpx.tracks[0].points[0].lat;
+      let lon = gpx.tracks[0].points[0].lon;
 
       let len = gpx.tracks[0].points.length - 1;
-      var lat_end = gpx.tracks[0].points[len].lat;
-      var lon_end = gpx.tracks[0].points[len].lon;
+      let lat_end = gpx.tracks[0].points[len].lat;
+      let lon_end = gpx.tracks[0].points[len].lon;
 
 
       console.log("LATITUDINE START", lat);
