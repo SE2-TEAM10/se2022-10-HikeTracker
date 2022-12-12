@@ -18,8 +18,8 @@ class NewParking {
   Map<String, dynamic> toMap() => {
         'name': name,
         'capacity': capacity,
-        'latitude': latitude,
-        'longitude': longitude,
+        'latitude': double.parse(latitude!),
+        'longitude': double.parse(longitude!),
         'city': city,
         'province': province,
       };
