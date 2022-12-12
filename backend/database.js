@@ -48,14 +48,10 @@ class Database {
         for (let entry of Object.entries(filters)) {
           let key = entry[0];
           let value = entry[1];
-          if (key == "start_asc" || key == "end_asc") {
+          if (key == "start_asc" || key == "end_asc" || key == "start_len" || key == "end_len") {
             value = parseInt(value);
           }
-          if (key == "start_len" || key == "end_len") {
-            value = parseInt(value);
-          }
-          if (typeof value === "string" || value instanceof String) {
-            if (key.length !== 0) {
+          if ((typeof value === "string" || value instanceof String) && (key.length !== 0)) {
               if (key == "start_time") {
                 query2 = query2.concat(
                   "expected_time",
@@ -67,7 +63,6 @@ class Database {
               } else {
                 query2 = query2.concat(key, "=", "'" + value + "'");
               }
-            }
           } else if (typeof value === "number" || value instanceof Number) {
             if (key == "start_asc") {
               query2 = query2.concat("ascent", " > ", value);
@@ -684,14 +679,10 @@ class Database {
         for (let entry of Object.entries(filters)) {
           let key = entry[0];
           let value = entry[1];
-          if (key == "min_altitude" || key == "max_altitude") {
+          if (key == "min_altitude" || key == "max_altitude" || key == "min_bed_num" || key == "max_bed_num") {
             value = parseInt(value);
           }
-          if (key == "min_bed_num" || key == "max_bed_num") {
-            value = parseInt(value);
-          }
-          if (typeof value === "string" || value instanceof String) {
-            if (key.length !== 0) {
+          if ((typeof value === "string" || value instanceof String) && key.length !== 0) {
               if (key == "min_opening_time") {
                 query2 = query2.concat(
                   "opening_time",
@@ -711,7 +702,6 @@ class Database {
               } else {
                 query2 = query2.concat(key, "=", "'" + value + "'"); //city, province
               }
-            }
           } else if (typeof value === "number" || value instanceof Number) {
             if (key == "min_altitude") {
               //min_altitude
