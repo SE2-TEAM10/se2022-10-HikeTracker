@@ -9,11 +9,11 @@ class MapData {
   MapData({
     required this.content,
     required this.gpx,
-    required this.startLocation,
-    required this.endLocation,
+    required this.track,
     required this.totalLength,
     required this.totalAscent,
-    required this.track,
+    this.startLocation,
+    this.endLocation,
   });
 
   factory MapData.fromStringGPX({
@@ -21,21 +21,23 @@ class MapData {
   }) {
     final gpx = GpxReader().fromString(stringGpx);
 
-    final slData = gpx.wpts[0];
-    final startLocation = MapLocation.fromWaypoint(slData);
-    final elData = gpx.wpts[1];
-    final endLocation = MapLocation.fromWaypoint(elData);
-    final trkData = gpx.trks.first.trksegs.first.trkpts;
-
     return MapData(
       content: stringGpx,
       gpx: gpx,
-      startLocation: startLocation,
-      endLocation: endLocation,
+      startLocation: gpx.wpts.isNotEmpty
+          ? MapLocation.fromWaypoint(
+              gpx.wpts.first,
+            )
+          : null,
+      endLocation: gpx.wpts.isNotEmpty
+          ? MapLocation.fromWaypoint(
+              gpx.wpts.elementAt(1),
+            )
+          : null,
       totalLength: 0,
       totalAscent: 0,
       track: List<MapTrackPoint>.from(
-        trkData.map(
+        gpx.trks.first.trksegs.first.trkpts.map(
           (e) => MapTrackPoint.fromWaypoint(e),
         ),
       ),
@@ -44,20 +46,17 @@ class MapData {
 
   final String content;
   final Gpx gpx;
-  final MapLocation startLocation;
-  final MapLocation endLocation;
+  final List<MapTrackPoint> track;
   final double totalLength;
   final double totalAscent;
-  final List<MapTrackPoint> track;
+  final MapLocation? startLocation;
+  final MapLocation? endLocation;
 
-  LatLng getTrackCenter() => LatLng(
-        (startLocation.coordinates.latitude +
-                endLocation.coordinates.latitude) /
-            2,
-        (startLocation.coordinates.longitude +
-                endLocation.coordinates.longitude) /
-            2,
-      );
+  LatLng getTrackCenter() => track
+      .elementAt(
+        (track.length / 2).floor(),
+      )
+      .coordinates;
 
   MapTrackPoint? getNearestTrackPoint(LatLng current) {
     var nearest;
