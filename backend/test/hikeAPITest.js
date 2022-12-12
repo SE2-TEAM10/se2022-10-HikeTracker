@@ -14,17 +14,10 @@ const dbmanager = new DBManager();
 const hikeAPICalls = new HikeAPICalls();
 
 describe('Hike test suite', async () => {
-    /* before(async () => {
-        await dbmanager.deleteAllData();
-    });
-    after(async () => {
-        await dbmanager.deleteAllData();
-    }); */
 
     describe('Standard Hike getters', async () => {
         it('get all hikes', async () => {
             let response = await hikeAPICalls.getHikesTest();
-            //console.log(response.status);
             assert.equal(response.status, 200);
         });
     });
