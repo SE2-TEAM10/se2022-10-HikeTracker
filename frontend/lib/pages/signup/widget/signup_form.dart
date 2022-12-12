@@ -8,6 +8,8 @@ class SignupForm extends StatefulWidget {
   const SignupForm({
     required this.onSubmit,
     required this.onLoginTap,
+    required this.onPwdSuccess,
+    required this.onPwdFail,
     this.isSmall = false,
     super.key,
   });
@@ -17,6 +19,8 @@ class SignupForm extends StatefulWidget {
     NewUser,
   ) onSubmit;
   final Function onLoginTap;
+  final Function onPwdSuccess;
+  final Function onPwdFail;
 
   @override
   State<SignupForm> createState() => _LoginFormState();
@@ -32,7 +36,6 @@ class _LoginFormState extends State<SignupForm> {
   }
 
   final _passwordController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -108,20 +111,21 @@ class _LoginFormState extends State<SignupForm> {
               label: 'Password',
               isPassword: true,
             ),
-          ),SizedBox(
+          ),
+          SizedBox(
             height: widget.isSmall ? 8 : 32,
           ),
           FlutterPwValidator(
-              controller: _passwordController,
-              minLength: 8,
-              uppercaseCharCount: 1,
-              numericCharCount: 1,
-              normalCharCount: 1,
-              specialCharCount: 1,
-              width: 350,
-              height: 150,
-              onSuccess: () => '',
-              onFail: () => ''
+            controller: _passwordController,
+            minLength: 8,
+            uppercaseCharCount: 1,
+            numericCharCount: 1,
+            normalCharCount: 1,
+            specialCharCount: 1,
+            width: 350,
+            height: 150,
+            onSuccess: () => widget.onPwdSuccess(),
+            onFail: () => widget.onPwdFail(),
           ),
           SizedBox(
             height: widget.isSmall ? 8 : 32,
@@ -134,6 +138,9 @@ class _LoginFormState extends State<SignupForm> {
               label: 'Confirm Password',
               isPassword: true,
             ),
+          ),
+          const SizedBox(
+            height: 8.0,
           ),
           FractionallySizedBox(
             widthFactor: widget.isSmall ? 1 : 0.6,
@@ -152,6 +159,7 @@ class _LoginFormState extends State<SignupForm> {
                   height: 8.0,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(
                       mainAxisSize: MainAxisSize.min,
@@ -176,8 +184,31 @@ class _LoginFormState extends State<SignupForm> {
                         ),
                       ],
                     ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Hiker',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Theme.of(context).colorScheme.outline,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Radio(
+                          value: UserRole.Hiker,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                          groupValue: user.role,
+                          onChanged: (UserRole? value) => setState(
+                            () => user = user.copyWith(
+                              role: value ?? UserRole.Hiker,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

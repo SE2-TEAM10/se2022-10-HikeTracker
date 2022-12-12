@@ -11,6 +11,7 @@ const PROFILE = '/profile';
 const HIKE_ADD = '/hike/add';
 const HUT_ADD = '/hut/add';
 const PARKING_ADD = '/parking/add';
+const HUTS = '/huts';
 
 class Route {
   Route({
@@ -35,6 +36,8 @@ class RouteUtils {
     switch (currentUser.role) {
       case UserRole.LocalGuide:
         return LOCAL_GUIDE_NAVIGATION_BAR_ROUTES;
+      case UserRole.Hiker:
+        return HIKER_NAVIGATION_BAR_ROUTES;
       default:
         return NOT_LOGGED_NAVIGATION_BAR_ROUTES;
     }
@@ -92,5 +95,26 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
     label: 'Add Parking',
     path: PARKING_ADD,
     icon: Icons.local_parking,
-  )
+  ),
+];
+
+final HIKER_NAVIGATION_BAR_ROUTES = [
+  Route(
+    index: 0,
+    label: 'Home',
+    path: HOME,
+    icon: Icons.home_outlined,
+  ),
+  Route(
+    index: 1,
+    label: 'Profile',
+    path: PROFILE,
+    icon: Icons.person_outline,
+  ),
+  Route(
+    index: 2,
+    label: 'Huts',
+    path: HUTS,
+    icon: Icons.home_work,
+  ),
 ];

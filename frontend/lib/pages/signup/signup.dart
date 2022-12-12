@@ -23,6 +23,7 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   bool isLoading = false;
+  bool isPasswordValid = false;
 
   @override
   void initState() {
@@ -54,6 +55,10 @@ class _SignupState extends State<Signup> {
                         onLoginTap: () =>
                             GoRouter.of(context).replace('/login'),
                         isSmall: context.breakpoint <= LayoutBreakpoint.xs,
+                        onPwdFail: () =>
+                            setState(() => isPasswordValid = false),
+                        onPwdSuccess: () =>
+                            setState(() => isPasswordValid = true),
                       ),
                     ],
                   ),
@@ -73,10 +78,10 @@ class _SignupState extends State<Signup> {
         messageType: MessageType.Error,
       ).show();
       return;
-    } else if(!user.isPasswordValid()){
+    } else if (!isPasswordValid) {
       Message(
         context: context,
-        message: 'Password does not match all the criterias' ,
+        message: 'Password does not match all the criterias',
         messageType: MessageType.Error,
       ).show();
       return;

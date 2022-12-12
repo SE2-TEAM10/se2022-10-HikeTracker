@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:HikeTracker/pages/home/models/filter.dart';
+//import 'package:HikeTracker/pages/home/models/filter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'package:requests/requests.dart';
@@ -12,7 +12,7 @@ class RestClient {
     required String api,
     String? endpoint,
     Map<String, String>? headers,
-    Filter? filter,
+    dynamic filter,
   }) async {
     final e = endpoint ?? dotenv.env['ENDPOINT'];
 

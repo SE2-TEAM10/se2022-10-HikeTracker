@@ -67,9 +67,9 @@ describe.only('hikeController Tests', () => {
             let user_ID = 3;
             const hike_ID = await hikeController.addNewHike(reqbody.hike, reqbody.gpx, user_ID);
 
-            const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "startp", hike_ID, reqbody.gpx);
+            const newStartpLocation = await hikeController.addNewLocation(reqbody.startp, "start", hike_ID, reqbody.gpx);
 
-            const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "endp", hike_ID, reqbody.gpx);
+            const newEndpLocation = await hikeController.addNewLocation(reqbody.endp, "end", hike_ID, reqbody.gpx);
 
             const hikeGPX_ID = await hikeController.addNewHikeGPX(reqbody.gpx, hike_ID);
 
@@ -173,7 +173,7 @@ describe.only('hikeController Tests', () => {
                 name: "testName",
                 surname: "testSurname",
                 mail: "test@hike.it",
-                password: "password",
+                password: "Localguide1!",
                 salt: "f4df7b66d7",
                 role: "LocalGuide",
                 verified: 0
@@ -407,6 +407,28 @@ describe.only('hikeController Tests', () => {
 
         })
 
+    })
+
+    describe('getHutsWithFilters method test', () => {
+        test('successful use of getHutsWithFilters', async () => {
+
+            /* to test the real DB, you need to add filters and to make sure that the number of result is the same on the assert equal */
+            let filters = {
+                //min_opening_time: "06:00",
+				//max_opening_time: "10:00",
+				//min_closing_time: "19:00",
+                //max_closing_time: "23:00",
+                //min_bed_num: 3,
+				//max_bed_num: 55,
+                //min_altitude: 10,
+				//max_altitude: 5000,
+                //city: "Lecce",
+                //province: "Lecce"
+            };
+
+            const result = await hikeController.getHutsWithFilters(filters);
+            assert.equal(result.length, 20);
+        })
     })
 
 })
