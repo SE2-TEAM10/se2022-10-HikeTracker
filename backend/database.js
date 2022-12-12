@@ -8,20 +8,7 @@ const GpxParser = require("gpxparser");
 function checkPassword(password) {
   let count = 0;
 
-  if (password.length >= 8) {
-    count += 1;
-  }
-
-  //UpperCase
-  if (/[A-Z]/.test(password)) {
-    count += 1;
-  }
-  //Lowercase
-  if (/[a-z]/.test(password)) {
-    count += 1;
-  }
-  //Numbers
-  if (/\d/.test(password)) {
+  if (password.length >= 8 || /[A-Z]/.test(password) || /[a-z]/.test(password) || /\d/.test(password)) {
     count += 1;
   }
 
