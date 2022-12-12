@@ -532,7 +532,7 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
     const loc = await db.getLocationToLink(req.body.hike_ID, req.body.start_end);
     if (req.body.ref === "hut") {
       let final_huts = [];
-      const huts = await db.getHutsByProvince(loc.province);
+      const huts = await db.getAllHuts();
       huts.map((h) => {
         let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, h.latitude, h.longitude);
         if (distance < 5) {
@@ -559,7 +559,7 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
       res.json(final_huts);
     } else if (req.body.ref === "p_lot") {
       let final_parks = [];
-      const parks = await db.getParkingsByProvince(loc.province);
+      const parks = await db.getAllParkings();
       parks.map((p) => {
         let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, p.latitude, p.longitude);
         if (distance < 5) {

@@ -773,22 +773,22 @@ class Database {
     });
   };
 
-  /*HT-8 - GET HUTS BY PROVINCE*/
-  getHutsByProvince = (province) => {
+  /*HT-8 - GET ALL HUTS*/
+  getAllHuts = () => {
     return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM hut WHERE province = ?";
-      this.db.all(sql, [province], function (err, rows) {
+      const sql = "SELECT * FROM hut";
+      this.db.all(sql, [], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
     });
   };
 
-  /*HT-8 - GET PARKING LOTS BY PROVINCE*/
-  getParkingsByProvince = (province) => {
+  /*HT-8 - GET ALL PARKING LOTS*/
+  getAllParkings = () => {
     return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM parking_lot WHERE province = ?";
-      this.db.all(sql, [province], function (err, rows) {
+      const sql = "SELECT * FROM parking_lot";
+      this.db.all(sql, [], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
