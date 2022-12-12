@@ -96,12 +96,6 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
     path: PARKING_ADD,
     icon: Icons.local_parking,
   ),
-  Route(
-    index: 5,
-    label: 'Huts',
-    path: HUTS,
-    icon: Icons.home_work,
-  ),
 ];
 
 final HIKER_NAVIGATION_BAR_ROUTES = [
