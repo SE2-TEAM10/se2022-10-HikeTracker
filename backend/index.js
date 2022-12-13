@@ -231,7 +231,6 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
     const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
     console.log("res4 - ", result4);
 
-    //console.log(result1);
     res.status(201).json("Hike " + result1 + " correctly created!");
   } catch (err) {
     console.error(err);

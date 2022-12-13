@@ -674,7 +674,7 @@ class Database {
     return new Promise((resolve, reject) => {
       let query = "SELECT * FROM hut";
       let query2 = "";
-      if (!(Object.entries(filters) == 0)) {
+      if (Object.entries(filters).length != 0) {
         query2 = query.concat(" WHERE ");
         for (let entry of Object.entries(filters)) {
           let key = entry[0];
