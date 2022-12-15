@@ -41,12 +41,12 @@ sections:
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
 - Hours per task average, standard deviation (estimate and actual)
-  - Estimated Average: 74.75 / 22 = 3.4 = 3h 24m
-  - Estimated Stardard deviation: 10.18 = 10h 11m
-  - Actual: 60.75 / 22 = 2.75 = 2h 45m
-  - Actual Stardard deviation: 7.76 = 7h 46m
+  - Estimated Average: 51 / 19 = 2.7 = 2h 42m
+  - Estimated Stardard deviation: 6.87 = 6h 52m
+  - Actual: 47.75 / 19 = 2.5 = 2h 30m
+  - Actual Stardard deviation: 6.93 = 6h 56m
 - Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1
-  - (74.75 / 60.75) - 1 = 0.23
+  - (51 / 47.75) - 1 = 0.06
   
 ## QUALITY MEASURES 
 
@@ -56,9 +56,9 @@ sections:
   - Total hours spent
     - 4h
   - Nr of automated unit test cases
-    - 19
+    - 24
   - Coverage (if available)
-    - 68%
+    - 72%
 - E2E testing:
   - Total hours estimated
     - 1h
@@ -90,15 +90,16 @@ sections:
 ## ASSESSMENT
 
 - What caused your errors in estimation (if any)?
-  - 
+  - We didn't estimate in detail the tasks about SonarQube, so in the retrospective there is a general estimation.
 - What lessons did you learn (both positive and negative) in this sprint?
-
+  - The collaboration between the team members that worked on the front-end and the ones that worked on the back-end has improved significantly in this sprint.
 - Which improvement goals set in the previous retrospective were you able to achieve? 
-  
+  - We estimated more hours for the front-end tasks, since it was the main problem in the precious sprint
 - Which ones you were not able to achieve? Why?
-
+  - We made some improvements, but we can always do better
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-
+  - We need to write a task for each issue present in SonarQube
 > Propose one or two
 
 - One thing you are proud of as a Team!!
+  - Team working and communication were fine.
