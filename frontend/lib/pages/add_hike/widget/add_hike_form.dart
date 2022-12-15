@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:HikeTracker/common/input_field.dart';
 import 'package:HikeTracker/pages/add_hike/models/new_hike.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,6 +23,7 @@ class AddHikeForm extends StatefulWidget {
 class _AddHikeFormState extends State<AddHikeForm> {
   final List<String> difficulties = ['T', 'PH', 'H'];
   late NewHike hike;
+  String? imageName;
 
   @override
   void initState() {
@@ -103,52 +107,91 @@ class _AddHikeFormState extends State<AddHikeForm> {
           const SizedBox(
             height: 32,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              const Text(
-                'Difficulty',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(
-                height: 8.0,
-              ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: DropdownButton(
-                    value: hike.difficulty,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    elevation: 16,
-                    underline: const SizedBox(),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Difficulty',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        hike = hike.copyWith(difficulty: value);
-                      });
-                    },
-                    items: difficulties
-                        .map(
-                          (String value) => DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: DropdownButton(
+                          value: hike.difficulty,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          elevation: 16,
+                          underline: const SizedBox(),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
-                        )
-                        .toList(),
-                  ),
+                          onChanged: (String? value) {
+                            setState(() {
+                              hike = hike.copyWith(difficulty: value);
+                            });
+                          },
+                          items: difficulties
+                              .map(
+                                (String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Cover image',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    TextButton.icon(
+                      onPressed: () => _selectImage(),
+                      icon: const Icon(Icons.image),
+                      label: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          hike.imageBase64 != null && imageName != null
+                              ? imageName!
+                              : 'Select here',
+                          style: const TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -269,6 +312,9 @@ class _AddHikeFormState extends State<AddHikeForm> {
             ),
             multiline: true,
           ),
+          const SizedBox(
+            height: 32,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -294,5 +340,22 @@ class _AddHikeFormState extends State<AddHikeForm> {
         ],
       ),
     );
+  }
+
+  Future<void> _selectImage() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+    if (result != null) {
+      final platformFile = result.files.single;
+      final uploadfile = platformFile.bytes!;
+      final base64String = base64Encode(uploadfile);
+      setState(() {
+        imageName = platformFile.name;
+        hike = hike.copyWith(
+          imageBase64: base64String,
+        );
+      });
+    }
   }
 }

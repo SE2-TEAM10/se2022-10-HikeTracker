@@ -1,5 +1,6 @@
 import 'package:HikeTracker/models/hike.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:layout/layout.dart';
 
 class Details extends StatelessWidget {
@@ -124,6 +125,27 @@ class Details extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const Divider(
+              height: 32,
+            ),
+            Container(
+              height: 300,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                image: DecorationImage(
+                  image: NetworkImage(
+                    '${dotenv.env['ASSETS_ENDPOINT']}${hike.coverUrl}',
+                    scale: 0.5,
+                  ),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(
+                    16.0,
+                  ),
+                ),
+              ),
             ),
             const Divider(
               height: 32,

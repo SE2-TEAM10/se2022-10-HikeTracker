@@ -22,15 +22,18 @@ class HutsPage extends StatefulWidget {
 
 class _HutsState extends State<HutsPage> {
   late Filter filter;
+  late HutsTableController tableController;
 
   @override
   void initState() {
+    tableController = HutsTableController();
     filter = Filter();
     super.initState();
   }
 
   void filterHuts(Filter f) {
     setState(() => filter = f);
+    tableController.onFilterChange?.call(f);
   }
 
   @override
@@ -45,6 +48,7 @@ class _HutsState extends State<HutsPage> {
         client: widget.client,
         filter: filter,
         user: widget.user,
+        controller: tableController,
       ),
     );
   }

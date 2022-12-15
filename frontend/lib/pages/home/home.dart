@@ -22,19 +22,23 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Filter filter;
+  late HikesTableController tableController;
 
   @override
   void initState() {
     filter = Filter();
+    tableController = HikesTableController();
     super.initState();
   }
 
   void filterHikes(Filter f) {
     setState(() => filter = f);
+    tableController.onFilterChange?.call(f);
   }
 
   @override
   Widget build(BuildContext context) {
+    tableController.onFilterChange?.call(filter);
     return FilteredCardsLayout(
       FilterTab: FilterTab(
         filterHikes: filterHikes,
@@ -45,6 +49,7 @@ class _HomeState extends State<Home> {
         client: widget.client,
         filter: filter,
         user: widget.user,
+        controller: tableController,
       ),
     );
   }

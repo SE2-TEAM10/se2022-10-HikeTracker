@@ -4,6 +4,8 @@ const sqlite = require("sqlite3");
 const crypto = require("crypto");
 const dayjs = require("dayjs");
 const GpxParser = require("gpxparser");
+const fs = require("fs");
+const { Buffer } = require("buffer");
 
 function checkPassword(password) {
   let count = 0;
@@ -48,21 +50,25 @@ class Database {
         for (let entry of Object.entries(filters)) {
           let key = entry[0];
           let value = entry[1];
-          if (key == "start_asc" || key == "end_asc" || key == "start_len" || key == "end_len") {
+          if (
+            key == "start_asc" ||
+            key == "end_asc" ||
+            key == "start_len" ||
+            key == "end_len"
+          ) {
             value = parseInt(value);
           }
-          if ((typeof value === "string" || value instanceof String) && (key.length !== 0)) {
-              if (key == "start_time") {
-                query2 = query2.concat(
-                  "expected_time",
-                  " > ",
-                  "'" + value + "'"
-                );
-              } else if (key == "end_time") {
-                query2 = query2.concat("expected_time", "<", "'" + value + "'");
-              } else {
-                query2 = query2.concat(key, "=", "'" + value + "'");
-              }
+          if (
+            (typeof value === "string" || value instanceof String) &&
+            key.length !== 0
+          ) {
+            if (key == "start_time") {
+              query2 = query2.concat("expected_time", " > ", "'" + value + "'");
+            } else if (key == "end_time") {
+              query2 = query2.concat("expected_time", "<", "'" + value + "'");
+            } else {
+              query2 = query2.concat(key, "=", "'" + value + "'");
+            }
           } else if (typeof value === "number" || value instanceof Number) {
             if (key == "start_asc") {
               query2 = query2.concat("ascent", " > ", value);
@@ -84,7 +90,7 @@ class Database {
       }
 
       console.log("final query: ", query2);
-      this.db.all(query2, [], (err, rows) => {
+      this.db.all(query2, [], async (err, rows) => {
         if (err) {
           reject(err);
           return;
@@ -139,6 +145,19 @@ class Database {
             }
           }
         });
+
+        const promises = array.map(async (h) => {
+          return this.getCoverImageByHikeID(h.ID);
+        });
+        const results = await Promise.all(promises);
+
+        array.forEach((element, index) => {
+          array[index] = {
+            ...element,
+            coverUrl: results[index],
+          };
+        });
+
         return resolve(array);
       });
     });
@@ -148,7 +167,7 @@ class Database {
     return new Promise((resolve, reject) => {
       const sql =
         "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID INNER JOIN hike_gpx ON hike.ID = hike_gpx.hike_ID WHERE hike.ID = ?";
-      this.db.all(sql, [hike_ID], function (err, rows) {
+      this.db.all(sql, [hike_ID], async (err, rows) => {
         if (err || rows.length === 0) reject(err);
         else {
           const list = rows.map((e) => ({
@@ -203,6 +222,19 @@ class Database {
               }
             }
           });
+
+          const promises = array.map(async (h) => {
+            return this.getCoverImageByHikeID(h.ID);
+          });
+          const results = await Promise.all(promises);
+  
+          array.forEach((element, index) => {
+            array[index] = {
+              ...element,
+              coverUrl: results[index],
+            };
+          });
+
           return resolve(array);
         }
       });
@@ -236,6 +268,26 @@ class Database {
       this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
+      });
+    });
+  };
+
+  getCoverImageByHikeID = (hike_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT path FROM hike_image WHERE hike_ID = ?";
+      this.db.get(sql, [hike_ID], async function (err, res) {
+        if (err) reject(err);
+
+        if (res == undefined) {
+          res = "hike/cover/default.png";
+          resolve(res);
+          return;
+        }
+
+        res = res.path;
+        res = res.split('./assets/')
+
+        resolve(res[res.length-1]);
       });
     });
   };
@@ -527,6 +579,23 @@ class Database {
     });
   };
 
+  addNewHikeImage = (imagePath, hike_ID, type) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (typeof imagePath !== "string" || typeof hike_ID !== "number") {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "INSERT INTO hike_image(path, hike_ID, type) VALUES(?,?,?)";
+      this.db.run(sql, [imagePath, hike_ID, type], function (err) {
+        if (err) reject(err);
+        else resolve(this.lastID);
+      });
+    });
+  };
+
   addUser = (user) => {
     return new Promise((resolve, reject) => {
       try {
@@ -679,29 +748,29 @@ class Database {
         for (let entry of Object.entries(filters)) {
           let key = entry[0];
           let value = entry[1];
-          if (key == "min_altitude" || key == "max_altitude" || key == "min_bed_num" || key == "max_bed_num") {
+          if (
+            key == "min_altitude" ||
+            key == "max_altitude" ||
+            key == "min_bed_num" ||
+            key == "max_bed_num"
+          ) {
             value = parseInt(value);
           }
-          if ((typeof value === "string" || value instanceof String) && key.length !== 0) {
-              if (key == "min_opening_time") {
-                query2 = query2.concat(
-                  "opening_time",
-                  " > ",
-                  "'" + value + "'"
-                );
-              } else if (key == "max_opening_time") {
-                query2 = query2.concat("opening_time", "<", "'" + value + "'");
-              } else if (key == "min_closing_time") {
-                query2 = query2.concat(
-                  "closing_time",
-                  " > ",
-                  "'" + value + "'"
-                );
-              } else if (key == "max_closing_time") {
-                query2 = query2.concat("closing_time", "<", "'" + value + "'");
-              } else {
-                query2 = query2.concat(key, "=", "'" + value + "'"); //city, province
-              }
+          if (
+            (typeof value === "string" || value instanceof String) &&
+            key.length !== 0
+          ) {
+            if (key == "min_opening_time") {
+              query2 = query2.concat("opening_time", " > ", "'" + value + "'");
+            } else if (key == "max_opening_time") {
+              query2 = query2.concat("opening_time", "<", "'" + value + "'");
+            } else if (key == "min_closing_time") {
+              query2 = query2.concat("closing_time", " > ", "'" + value + "'");
+            } else if (key == "max_closing_time") {
+              query2 = query2.concat("closing_time", "<", "'" + value + "'");
+            } else {
+              query2 = query2.concat(key, "=", "'" + value + "'"); //city, province
+            }
           } else if (typeof value === "number" || value instanceof Number) {
             if (key == "min_altitude") {
               //min_altitude

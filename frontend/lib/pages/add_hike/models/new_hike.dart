@@ -8,6 +8,7 @@ class NewHike {
     this.startp,
     this.endp,
     this.gpx,
+    this.imageBase64,
   });
 
   final String? name;
@@ -18,6 +19,7 @@ class NewHike {
   final String? gpx;
   final NewLocation? startp;
   final NewLocation? endp;
+  final String? imageBase64;
 
   Map<String, dynamic> toMap() => {
         'hike': {
@@ -29,6 +31,7 @@ class NewHike {
         'gpx': gpx,
         'startp': startp?.toMap(),
         'endp': endp?.toMap(),
+        'image_base_64': imageBase64
       };
 
   bool isFull() =>
@@ -52,6 +55,7 @@ class NewHike {
     String? gpx,
     NewLocation? startp,
     NewLocation? endp,
+    String? imageBase64,
   }) =>
       NewHike(
         name: name ?? this.name,
@@ -62,6 +66,7 @@ class NewHike {
         gpx: gpx ?? this.gpx,
         startp: startp ?? this.startp,
         endp: endp ?? this.endp,
+        imageBase64: imageBase64 ?? this.imageBase64,
       );
 }
 

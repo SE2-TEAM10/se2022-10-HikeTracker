@@ -1,17 +1,22 @@
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/huts/models/filter.dart';
+import 'package:HikeTracker/pages/huts/models/hut.dart';
 import 'package:HikeTracker/pages/huts/widget/hut_card.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart';
 import 'package:layout/layout.dart';
 
-import '../models/hut.dart';
+class HutsTableController {
+  Function(Filter)? onFilterChange;
+}
 
 class HutsTable extends StatefulWidget {
   const HutsTable({
     required this.client,
     required this.filter,
+    required this.controller,
     this.user,
     super.key,
   });
@@ -19,19 +24,36 @@ class HutsTable extends StatefulWidget {
   final Filter filter;
   final RestClient client;
   final User? user;
+  final HutsTableController controller;
 
   @override
   State<StatefulWidget> createState() => _HutsTableState();
 }
 
 class _HutsTableState extends State<HutsTable> {
+  late Future<Response> future;
+
+  @override
+  void initState() {
+    future = widget.client.get(
+      api: 'hutWithFilters',
+      filter: widget.filter,
+    );
+    widget.controller.onFilterChange = (newFilter) {
+      setState(() {
+        future = widget.client.get(
+          api: 'hutWithFilters',
+          filter: widget.filter,
+        );
+      });
+    };
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.client.get(
-        api: 'hutWithFilters',
-        filter: widget.filter,
-      ),
+      future: future,
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(

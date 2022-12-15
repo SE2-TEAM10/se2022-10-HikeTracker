@@ -5,6 +5,7 @@ import 'package:HikeTracker/pages/huts/models/filter.dart';
 import 'package:HikeTracker/pages/huts/models/hut.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:layout/layout.dart';
 
 class FilterTab extends StatefulWidget {
@@ -26,20 +27,22 @@ class FilterTab extends StatefulWidget {
 class _FilterTab extends State<FilterTab> {
   late GlobalKey<FormState> _formKey;
   late Filter filter;
+  late Future<Response> future;
 
   @override
   void initState() {
     _formKey = GlobalKey<FormState>();
     filter = widget.currentFilter ?? Filter();
+    future = widget.client.get(
+      api: 'hutWithFilters',
+    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.client.get(
-        api: 'hutWithFilters',
-      ),
+      future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Expanded(

@@ -5,12 +5,18 @@ import 'package:HikeTracker/pages/home/widget/hike_card.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart';
 import 'package:layout/layout.dart';
+
+class HikesTableController {
+  Function(Filter)? onFilterChange;
+}
 
 class HikesTable extends StatefulWidget {
   const HikesTable({
     required this.client,
     required this.filter,
+    required this.controller,
     this.user,
     super.key,
   });
@@ -18,19 +24,36 @@ class HikesTable extends StatefulWidget {
   final Filter filter;
   final RestClient client;
   final User? user;
+  final HikesTableController controller;
 
   @override
-  State<StatefulWidget> createState() => _HikesTableState();
+  State<HikesTable> createState() => _HikesTableState();
 }
 
 class _HikesTableState extends State<HikesTable> {
+  late Future<Response> future;
+
+  @override
+  void initState() {
+    future = widget.client.get(
+      api: 'hike',
+      filter: widget.filter,
+    );
+    widget.controller.onFilterChange = (newFilter) {
+      setState(() {
+        future = widget.client.get(
+          api: 'hike',
+          filter: newFilter,
+        );
+      });
+    };
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.client.get(
-        api: 'hike',
-        filter: widget.filter,
-      ),
+      future: future,
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
