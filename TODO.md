@@ -2,89 +2,89 @@
 
 ## FIX ERRORS
 >
-> - FE - Put password verification (at least 8 characters, etc)
-> - BE & FE - Put more explicit errors
-> - BE - change *reference_point* table:
-> >
-> > - remove parking and huts, to add them into specific tables
-> > - update coordinates of the points: they have to be taken from the GPX file
-> > - add user_ID, to check who added which point
-
+> -
+> -
+> -
 ----
 
-## HT-5 - Hut Description (ESTIMATION: 5 PTS)
+## HT-17 - Start hike (ESTIMATION: 13 PTS)
 
-> ### *As a local guide I want to insert a hut description*
-
-### FROM THE FAQ
->
-> - *About story HT-5 and HT-15, can a hut worker “access” huts that were inserted by a local guide in HT-5? In other words, can a hut worker insert extra info for a hut by clicking a modify button on a hut that was inserted by a local guide?*
-> >
-> > - *Yes, after a hut worker has been validate as actually working at a given hut she can add/modify information about that hut*
->
-### BACK-END
-
-> **NEW TABLE** and **NEW POST**
->
-> - NEW TABLE: *hut* (ID, name, description, opening_time, closing_time, bed_num, latitude, longitude, altitude, city, province, phone, email, website, user_ID) - it also links the user that has added it
-> - dataset to be taken from: <https://www.dati.piemonte.it/#/catalogodetail/regpie_ckan_ckan2_yucca_sdp_smartdatanet.it_RifugiOpenDa_2296>
-> - POST on hut
-> >
-> > - check if the user that tries to add the hut is a local guide or a hut worker - otherwise reject the action
-> >
-> - unit tests
->
-### FRONT-END
->
->- hut adding form
-
-------
-
-## HT-6 - Describe parking (ESTIMATION: 2 PTS)
-
-> ### *As a local guide I want to add a parking lot*
+> ### *As a hiker I want to start a registered hike So that I can record my position*
 
 ### FROM THE FAQ
 >
-> - *Does a parking lot has to be related to a specific hike?*
-> > - *No parking lot s are created independently of hikes, then later they can be marked as start/end point for a hike*
-> - *What information is required for a parking lot?*
-> > - *At least: name, position, and capacity (in terms of cars)*
-> - *Do we need to provide information on province and region where the parking lot is located?*
-> > - *It is not mandatory; if you do, you must implement validation: input data must be consistent with the location of the parking lot (e.g., if a parking lot is placed in Abruzzo, the local guide cannot fill the “region” field with Veneto)*
+> -
+> >
+> > -
 >
->
+> -
+> >
+> > -
+> >
+> >
 ### BACK-END
-
-> **NEW POST**
-> - NEW TABLE *parking_lot* (ID, name, capacity, latitude, longitude, user_ID)
-> - POST on *parking_lot*
-> - unit tests
 >
-### FRONT-END
->
-> - adding reference point form
-
-------
-
-## HT-7 - Search hut (ESTIMATION: 5 PTS)
-
-> ### *As a hiker I want to search for hut description*
-
-### FROM THE FAQ
->
-> - *search criteria for a hut?*
-> > - *The characteristics of the hut: see HT-5*
-> - *Do we need to provide information on province and region where the hut is located?*
-> > - *It is not mandatory; if you do, you must implement validation: input data must be consistent with the location of hut (e.g., if a hut is placed in Abruzzo, the local guide cannot fill the “region” field with Veneto)*
-### BACK-END
-> - GET with parameters: opening_time, closing_time, min_bed_num, max_bed_num, min_altitude, max_altitude, city, province
+> - NEW TABLE: hike_schedule(hike_ID, user_ID, start_time, end_time, status, duration)
+> - status can be "ongoing", if the hike has just started
+> - end_time will be initially put on "ongoing"
+> - duration will be initially be "ongoing" (if string)
 > -
 ### FRONT-END
 >
 > -
 
 -----
+
+## HT-18 - Terminate hike (ESTIMATION: 8 PTS)
+
+> ### *As a hiker I want to terminate a hike So that everybody is informed*
+
+### FROM THE FAQ
+>
+> -
+> >
+> > -
+>
+> -
+> >
+> > -
+> >
+> >
+### BACK-END
+> - PUT on hike_schedule table, given the hike_ID and the user_ID, setting the status to "completed", the end_time to the actual end_time
+> - duration will be modified with the correct calculation
+>
+### FRONT-END
+>
+> -
+
+-----
+
+## HT-34 - Completed hikes (ESTIMATION: PTS)
+
+> ### *As a hiker I want to access the list of hikes I completed*
+
+### FROM THE FAQ
+>
+> -
+> >
+> > -
+>
+> -
+> >
+> > -
+> >
+> >
+### BACK-END
+> - GET from hike_schedule with the user_ID and the status "completed"
+>
+>
+### FRONT-END
+>
+> -
+
+-----
+
 
 ## HT-8 - Link start/arrival (ESTIMATION: 8 PTS)
 
@@ -432,58 +432,6 @@
 > NEW TABLE
 >
 > - table hut_img (hut_ID, img)
->
-### FRONT-END
->
-> -
-
------
-
-## HT-17 - Start hike (ESTIMATION: 13 PTS)
-
-> ### *As a hiker I want to start a registered hike So that I can record my position*
-
-### FROM THE FAQ
->
-> -
-> >
-> > -
->
-> -
-> >
-> > -
-> >
-> >
-### BACK-END
->
-> -
->
->
-### FRONT-END
->
-> -
-
------
-
-## HT-18 - Terminate hike (ESTIMATION: 8 PTS)
-
-> ### *As a hiker I want to terminate a hike So that everybody is informed*
-
-### FROM THE FAQ
->
-> -
-> >
-> > -
->
-> -
-> >
-> > -
-> >
-> >
-### BACK-END
->
-> -
->
 >
 ### FRONT-END
 >
