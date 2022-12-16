@@ -169,26 +169,26 @@ Table `user` contains all user details
 Table `parking_lot` contains all the parking lot
 
 | ID | name | capacity | latitude | longitude |city | province | user_ID |
-|-----------|--------------|----------|-----------|--------------|    
+|----|------|----------|----------|-----------|-----|----------|---------|    
 | 1   | Parcheggio di Cortavetto | 100  | 45.10281 | 7.16555 | Cortavetto | Torino | 3 |
 
 Table `reference_point` contains all the reference point for each hike
 
 | ID | name | type | latitude | longitude |city | province | user_ID |
-|-----------|--------------|----------|-----------|--------------|    
+|----|------|------|----------|-----------|-----|----------|---------|    
 | 1   | Villaggio Albaron | village  | 45.30241 | 7.224057 | Balme | Torino | 1 |
 
 Table `hut` contains all the huts
 
 | ID | name | description | opening_time | closing_time |bed_num | altitude | latitude | longitude |city | province |phone |mail | website |user_ID|
-|-----------|--------------|----------|-----------|--------------|    
+|----|------|-------------|--------------|--------------|--------|----------|----------|-----------|-----|----------|------|-----|---------|-------|   
 | 1 | Rifugio Ca Asti | _string description_ | 08:00 | 22:00 | 60 | 2854 | 45.10281 | 7.16555 | Rocciamelone | Torino | _phone number_ | jennifer.lopez@hike.it | www.hikers.it | 1
 
 
 Table `hike_user` contains relation between table _hike_ and table _user_
 
 | hike_ID | user_ID |
-|-----------|-----|    
+|-----|---|    
 | 1   | 1 |  
 
 
@@ -200,26 +200,26 @@ Table `hike_gpx` contains relation between table _hike_ and table _hike_gpx_
 
 Table `hike_user_ref` contains relation between table _hike_ , table _user_  and table _reference_point_
 
-| hike_ID | user_ID | ref_ID | ref_type
-|-----------|-----|    
+| hike_ID | user_ID | ref_ID | ref_type|
+|-----------|-----|---|----|    
 | 5   | 1 | 2 | point |  
 
 Table `hike_user_parking` contains relation between table _hike_ , table _user_  and table _parking lot_
 
-| hike_ID | user_ID | parking_ID | ref_type
-|-----------|-----|    
+| hike_ID | user_ID | parking_ID | ref_type|
+|-----------|-----|---|----| 
 | 32   | 3 | 3 | point | 
 
 Table `hike_user_hut` contains relation between table _hike_ , table _user_  and table _hut_
 
-| ID | path | hut_ID | type
-|-----------|-----|    
+| ID | path | hut_ID | type|
+|-----------|-----|----|----|  
 | 3   | 1 | 1 | point | 
 
 Table `hike_image` contains all the images
 
-| hike_ID | user_ID | hike_ID | ref_type
-|-----------|-----|    
+| hike_ID | user_ID | hike_ID | ref_type|
+|-----------|-----|---|----|
 | 1   | _path_ | 1 | cover | 
 
 Table `border` contains the coordinates that delimit a municipality
