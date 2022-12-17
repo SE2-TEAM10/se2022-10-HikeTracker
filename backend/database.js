@@ -311,6 +311,28 @@ class Database {
     });
   };
 
+  getHikeUserHut = (hike_ID,user_ID,hut_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+      this.db.all(sql, [hike_ID,user_ID,hut_ID], function (err,rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getHikeUserParking = (hike_ID,user_ID,parking_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
+      this.db.all(sql, [hike_ID,user_ID,parking_ID], function (err,rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+
+
   deleteHikeByID = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike WHERE ID=?";
@@ -412,6 +434,26 @@ class Database {
             reject(new Error("User not found!"));
           }
         }
+      });
+    });
+  };
+
+  deleteHikeUserHut = (hike_ID,user_ID,hut_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+      this.db.run(sql, [hike_ID,user_ID,hut_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteHikeUserParking = (hike_ID,user_ID,parking_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
+      this.db.run(sql, [hike_ID,user_ID,parking_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
       });
     });
   };

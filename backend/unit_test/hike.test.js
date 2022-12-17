@@ -415,13 +415,13 @@ describe.only('hikeController Tests', () => {
             /* to test the real DB, you need to add filters and to make sure that the number of result is the same on the assert equal */
             let filters = {
                 //min_opening_time: "06:00",
-				//max_opening_time: "10:00",
-				//min_closing_time: "19:00",
+                //max_opening_time: "10:00",
+                //min_closing_time: "19:00",
                 //max_closing_time: "23:00",
                 //min_bed_num: 3,
-				//max_bed_num: 55,
+                //max_bed_num: 55,
                 //min_altitude: 10,
-				//max_altitude: 5000,
+                //max_altitude: 5000,
                 //city: "Lecce",
                 //province: "Lecce"
             };
@@ -430,5 +430,101 @@ describe.only('hikeController Tests', () => {
             assert.equal(result.length, 20);
         })
     })
+
+    describe('addHikeUserHut method test', () => {
+        test('successful use of add a hut as start/arrival point for hike', async () => {
+
+            let reqbody = {
+                hike_ID: 1,
+                hut_ID: 2,
+                ref_type: "test_point_hut"
+            };
+
+            await hikeController.deleteHikeUserHut(1, 1, 2);
+
+            const user_ID = 1;
+
+            await hikeController.addHikeUserHut(reqbody.hike_ID, user_ID, reqbody.hut_ID, reqbody.ref_type);
+
+            const result = await hikeController.getHikeUserHut(reqbody.hike_ID, user_ID, reqbody.hut_ID);
+
+            assert.equal(result[0].hike_ID, reqbody.hike_ID);
+            assert.equal(result[0].user_ID, user_ID);
+            assert.equal(result[0].hut_ID, reqbody.hut_ID);
+            assert.equal(result[0].ref_type, reqbody.ref_type);
+
+        })
+
+        test('try to add a hut as start/arrival point for a hike with wrong params', async () => {
+
+            let reqbody = {
+                hike_ID: "hike_ID",
+                hut_ID: "hut_ID",
+                ref_type: "test_point_hut"
+            };
+
+            const user_ID = 1;
+
+            const result = await hikeController.addHikeUserHut(reqbody.hike_ID, user_ID, reqbody.hut_ID, reqbody.ref_type).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to a hut as start/arrival point for a hike with empty params', async () => {
+
+            const result = await hikeController.addHikeUserHut().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+    })
+
+    describe('addHikeUserParking method test', () => {
+        test('successful use of add a parking lot as start/arrival point for hike', async () => {
+
+            let reqbody = {
+                hike_ID: 1,
+                parking_ID: 2,
+                ref_type: "test_point_parking"
+            };
+
+            await hikeController.deleteHikeUserParking(1, 1, 2);
+
+            const user_ID = 1;
+
+            await hikeController.addHikeUserParking(reqbody.hike_ID, user_ID, reqbody.parking_ID, reqbody.ref_type);
+
+            const result = await hikeController.getHikeUserParking(reqbody.hike_ID, user_ID, reqbody.parking_ID);
+
+            assert.equal(result[0].hike_ID, reqbody.hike_ID);
+            assert.equal(result[0].user_ID, user_ID);
+            assert.equal(result[0].parking_ID, reqbody.parking_ID);
+            assert.equal(result[0].ref_type, reqbody.ref_type);
+
+        })
+
+        test('try to add a parking lot as start/arrival point for a hike with wrong params', async () => {
+
+            let reqbody = {
+                hike_ID: "hike_ID",
+                parking_ID: "parking_ID",
+                ref_type: "test_point_parking"
+            };
+
+            const user_ID = 1;
+
+            const result = await hikeController.addHikeUserParking(reqbody.hike_ID, user_ID, reqbody.parking_ID, reqbody.ref_type).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to a parking lot as start/arrival point for a hike with empty params', async () => {
+
+            const result = await hikeController.addHikeUserParking().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+    })
+
+
 
 })
