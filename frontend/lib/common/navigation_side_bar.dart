@@ -19,7 +19,7 @@ class NavigationSideBar extends StatelessWidget {
 
     return NavigationRail(
       onDestinationSelected: (value) => currentPath != routes[value].path
-          ? GoRouter.of(context).push(routes[value].path)
+          ? GoRouter.of(context).go(routes[value].path)
           : null,
       labelType: NavigationRailLabelType.all,
       groupAlignment: 0.0,
@@ -31,7 +31,12 @@ class NavigationSideBar extends StatelessWidget {
             ),
           )
           .toList(),
-      selectedIndex: routes.firstWhere((r) => r.path == currentPath).index,
+      selectedIndex: routes
+          .firstWhere(
+            (r) => r.path == GoRouter.of(context).location,
+            orElse: () => routes.first,
+          )
+          .index,
     );
   }
 }

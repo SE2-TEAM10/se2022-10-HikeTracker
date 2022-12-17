@@ -17,35 +17,89 @@ GoRouter getRouter({
   required User? currentUser,
   required Function onLogged,
 }) {
+  final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  final _mainShellNavigatorKey = GlobalKey<NavigatorState>();
   return GoRouter(
-    initialLocation: HOME,
-    routes: <GoRoute>[
+    initialLocation: HIKES,
+    navigatorKey: _rootNavigatorKey,
+    routes: [
       GoRoute(
         path: HOME,
-        builder: (BuildContext context, GoRouterState state) {
-          return MainScaffold(
-            currentPath: state.path!,
-            currentUser: currentUser,
-            child: Home(
-              client: client,
-            ),
-          );
-        },
+        redirect: (_, __) => HIKES,
       ),
-      GoRoute(
-        path: HUTS,
-        builder: (BuildContext context, GoRouterState state) {
-          return MainScaffold(
-            currentPath: state.path!,
-            currentUser: currentUser,
-            child: HutsPage(
-              client: client,
+      ShellRoute(
+        navigatorKey: _mainShellNavigatorKey,
+        builder: (BuildContext context, GoRouterState state, Widget child) =>
+            MainScaffold(
+          currentPath: state.path!,
+          currentUser: currentUser,
+          child: child,
+        ),
+        routes: [
+          GoRoute(
+            path: HIKES,
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: Home(
+                client: client,
+              ),
             ),
-          );
-        },
+            routes: [
+              GoRoute(
+                path: ':hikeID',
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                  child: HikeDetail(
+                    client: client,
+                    hikeID: int.tryParse(state.params['hikeID'] ?? '0') ?? 0,
+                    user: currentUser,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: HUTS,
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return NoTransitionPage(
+                child: HutsPage(
+                  client: client,
+                ),
+              );
+            },
+          ),
+          if (currentUser != null)
+            GoRoute(
+              path: PROFILE,
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return NoTransitionPage(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('PROFILE PAGE: ${currentUser.name}'),
+                        TextButton.icon(
+                          onPressed: () async {
+                            await client.delete(
+                              api: 'sessions/current',
+                            );
+                            onLogged(null);
+                          },
+                          icon: const Icon(Icons.logout),
+                          label: const Text('Logout'),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+        ],
       ),
       if (currentUser == null)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: LOGIN,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -58,6 +112,7 @@ GoRouter getRouter({
         ),
       if (currentUser == null)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: SIGNUP,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -68,34 +123,9 @@ GoRouter getRouter({
             );
           },
         ),
-      if (currentUser != null)
-        GoRoute(
-          path: PROFILE,
-          builder: (BuildContext context, GoRouterState state) {
-            return SubScaffold(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('PROFILE PAGE: ${currentUser.name}'),
-                    TextButton.icon(
-                      onPressed: () async {
-                        await client.delete(
-                          api: 'sessions/current',
-                        );
-                        onLogged(null);
-                      },
-                      icon: const Icon(Icons.logout),
-                      label: const Text('Logout'),
-                    )
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
       if (currentUser?.role == UserRole.LocalGuide)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: HIKE_ADD,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -107,6 +137,7 @@ GoRouter getRouter({
         ),
       if (currentUser?.role == UserRole.LocalGuide)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: HUT_ADD,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -118,6 +149,7 @@ GoRouter getRouter({
         ),
       if (currentUser?.role == UserRole.LocalGuide)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: PARKING_ADD,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -133,18 +165,6 @@ GoRouter getRouter({
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
-            ),
-          );
-        },
-      ),
-      GoRoute(
-        path: HIKE_DETAIL,
-        builder: (BuildContext context, GoRouterState state) {
-          return SubScaffold(
-            child: HikeDetail(
-              client: client,
-              hikeID: int.tryParse(state.params['hikeID'] ?? '0') ?? 0,
-              user: currentUser,
             ),
           );
         },

@@ -1,3 +1,4 @@
+import 'package:HikeTracker/router/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:layout/layout.dart';
@@ -18,10 +19,7 @@ class SubScaffold extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          onPressed: () {
-            final r = GoRouter.of(context);
-            r.pop();
-          },
+          onPressed: () => GoRouter.of(context).go(HOME),
           icon: Icon(
             Icons.arrow_back,
             color: Theme.of(context).colorScheme.onSurface,

@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 
 //ROUTES
 const HOME = '/';
+const HIKES = '/hikes';
 const LOGIN = '/login';
 const SIGNUP = '/signup';
 const LOADING = '/loading';
-const HIKE_DETAIL = '/hike/:hikeID';
+const HIKE_DETAIL = '$HIKES/:hikeID';
 const PROFILE = '/profile';
 const HIKE_ADD = '/hike/add';
 const HUT_ADD = '/hut/add';
@@ -47,8 +48,8 @@ class RouteUtils {
 final NOT_LOGGED_NAVIGATION_BAR_ROUTES = [
   Route(
     index: 0,
-    label: 'Home',
-    path: HOME,
+    label: 'Hikes',
+    path: HIKES,
     icon: Icons.home_outlined,
   ),
   Route(
@@ -68,8 +69,8 @@ final NOT_LOGGED_NAVIGATION_BAR_ROUTES = [
 final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
   Route(
     index: 0,
-    label: 'Home',
-    path: HOME,
+    label: 'Hikes',
+    path: HIKES,
     icon: Icons.home_outlined,
   ),
   Route(
@@ -101,8 +102,8 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
 final HIKER_NAVIGATION_BAR_ROUTES = [
   Route(
     index: 0,
-    label: 'Home',
-    path: HOME,
+    label: 'Hikes',
+    path: HIKES,
     icon: Icons.home_outlined,
   ),
   Route(
