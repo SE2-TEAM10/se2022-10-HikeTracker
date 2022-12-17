@@ -13,6 +13,7 @@ GoRouter getRouter({
   required bool showSplash,
   required User? currentUser,
   required Function onLogged,
+  required Function onThemeChanged,
 }) {
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
   final _mainShellNavigatorKey = GlobalKey<NavigatorState>();
@@ -30,6 +31,7 @@ GoRouter getRouter({
             MainScaffold(
           currentPath: state.path!,
           currentUser: currentUser,
+          onThemeChanged: onThemeChanged,
           child: child,
         ),
         routes: [

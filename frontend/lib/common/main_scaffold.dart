@@ -9,12 +9,14 @@ class MainScaffold extends StatelessWidget {
     required this.child,
     required this.currentPath,
     required this.currentUser,
+    required this.onThemeChanged,
     super.key,
   });
 
   final Widget child;
   final String currentPath;
   final User? currentUser;
+  final Function onThemeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,7 @@ class MainScaffold extends StatelessWidget {
                 NavigationSideBar(
                   currentPath: currentPath,
                   currentUser: currentUser,
+                  onThemeChanged: onThemeChanged,
                 ),
                 Expanded(
                   child: child,
