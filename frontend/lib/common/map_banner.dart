@@ -111,9 +111,16 @@ class _MapBannerState extends State<MapBanner> {
                     }),
                   ),
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          widget.dense ? 0 : 16.0,
+                        ),
+                      ),
+                      child: TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      ),
                     ),
                     BorderPolyline(
                       mapBorders: widget.mapBorders,
@@ -152,9 +159,16 @@ class _MapBannerState extends State<MapBanner> {
                     }),
                   ),
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          widget.dense ? 0 : 16.0,
+                        ),
+                      ),
+                      child: TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      ),
                     ),
                     TrackPolyline(
                       track: widget.mapData!.track,
