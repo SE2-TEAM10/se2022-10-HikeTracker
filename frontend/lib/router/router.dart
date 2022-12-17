@@ -1,11 +1,8 @@
 import 'package:HikeTracker/common/main_scaffold.dart';
 import 'package:HikeTracker/common/sub_scaffold.dart';
 import 'package:HikeTracker/models/user.dart';
-import 'package:HikeTracker/pages/add_hut/add_hut.dart';
-import 'package:HikeTracker/pages/add_parking/add_parking.dart';
-import 'package:HikeTracker/pages/hike_detail/hike_detail_page.dart';
+import 'package:HikeTracker/pages/hikes/hike_detail/hike_detail_page.dart';
 import 'package:HikeTracker/pages/pages.dart';
-import 'package:HikeTracker/pages/signup/signup.dart';
 import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +36,7 @@ GoRouter getRouter({
           GoRoute(
             path: HIKES,
             pageBuilder: (context, state) => NoTransitionPage(
-              child: Home(
+              child: Hikes(
                 client: client,
               ),
             ),

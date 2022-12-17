@@ -5,7 +5,7 @@ import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/map_data.dart';
 import 'package:HikeTracker/models/user.dart';
-import 'package:HikeTracker/pages/hike_detail/widget/hike_detail.dart';
+import 'package:HikeTracker/pages/hikes/hike_detail/widget/hike_detail.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 

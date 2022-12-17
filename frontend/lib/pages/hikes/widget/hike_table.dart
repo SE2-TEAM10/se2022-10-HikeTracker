@@ -1,7 +1,7 @@
 import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/user.dart';
-import 'package:HikeTracker/pages/home/models/filter.dart';
-import 'package:HikeTracker/pages/home/widget/hike_card.dart';
+import 'package:HikeTracker/pages/hikes/models/filter.dart';
+import 'package:HikeTracker/pages/hikes/widget/hike_card.dart';
 import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
