@@ -1,5 +1,5 @@
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:layout/layout.dart';
 
 enum MessageType {
   Success,
@@ -26,7 +26,7 @@ class Message {
 
   SnackBar build() {
     return SnackBar(
-      margin: context.breakpoint > LayoutBreakpoint.sm
+      margin: !context.isMobile
           ? EdgeInsets.fromLTRB(
               MediaQuery.of(context).size.width / 4,
               5.0,
@@ -54,7 +54,7 @@ class Message {
           : messageType == MessageType.Success
               ? Theme.of(context).colorScheme.secondaryContainer
               : Theme.of(context).colorScheme.errorContainer,
-      behavior: context.breakpoint > LayoutBreakpoint.sm
+      behavior: !context.isMobile
           ? SnackBarBehavior.floating
           : SnackBarBehavior.fixed,
     );

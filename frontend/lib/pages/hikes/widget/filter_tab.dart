@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/pages/hikes/models/filter.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:layout/layout.dart';
 
 class FilterTab extends StatefulWidget {
   const FilterTab({
@@ -310,7 +310,7 @@ class _FilterTab extends State<FilterTab> {
                             ),
                           ),
                           onPressed: () => setState(() {
-                            if (context.breakpoint <= LayoutBreakpoint.sm) {
+                            if (context.isMobile) {
                               Navigator.of(context).pop();
                             }
                             filter = Filter();
@@ -325,7 +325,7 @@ class _FilterTab extends State<FilterTab> {
                           ),
                         ),
                         onPressed: () {
-                          if (context.breakpoint <= LayoutBreakpoint.sm) {
+                          if (context.isMobile) {
                             Navigator.of(context).pop();
                           }
                           widget.filterHikes(filter);

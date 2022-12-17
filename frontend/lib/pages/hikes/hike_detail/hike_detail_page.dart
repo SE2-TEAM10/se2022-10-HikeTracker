@@ -6,6 +6,7 @@ import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/map_data.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/hikes/hike_detail/widget/hike_detail.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 
@@ -33,11 +34,6 @@ class _HikeDetailState extends State<HikeDetail> {
         api: 'hikesdetails/${widget.hikeID}',
       ),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
         if (snapshot.hasError) {
           return Center(
             child: Text(
@@ -45,21 +41,18 @@ class _HikeDetailState extends State<HikeDetail> {
             ),
           );
         }
-        if (snapshot.hasData) {
-          return HikeDetailContent(
-            user: widget.user,
-            client: widget.client,
-            hike: Hike.fromJson(snapshot.data!.body),
-            gpx: jsonDecode(snapshot.data!.body)['gpx'],
-          );
-        }
-        return Container();
+        return HikeDetailContent(
+          user: widget.user,
+          client: widget.client,
+          hike: snapshot.hasData ? Hike.fromJson(snapshot.data!.body) : null,
+          gpx: snapshot.hasData ? jsonDecode(snapshot.data!.body)['gpx'] : null,
+        );
       },
     );
   }
 }
 
-class HikeDetailContent extends StatefulWidget {
+class HikeDetailContent extends StatelessWidget {
   const HikeDetailContent({
     required this.client,
     required this.hike,
@@ -70,32 +63,30 @@ class HikeDetailContent extends StatefulWidget {
 
   final User? user;
   final RestClient client;
-  final String gpx;
-  final Hike hike;
+  final String? gpx;
+  final Hike? hike;
 
-  @override
-  State<HikeDetailContent> createState() => _HikeDetailContentState();
-}
-
-class _HikeDetailContentState extends State<HikeDetailContent> {
   @override
   Widget build(BuildContext context) {
     return TwoColumnsLayout(
-      leftChild: widget.user != null
-          ? Expanded(
-              flex: 2,
-              child: MapBanner(
-                client: widget.client,
-                mapData: MapData.fromStringGPX(stringGpx: widget.gpx),
-              ),
+      isNested: !context.isMobile,
+      hideLeftChild: user == null,
+      leftFlex: 2,
+      rightFlex: 3,
+      leftChild: user != null
+          ? MapBanner(
+              client: client,
+              mapData:
+                  gpx != null ? MapData.fromStringGPX(stringGpx: gpx!) : null,
             )
           : Container(),
-      rightChild: Expanded(
-        flex: 3,
-        child: Details(
-          hike: widget.hike,
-        ),
-      ),
+      rightChild: hike != null
+          ? Details(
+              hike: hike!,
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:HikeTracker/common/input_field.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/signup/models/new_user.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 
@@ -10,11 +11,9 @@ class SignupForm extends StatefulWidget {
     required this.onLoginTap,
     required this.onPwdSuccess,
     required this.onPwdFail,
-    this.isSmall = false,
     super.key,
   });
 
-  final bool isSmall;
   final Function(
     NewUser,
   ) onSubmit;
@@ -42,7 +41,7 @@ class _LoginFormState extends State<SignupForm> {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 16,
-        horizontal: widget.isSmall ? 16 : 128,
+        horizontal: context.isMobile ? 16 : 128,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +64,7 @@ class _LoginFormState extends State<SignupForm> {
             height: 32,
           ),
           FractionallySizedBox(
-            widthFactor: widget.isSmall ? 1 : 0.6,
+            widthFactor: context.isMobile ? 1 : 0.6,
             child: Row(
               children: [
                 Expanded(
@@ -76,7 +75,7 @@ class _LoginFormState extends State<SignupForm> {
                   ),
                 ),
                 SizedBox(
-                  width: widget.isSmall ? 8 : 16,
+                  width: context.isMobile ? 8 : 16,
                 ),
                 Expanded(
                   child: InputField(
@@ -89,10 +88,10 @@ class _LoginFormState extends State<SignupForm> {
             ),
           ),
           SizedBox(
-            height: widget.isSmall ? 8 : 32,
+            height: context.isMobile ? 8 : 32,
           ),
           FractionallySizedBox(
-            widthFactor: widget.isSmall ? 1 : 0.6,
+            widthFactor: context.isMobile ? 1 : 0.6,
             child: InputField(
               onChange: (value) =>
                   setState(() => user = user.copyWith(email: value)),
@@ -100,10 +99,10 @@ class _LoginFormState extends State<SignupForm> {
             ),
           ),
           SizedBox(
-            height: widget.isSmall ? 8 : 32,
+            height: context.isMobile ? 8 : 32,
           ),
           FractionallySizedBox(
-            widthFactor: widget.isSmall ? 1 : 0.6,
+            widthFactor: context.isMobile ? 1 : 0.6,
             child: InputField(
               onChange: (value) =>
                   setState(() => user = user.copyWith(password: value)),
@@ -113,7 +112,7 @@ class _LoginFormState extends State<SignupForm> {
             ),
           ),
           SizedBox(
-            height: widget.isSmall ? 8 : 32,
+            height: context.isMobile ? 8 : 32,
           ),
           FlutterPwValidator(
             controller: _passwordController,
@@ -128,10 +127,10 @@ class _LoginFormState extends State<SignupForm> {
             onFail: () => widget.onPwdFail(),
           ),
           SizedBox(
-            height: widget.isSmall ? 8 : 32,
+            height: context.isMobile ? 8 : 32,
           ),
           FractionallySizedBox(
-            widthFactor: widget.isSmall ? 1 : 0.6,
+            widthFactor: context.isMobile ? 1 : 0.6,
             child: InputField(
               onChange: (value) =>
                   setState(() => user = user.copyWith(confirm: value)),
@@ -143,7 +142,7 @@ class _LoginFormState extends State<SignupForm> {
             height: 8.0,
           ),
           FractionallySizedBox(
-            widthFactor: widget.isSmall ? 1 : 0.6,
+            widthFactor: context.isMobile ? 1 : 0.6,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -213,7 +212,7 @@ class _LoginFormState extends State<SignupForm> {
             ),
           ),
           SizedBox(
-            height: widget.isSmall ? 8 : 32,
+            height: context.isMobile ? 8 : 32,
           ),
           TextButton.icon(
             onPressed: user.isFull()

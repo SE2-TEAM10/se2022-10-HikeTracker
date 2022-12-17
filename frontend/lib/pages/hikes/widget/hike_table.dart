@@ -3,11 +3,11 @@ import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/hikes/models/filter.dart';
 import 'package:HikeTracker/pages/hikes/widget/hike_card.dart';
 import 'package:HikeTracker/router/utils.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
-import 'package:layout/layout.dart';
 
 class HikesTableController {
   Function(Filter)? onFilterChange;
@@ -64,7 +64,7 @@ class _HikesTableState extends State<HikesTable> {
         if (snapshot.hasData) {
           final hikes = Hikes.fromJson(snapshot.data!.body);
           return GridView.builder(
-            padding: context.breakpoint < LayoutBreakpoint.md
+            padding: context.isMobile
                 ? const EdgeInsets.symmetric(
                     vertical: 16.0,
                     horizontal: 16.0,
@@ -76,9 +76,9 @@ class _HikesTableState extends State<HikesTable> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisSpacing: 32,
               mainAxisSpacing: 32,
-              crossAxisCount: context.breakpoint < LayoutBreakpoint.sm
+              crossAxisCount: context.isMobile
                   ? 1
-                  : context.breakpoint < LayoutBreakpoint.lg
+                  : context.isLaptop
                       ? 2
                       : 3,
             ),

@@ -61,9 +61,6 @@ class HikeCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 8.0,
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(

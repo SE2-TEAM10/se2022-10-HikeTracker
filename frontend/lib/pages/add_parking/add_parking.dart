@@ -10,7 +10,6 @@ import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:layout/layout.dart';
 
 class AddParking extends StatefulWidget {
   const AddParking({
@@ -38,51 +37,50 @@ class _AddParkingState extends State<AddParking> {
             child: CircularProgressIndicator(),
           )
         : TwoColumnsLayout(
-            leftChild: Expanded(
-              flex: 2,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: MapBanner(
+            leftFlex: 2,
+            rightFlex: 3,
+            leftChild: Stack(
+              children: [
+                Positioned.fill(
+                  child: MapBanner(
+                    client: widget.client,
+                    mapBorders: mapBorders,
+                    onTap: (value) {
+                      setState(() {
+                        selectedCoordinate = value;
+                      });
+                    },
+                    selectedCoordinates: selectedCoordinate != null
+                        ? [selectedCoordinate!]
+                        : null,
+                  ),
+                ),
+                Positioned(
+                  top: 32,
+                  left: 32,
+                  right: 32,
+                  child: Card(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    child: CityInputField(
                       client: widget.client,
-                      mapBorders: mapBorders,
-                      onTap: (value) {
+                      onProvinceChange: (province) => {
                         setState(() {
-                          selectedCoordinate = value;
+                          selectedProvince = province;
+                        })
+                      },
+                      onCityChange: (city) async {
+                        final b = await getBorders(city);
+                        setState(() {
+                          mapBorders = b;
+                        });
+                        setState(() {
+                          selectedCity = city;
                         });
                       },
-                      selectedCoordinates: selectedCoordinate != null
-                          ? [selectedCoordinate!]
-                          : null,
                     ),
                   ),
-                  Positioned(
-                    top: 32,
-                    left: 32,
-                    right: 32,
-                    child: Card(
-                      color: Theme.of(context).colorScheme.surfaceVariant,
-                      child: CityInputField(
-                        client: widget.client,
-                        onProvinceChange: (province) => {
-                          setState(() {
-                            selectedProvince = province;
-                          })
-                        },
-                        onCityChange: (city) async {
-                          final b = await getBorders(city);
-                          setState(() {
-                            mapBorders = b;
-                          });
-                          setState(() {
-                            selectedCity = city;
-                          });
-                        },
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
             rightChild: AddParkingForm(
               onSubmit: (
@@ -91,7 +89,6 @@ class _AddParkingState extends State<AddParking> {
                   onSubmit(
                 newParking: newParking,
               ),
-              isSmall: context.breakpoint <= LayoutBreakpoint.xs,
             ),
           );
   }

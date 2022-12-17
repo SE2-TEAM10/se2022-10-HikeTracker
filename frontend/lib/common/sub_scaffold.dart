@@ -1,7 +1,7 @@
 import 'package:HikeTracker/router/utils.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:layout/layout.dart';
 
 class SubScaffold extends StatelessWidget {
   const SubScaffold({
@@ -26,7 +26,7 @@ class SubScaffold extends StatelessWidget {
           ),
         ),
       ),
-      extendBodyBehindAppBar: context.breakpoint < LayoutBreakpoint.md,
+      extendBodyBehindAppBar: context.isMobile,
       body: child,
     );
   }

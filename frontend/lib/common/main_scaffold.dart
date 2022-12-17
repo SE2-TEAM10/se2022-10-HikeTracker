@@ -1,8 +1,8 @@
 import 'package:HikeTracker/common/navigation_bottom_bar.dart';
 import 'package:HikeTracker/common/navigation_side_bar.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:layout/layout.dart';
 
 class MainScaffold extends StatelessWidget {
   const MainScaffold({
@@ -20,7 +20,7 @@ class MainScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: context.breakpoint > LayoutBreakpoint.sm
+        leading: !context.isMobile
             ? DecoratedBox(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondaryContainer,
@@ -47,10 +47,10 @@ class MainScaffold extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         leadingWidth: double.infinity,
-        backgroundColor: context.breakpoint > LayoutBreakpoint.sm
-            ? Colors.transparent
-            : Theme.of(context).colorScheme.secondaryContainer,
-        title: context.breakpoint <= LayoutBreakpoint.sm
+        backgroundColor: context.isMobile
+            ? Theme.of(context).colorScheme.secondaryContainer
+            : Colors.transparent,
+        title: context.isMobile
             ? Text(
                 'Hike Tracker',
                 style: TextStyle(
@@ -61,8 +61,8 @@ class MainScaffold extends StatelessWidget {
               )
             : null,
       ),
-      extendBodyBehindAppBar: context.breakpoint > LayoutBreakpoint.sm,
-      body: context.breakpoint > LayoutBreakpoint.sm
+      extendBodyBehindAppBar: !context.isMobile,
+      body: !context.isMobile
           ? Row(
               children: [
                 NavigationSideBar(

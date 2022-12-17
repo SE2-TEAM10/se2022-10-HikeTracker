@@ -75,27 +75,27 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
   ),
   Route(
     index: 1,
-    label: 'Profile',
-    path: PROFILE,
-    icon: Icons.person_outline,
-  ),
-  Route(
-    index: 2,
     label: 'Add Hike',
     path: HIKE_ADD,
     icon: Icons.add,
   ),
   Route(
-    index: 3,
+    index: 2,
     label: 'Add Hut',
     path: HUT_ADD,
     icon: Icons.add_home,
   ),
   Route(
-    index: 4,
+    index: 3,
     label: 'Add Parking',
     path: PARKING_ADD,
     icon: Icons.local_parking,
+  ),
+  Route(
+    index: 4,
+    label: 'Profile',
+    path: PROFILE,
+    icon: Icons.person_outline,
   ),
 ];
 
@@ -108,14 +108,14 @@ final HIKER_NAVIGATION_BAR_ROUTES = [
   ),
   Route(
     index: 1,
-    label: 'Profile',
-    path: PROFILE,
-    icon: Icons.person_outline,
-  ),
-  Route(
-    index: 2,
     label: 'Huts',
     path: HUTS,
     icon: Icons.home_work,
+  ),
+  Route(
+    index: 2,
+    label: 'Profile',
+    path: PROFILE,
+    icon: Icons.person_outline,
   ),
 ];

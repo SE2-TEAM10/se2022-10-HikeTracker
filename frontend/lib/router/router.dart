@@ -43,10 +43,7 @@ GoRouter getRouter({
             routes: [
               GoRoute(
                 path: ':hikeID',
-                pageBuilder: (context, state) => CustomTransitionPage(
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) =>
-                          FadeTransition(opacity: animation, child: child),
+                pageBuilder: (context, state) => NoTransitionPage(
                   child: HikeDetail(
                     client: client,
                     hikeID: int.tryParse(state.params['hikeID'] ?? '0') ?? 0,

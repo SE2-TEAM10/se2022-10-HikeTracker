@@ -1,7 +1,7 @@
 import 'package:HikeTracker/models/hike.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:layout/layout.dart';
 
 class Details extends StatelessWidget {
   const Details({
@@ -13,16 +13,11 @@ class Details extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final location1 = hike.locations.first;
-    // final location2 = hike.locations.elementAt(1);
-
-    final isSmall = context.breakpoint < LayoutBreakpoint.md;
-
     return Column(
       children: [
         ListView(
           shrinkWrap: true,
-          padding: isSmall
+          padding: context.isMobile
               ? const EdgeInsets.only(
                   top: 16,
                   left: 16,
@@ -39,7 +34,7 @@ class Details extends StatelessWidget {
                   child: Text(
                     hike.name,
                     style: TextStyle(
-                      fontSize: isSmall ? 18 : 32,
+                      fontSize: context.isMobile ? 18 : 32,
                       fontWeight: FontWeight.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -50,11 +45,11 @@ class Details extends StatelessWidget {
                     context,
                   ),
                   label: Padding(
-                    padding: EdgeInsets.all(isSmall ? 0 : 8.0),
+                    padding: EdgeInsets.all(context.isMobile ? 0 : 8.0),
                     child: Text(
                       hike.formatDifficulty(),
                       style: TextStyle(
-                        fontSize: isSmall ? 14 : 20,
+                        fontSize: context.isMobile ? 14 : 20,
                         color: hike.difficultyTextColor(
                           context,
                         ),
@@ -73,7 +68,7 @@ class Details extends StatelessWidget {
                 Text(
                   'Distance: ',
                   style: TextStyle(
-                    fontSize: isSmall ? 12 : 16,
+                    fontSize: context.isMobile ? 12 : 16,
                     color: Theme.of(context).colorScheme.onSecondaryContainer,
                   ),
                 ),
@@ -81,7 +76,7 @@ class Details extends StatelessWidget {
                   child: Text(
                     '${hike.length} Km',
                     style: TextStyle(
-                      fontSize: isSmall ? 12 : 16,
+                      fontSize: context.isMobile ? 12 : 16,
                       color: Theme.of(context).colorScheme.onSecondaryContainer,
                       fontWeight: FontWeight.bold,
                     ),
@@ -91,7 +86,7 @@ class Details extends StatelessWidget {
                 Text(
                   'Duration: ',
                   style: TextStyle(
-                    fontSize: isSmall ? 12 : 16,
+                    fontSize: context.isMobile ? 12 : 16,
                     color: Theme.of(context).colorScheme.onSecondaryContainer,
                   ),
                 ),
@@ -99,7 +94,7 @@ class Details extends StatelessWidget {
                   child: Text(
                     hike.formatTime(),
                     style: TextStyle(
-                      fontSize: isSmall ? 12 : 16,
+                      fontSize: context.isMobile ? 12 : 16,
                       color: Theme.of(context).colorScheme.onSecondaryContainer,
                       fontWeight: FontWeight.bold,
                     ),
@@ -109,7 +104,7 @@ class Details extends StatelessWidget {
                 Text(
                   'Ascent: ',
                   style: TextStyle(
-                    fontSize: isSmall ? 12 : 16,
+                    fontSize: context.isMobile ? 12 : 16,
                     color: Theme.of(context).colorScheme.onSecondaryContainer,
                   ),
                 ),
@@ -117,7 +112,7 @@ class Details extends StatelessWidget {
                   child: Text(
                     '${hike.ascent} m',
                     style: TextStyle(
-                      fontSize: isSmall ? 12 : 16,
+                      fontSize: context.isMobile ? 12 : 16,
                       color: Theme.of(context).colorScheme.onSecondaryContainer,
                       fontWeight: FontWeight.bold,
                     ),
@@ -153,7 +148,7 @@ class Details extends StatelessWidget {
             Text(
               hike.description,
               style: TextStyle(
-                fontSize: isSmall ? 14 : 18,
+                fontSize: context.isMobile ? 14 : 18,
               ),
             ),
             const SizedBox(
