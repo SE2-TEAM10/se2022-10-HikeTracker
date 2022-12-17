@@ -4,4 +4,5 @@ export 'add_parking/add_parking.dart';
 export 'hikes/hikes.dart';
 export 'huts/huts_page.dart';
 export 'login/login.dart';
+export 'profile/profile.dart';
 export 'signup/signup.dart';

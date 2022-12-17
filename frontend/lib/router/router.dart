@@ -70,23 +70,10 @@ GoRouter getRouter({
               path: PROFILE,
               pageBuilder: (BuildContext context, GoRouterState state) {
                 return NoTransitionPage(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('PROFILE PAGE: ${currentUser.name}'),
-                        TextButton.icon(
-                          onPressed: () async {
-                            await client.delete(
-                              api: 'sessions/current',
-                            );
-                            onLogged(null);
-                          },
-                          icon: const Icon(Icons.logout),
-                          label: const Text('Logout'),
-                        )
-                      ],
-                    ),
+                  child: ProfilePage(
+                    client: client,
+                    onLogged: onLogged,
+                    user: currentUser,
                   ),
                 );
               },

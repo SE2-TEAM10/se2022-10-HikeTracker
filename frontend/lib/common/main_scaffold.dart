@@ -1,8 +1,10 @@
 import 'package:HikeTracker/common/navigation_bottom_bar.dart';
 import 'package:HikeTracker/common/navigation_side_bar.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MainScaffold extends StatelessWidget {
   const MainScaffold({
@@ -34,7 +36,10 @@ class MainScaffold extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Hike Tracker',
+                      'Hike Tracker: ${RouteUtils.getNavigationRoutes(currentUser).firstWhere(
+                            (r) => r.path == GoRouter.of(context).location,
+                            orElse: () => SUPPORT_ROUTE,
+                          ).label}',
                       style: TextStyle(
                         fontSize: 24,
                         color:
@@ -54,7 +59,10 @@ class MainScaffold extends StatelessWidget {
             : Colors.transparent,
         title: context.isMobile
             ? Text(
-                'Hike Tracker',
+                'Hike Tracker: ${RouteUtils.getNavigationRoutes(currentUser).firstWhere(
+                      (r) => r.path == GoRouter.of(context).location,
+                      orElse: () => SUPPORT_ROUTE,
+                    ).label}',
                 style: TextStyle(
                   fontSize: 24,
                   color: Theme.of(context).colorScheme.onSecondaryContainer,

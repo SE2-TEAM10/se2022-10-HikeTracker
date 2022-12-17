@@ -66,6 +66,13 @@ final NOT_LOGGED_NAVIGATION_BAR_ROUTES = [
   ),
 ];
 
+final SUPPORT_ROUTE = Route(
+  index: 0,
+  label: '',
+  path: '',
+  icon: Icons.label,
+);
+
 final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
   Route(
     index: 0,
