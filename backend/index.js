@@ -92,6 +92,45 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+/*function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  let R = 6371; // Radius of the earth in km
+  let dLat = deg2rad(lat2-lat1);  // deg2rad below
+  let dLon = deg2rad(lon2-lon1);
+  let a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+  ;
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  let d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}*/
+
+//This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  var R = 6371; // km
+  var dLat = toRad(lat2 - lat1);
+  var dLon = toRad(lon2 - lon1);
+  var lat1 = toRad(lat1);
+  var lat2 = toRad(lat2);
+
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c;
+  return d;
+}
+
+// Converts numeric degrees to radians
+function toRad(Value) {
+  return Value * Math.PI / 180;
+}
+
+
 // POST /sessions
 // login
 app.post("/api/sessions", function (req, res, next) {
@@ -151,25 +190,63 @@ app.get("/api/hike", async (req, res) => {
     });
 });
 
-app.get("/api/hikesdetails/:hike_ID", async (req, res) => {
-  await db
-    .getHikesDetailsByHikeID(req.params.hike_ID)
-    .then((lists) => {
-      lists.map((row) => {
-        if (row.location !== null && !Array.isArray(row.location))
-          row.location = [row.location];
-        return row;
+/* app.get("/api/distance", async (req, res) => {
+
+  let parking = [];
+  try {
+    let array = await db.getCoordinatesHike();
+    await db.getCoordinatesParking().then((coordinates) => {
+      coordinates.map((row) => {
+          let distance = getDistanceFromLatLonInKm(44.699197, 7.156556, row.latitude, row.longitude);
+          if (distance < 45) {
+            console.log("DISTANCE", distance);
+            parking.push({
+              name: row.name,
+              capacity: row.capacity,
+              latitude: row.latitude,
+              longitude: row.longitude,
+              city: row.city,
+              province: row.province,
+              distanceFromPoint: distance,
+            })
+            return parking;
+          }
+        })
+
       });
-      res.json(lists[0]);
-    })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(500)
-        .json({ error: `Database error while retrieving hike` })
-        .end();
-    });
-});
+      res.json(parking);
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+}); */
+
+app.get(
+  "/api/hikesdetails/:hike_ID",
+  isLoggedIn, async (req, res) => {
+    let thisuser = await db.getUserByID(req.user.ID);
+    if (thisuser.role !== "Hiker") {
+      return res.status(422).json({ error: `the logged in user is not a hiker` }).end();
+    }
+    await db
+      .getHikesDetailsByHikeID(req.params.hike_ID)
+      .then((lists) => {
+        lists.map((row) => {
+          if (row.location !== null && !Array.isArray(row.location))
+            row.location = [row.location];
+          return row;
+        });
+        res.json(lists[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: `Database error while retrieving hike` })
+          .end();
+      });
+  }
+);
 
 app.get("/api/sendEmail", async (req, res) => {
   let transport = nodemailer.createTransport({
@@ -202,6 +279,10 @@ app.get("/api/sendEmail", async (req, res) => {
 
 app.post("/api/hike", isLoggedIn, [], async (req, res) => {
   try {
+    let thisuser = await db.getUserByID(req.user.ID);
+    if (thisuser.role !== "Local Guide") {
+      return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
+    }
     if (typeof req.body.gpx !== "string") {
       res.status(422).json(err); //UNPROCESSABLE
     }
@@ -251,10 +332,14 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
 
 app.post(
   "/api/gpx",
-  //isLoggedIn,
+  isLoggedIn,
   [],
   async (req, res) => {
     try {
+      let thisuser = await db.getUserByID(req.user.ID);
+      if (thisuser.role !== "Local Guide") {
+        return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
+      }
       const result5 = await db.addGpx(req.body.gpx);
 
       res.status(201).json(result5);
@@ -362,6 +447,23 @@ app.get("/api/hutWithFilters", async (req, res) => {
     });
 });
 
+//api get parking from hike_ID
+app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
+  await db
+    .getParkingFromHike(req.params.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
+});
+
+
 //api per la verifica
 app.get("/api/user/verify/:token", (req, res) => {
   const { token } = req.params;
@@ -432,6 +534,99 @@ const sendEmail = async (email, subject, text) => {
   });
 };
 
+/* const getLinkUser = async (req,res) => {
+  // check if a user is a local guide or a hut worker
+  const user_res = await db.getLinkUser(req.body.hike_ID);
+  console.log("USER ID :", req.user.ID);
+  if (user_res !== req.user.ID) {
+    res.status(422).json("User and hike not linked");
+  } else if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
+    res.status(422).json("User isnt't a local guide or a hut worker");
+  }
+}; */
+
+app.get("/api/locationToLinkHutOrParking", async (req, res) => {
+  try {
+    const loc = await db.getLocationToLink(req.body.hike_ID, req.body.start_end);
+    if (req.body.ref === "hut") {
+      let final_huts = [];
+      const huts = await db.getAllHuts();
+      huts.map((h) => {
+        let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, h.latitude, h.longitude);
+        if (distance < 5) {
+          console.log("HUTS - DISTANCE: ", distance);
+          final_huts.push({
+            ID: h.ID,
+            name: h.name,
+            description: h.description,
+            opening_time: h.opening_time,
+            closing_time: h.closing_time,
+            bed_num: h.bed_num,
+            altitude: h.altitude,
+            latitude: h.latitude,
+            longitude: h.longitude,
+            city: h.city,
+            province: h.province,
+            phone: h.phone,
+            mail: h.mail,
+            website: h.website
+          })
+          return final_huts;
+        }
+      })
+      res.json(final_huts);
+    } else if (req.body.ref === "p_lot") {
+      let final_parks = [];
+      const parks = await db.getAllParkings();
+      parks.map((p) => {
+        let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, p.latitude, p.longitude);
+        if (distance < 5) {
+          console.log("PARKING LOTS - DISTANCE: ", distance);
+          final_parks.push({
+            ID: p.ID,
+            name: p.name,
+            capacity: p.capacity,
+            latitude: p.latitude,
+            longitude: p.longitude,
+            city: p.city,
+            province: p.province
+          })
+          return final_parks;
+        }
+      })
+      res.json(final_parks);
+    } else {
+      res.status(422).json("The reference point is not defined correctly!");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
+/*index.js - link hut to the hike*/
+app.post("/api/linkHut", isLoggedIn, [],
+  async (req, res) => {
+    try {
+      const result = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, req.body.hut_ID, req.body.ref_type);
+      res.status(201).json(result);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  });
+
+/*index.js - link parking lot to the hike*/
+app.post("/api/linkParking", isLoggedIn, [],
+  async (req, res) => {
+    try {
+      const result = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, req.body.parking_ID, req.body.ref_type);
+      res.status(201).json(result);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  });
 const saveHikeImage = async function (imageBase64, hike_ID, type) {
   const image = Buffer.from(imageBase64, "base64");
   const path =

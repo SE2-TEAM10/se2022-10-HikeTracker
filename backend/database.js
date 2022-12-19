@@ -358,6 +358,28 @@ class Database {
     });
   };
 
+  getHikeUserHut = (hike_ID,user_ID,hut_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+      this.db.all(sql, [hike_ID,user_ID,hut_ID], function (err,rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getHikeUserParking = (hike_ID,user_ID,parking_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
+      this.db.all(sql, [hike_ID,user_ID,parking_ID], function (err,rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+
+
   deleteHikeByID = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike WHERE ID=?";
@@ -459,6 +481,26 @@ class Database {
             reject(new Error("User not found!"));
           }
         }
+      });
+    });
+  };
+
+  deleteHikeUserHut = (hike_ID,user_ID,hut_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+      this.db.run(sql, [hike_ID,user_ID,hut_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteHikeUserParking = (hike_ID,user_ID,parking_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
+      this.db.run(sql, [hike_ID,user_ID,parking_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
       });
     });
   };
@@ -650,7 +692,6 @@ class Database {
     });
   };
 
-  //QUERY FOR HUT
   addHut = (hut, user_ID) => {
     return new Promise((resolve, reject) => {
       if (
@@ -701,7 +742,6 @@ class Database {
     });
   };
 
-  //QUERY FOR PARKING LOT
   addParking = (parking, user_ID) => {
     return new Promise((resolve, reject) => {
       if (
@@ -823,22 +863,120 @@ class Database {
     });
   };
 
-  //TO BE USED IN A FOLLOWING STORY
-  /* addHikeUserParking = (hike_ID, user_ID, parking_ID) => {
+  /*HT-8 - GET LOCATION GIVEN HIKE_ID AND TYPE OF POINT*/
+  getLocationToLink = (hike_ID, start_end) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM location WHERE hike_ID = ? AND start_end = ?";
+      this.db.all(sql, [hike_ID, start_end], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  /*HT-8 - GET ALL HUTS*/
+  getAllHuts = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hut";
+      this.db.all(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  /*HT-8 - GET ALL PARKING LOTS*/
+  getAllParkings = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM parking_lot";
+      this.db.all(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  /*HT-8 - ADD HUT LINKED TO THE HIKE*/
+  addHikeUserHut = (hike_ID, user_ID, hut_ID, ref_type) => {
     return new Promise((resolve, reject) => {
       try {
         if (
           typeof hike_ID !== 'number' ||
           typeof user_ID !== 'number' ||
-          typeof parking_ID !== 'number'
+          typeof hut_ID !== 'number' ||
+          typeof ref_type !== 'string'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
+      const sql = "INSERT INTO hike_user_hut(hike_ID, user_ID, hut_ID, ref_type) VALUES(?,?,?,?)";
+      this.db.run(
+        sql, [hike_ID, user_ID, hut_ID, ref_type], function (err) {
+          if (err) reject(err);
+          else {
+            resolve(true);
+          }
+        });
+    });
+  };
 
-      */
+  /*HT-8 - ADD PARKING LOT LINKED TO THE HIKE*/
+  addHikeUserParking = (hike_ID, user_ID, parking_ID, ref_type) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike_ID !== 'number' ||
+          typeof user_ID !== 'number' ||
+          typeof parking_ID !== 'number' ||
+          typeof ref_type !== 'string'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "INSERT INTO hike_user_parking(hike_ID, user_ID, parking_ID, ref_type) VALUES(?,?,?,?)";
+      this.db.run(
+        sql, [hike_ID, user_ID, parking_ID, ref_type], function (err) {
+          if (err) reject(err);
+          else {
+            resolve(true);
+          }
+        });
+    });
+  };
+
+  /* getParkingFromHike = (hike_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM parking_lot INNER JOIN hike_user_parking ON parking_lot.ID = hike_user_parking.parking_ID WHERE hike_ID = ?";
+      this.db.all(sql, [hike_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getCoordinatesHike = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT latitude,longitude FROM location WHERE hike_ID = 1";
+      this.db.all(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getCoordinatesParking = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM parking_lot";
+      this.db.all(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  }; */
 
   addGpx = (gpx1) => {
     return new Promise((resolve, reject) => {
