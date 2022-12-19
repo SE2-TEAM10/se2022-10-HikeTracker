@@ -1,26 +1,30 @@
 import 'package:HikeTracker/common/navigation_bottom_bar.dart';
 import 'package:HikeTracker/common/navigation_side_bar.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/router/utils.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:layout/layout.dart';
+import 'package:go_router/go_router.dart';
 
 class MainScaffold extends StatelessWidget {
   const MainScaffold({
     required this.child,
     required this.currentPath,
     required this.currentUser,
+    required this.onThemeChanged,
     super.key,
   });
 
   final Widget child;
   final String currentPath;
   final User? currentUser;
+  final Function onThemeChanged;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: context.breakpoint > LayoutBreakpoint.sm
+        leading: !context.isMobile
             ? DecoratedBox(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondaryContainer,
@@ -32,7 +36,10 @@ class MainScaffold extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Hike Tracker',
+                      'Hike Tracker: ${RouteUtils.getNavigationRoutes(currentUser).firstWhere(
+                            (r) => r.path == GoRouter.of(context).location,
+                            orElse: () => SUPPORT_ROUTE,
+                          ).label}',
                       style: TextStyle(
                         fontSize: 24,
                         color:
@@ -47,12 +54,15 @@ class MainScaffold extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         leadingWidth: double.infinity,
-        backgroundColor: context.breakpoint > LayoutBreakpoint.sm
-            ? Colors.transparent
-            : Theme.of(context).colorScheme.secondaryContainer,
-        title: context.breakpoint <= LayoutBreakpoint.sm
+        backgroundColor: context.isMobile
+            ? Theme.of(context).colorScheme.secondaryContainer
+            : Colors.transparent,
+        title: context.isMobile
             ? Text(
-                'Hike Tracker',
+                'Hike Tracker: ${RouteUtils.getNavigationRoutes(currentUser).firstWhere(
+                      (r) => r.path == GoRouter.of(context).location,
+                      orElse: () => SUPPORT_ROUTE,
+                    ).label}',
                 style: TextStyle(
                   fontSize: 24,
                   color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -61,13 +71,14 @@ class MainScaffold extends StatelessWidget {
               )
             : null,
       ),
-      extendBodyBehindAppBar: context.breakpoint > LayoutBreakpoint.sm,
-      body: context.breakpoint > LayoutBreakpoint.sm
+      extendBodyBehindAppBar: !context.isMobile,
+      body: !context.isMobile
           ? Row(
               children: [
                 NavigationSideBar(
                   currentPath: currentPath,
                   currentUser: currentUser,
+                  onThemeChanged: onThemeChanged,
                 ),
                 Expanded(
                   child: child,

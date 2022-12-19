@@ -1,14 +1,13 @@
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
     required this.onSubmit,
     required this.onSignupTap,
-    this.isSmall = false,
     super.key,
   });
 
-  final bool isSmall;
   final Function(String, String) onSubmit;
   final Function onSignupTap;
 
@@ -32,7 +31,7 @@ class _LoginFormState extends State<LoginForm> {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 16,
-        horizontal: widget.isSmall ? 16 : 128,
+        horizontal: context.isMobile ? 16 : 128,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -54,7 +53,7 @@ class _LoginFormState extends State<LoginForm> {
             height: 32,
           ),
           FractionallySizedBox(
-            widthFactor: widget.isSmall ? 1 : 0.6,
+            widthFactor: context.isMobile ? 1 : 0.6,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -92,10 +91,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           SizedBox(
-            height: widget.isSmall ? 8 : 32,
+            height: context.isMobile ? 8 : 32,
           ),
           FractionallySizedBox(
-            widthFactor: widget.isSmall ? 1 : 0.6,
+            widthFactor: context.isMobile ? 1 : 0.6,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -134,7 +133,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           SizedBox(
-            height: widget.isSmall ? 8 : 32,
+            height: context.isMobile ? 8 : 32,
           ),
           TextButton.icon(
             onPressed: () => widget.onSubmit(

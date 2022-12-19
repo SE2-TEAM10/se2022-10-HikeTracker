@@ -4,10 +4,10 @@ import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/models/map_data.dart';
 import 'package:HikeTracker/pages/add_hike/models/new_hike.dart';
 import 'package:HikeTracker/pages/add_hike/widget/add_hike_form.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:layout/layout.dart';
 
 class AddHike extends StatefulWidget {
   const AddHike({
@@ -32,16 +32,15 @@ class _AddHikeState extends State<AddHike> {
             child: CircularProgressIndicator(),
           )
         : TwoColumnsLayout(
-            leftChild: Expanded(
-              flex: 2,
-              child: MapBanner(
-                client: widget.client,
-                mapData: mapData,
-                onGpxLoaded: (data) => setState(
-                  () => mapData = data,
-                ),
-                dense: context.breakpoint < LayoutBreakpoint.md,
+            leftFlex: 2,
+            rightFlex: 3,
+            leftChild: MapBanner(
+              client: widget.client,
+              mapData: mapData,
+              onGpxLoaded: (data) => setState(
+                () => mapData = data,
               ),
+              dense: context.isMobile,
             ),
             rightChild: AddHikeForm(
               onSubmit: (
@@ -50,7 +49,6 @@ class _AddHikeState extends State<AddHike> {
                   onSubmit(
                 newHike: newHike,
               ),
-              isSmall: context.breakpoint <= LayoutBreakpoint.xs,
             ),
           );
   }

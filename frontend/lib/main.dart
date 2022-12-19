@@ -31,6 +31,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool showSplash = true;
   User? currentUser;
+  ThemeMode theme = ThemeMode.light;
 
   @override
   void initState() {
@@ -54,10 +55,14 @@ class _MyAppState extends State<MyApp> {
           showSplash: showSplash,
           currentUser: currentUser,
           onLogged: (User? val) => setState(() => currentUser = val),
+          onThemeChanged: () => setState(
+            () => theme =
+                theme == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark,
+          ),
         ),
         debugShowCheckedModeBanner: false,
         title: 'Hike Tracker',
-        themeMode: ThemeMode.light,
+        themeMode: theme,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: lightColorScheme,

@@ -32,14 +32,12 @@ class NewUser {
       password != null &&
       confirm != null;
 
-  bool isPasswordValid() {
-    if (password!.length < 8) return false;
-    if (!password!.contains(RegExp(r"[a-z]"))) return false;
-    if (!password!.contains(RegExp(r"[A-Z]"))) return false;
-    if (!password!.contains(RegExp(r"[0-9]"))) return false;
-    return true;
-  }
-
+  bool isPasswordValid() => [
+        password!.length >= 8,
+        password!.contains(RegExp(r'[a-z]')),
+        password!.contains(RegExp(r'[A-Z]')),
+        password!.contains(RegExp(r'[0-9]'))
+      ].every((cond) => cond == true);
 
   bool passwordMatches() => password == confirm;
 

@@ -2,10 +2,10 @@ import 'package:HikeTracker/common/login_banner.dart';
 import 'package:HikeTracker/common/message.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/login/widget/login_form.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:layout/layout.dart';
 
 class Login extends StatefulWidget {
   const Login({
@@ -32,8 +32,7 @@ class _LoginState extends State<Login> {
           )
         : Row(
             children: [
-              if (context.breakpoint >= LayoutBreakpoint.md)
-                const LoginBanner(),
+              if (!context.isMobile) const LoginBanner(),
               Expanded(
                 flex: 3,
                 child: Column(
@@ -46,7 +45,6 @@ class _LoginState extends State<Login> {
                         ),
                         onSignupTap: () =>
                             GoRouter.of(context).replace('/signup'),
-                        isSmall: context.breakpoint <= LayoutBreakpoint.xs,
                       ),
                     ),
                   ],

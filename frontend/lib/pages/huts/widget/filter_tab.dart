@@ -3,9 +3,10 @@ import 'dart:math';
 import 'package:HikeTracker/common/time_field.dart';
 import 'package:HikeTracker/pages/huts/models/filter.dart';
 import 'package:HikeTracker/pages/huts/models/hut.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:layout/layout.dart';
+import 'package:http/http.dart';
 
 class FilterTab extends StatefulWidget {
   const FilterTab({
@@ -26,20 +27,22 @@ class FilterTab extends StatefulWidget {
 class _FilterTab extends State<FilterTab> {
   late GlobalKey<FormState> _formKey;
   late Filter filter;
+  late Future<Response> future;
 
   @override
   void initState() {
     _formKey = GlobalKey<FormState>();
     filter = widget.currentFilter ?? Filter();
+    future = widget.client.get(
+      api: 'hutWithFilters',
+    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.client.get(
-        api: 'hutWithFilters',
-      ),
+      future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Expanded(
@@ -310,7 +313,7 @@ class _FilterTab extends State<FilterTab> {
                             ),
                           ),
                           onPressed: () => setState(() {
-                            if (context.breakpoint <= LayoutBreakpoint.sm) {
+                            if (context.isMobile) {
                               Navigator.of(context).pop();
                             }
                             filter = Filter();
@@ -325,7 +328,7 @@ class _FilterTab extends State<FilterTab> {
                           ),
                         ),
                         onPressed: () {
-                          if (context.breakpoint <= LayoutBreakpoint.sm) {
+                          if (context.isMobile) {
                             Navigator.of(context).pop();
                           }
                           widget.filterHuts(filter);

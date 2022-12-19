@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 
 //ROUTES
 const HOME = '/';
+const HIKES = '/hikes';
 const LOGIN = '/login';
 const SIGNUP = '/signup';
 const LOADING = '/loading';
-const HIKE_DETAIL = '/hike/:hikeID';
+const HIKE_DETAIL = '$HIKES/:hikeID';
 const PROFILE = '/profile';
 const HIKE_ADD = '/hike/add';
 const HUT_ADD = '/hut/add';
@@ -47,8 +48,8 @@ class RouteUtils {
 final NOT_LOGGED_NAVIGATION_BAR_ROUTES = [
   Route(
     index: 0,
-    label: 'Home',
-    path: HOME,
+    label: 'Hikes',
+    path: HIKES,
     icon: Icons.home_outlined,
   ),
   Route(
@@ -65,56 +66,63 @@ final NOT_LOGGED_NAVIGATION_BAR_ROUTES = [
   ),
 ];
 
+final SUPPORT_ROUTE = Route(
+  index: 0,
+  label: '',
+  path: '',
+  icon: Icons.label,
+);
+
 final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
   Route(
     index: 0,
-    label: 'Home',
-    path: HOME,
+    label: 'Hikes',
+    path: HIKES,
     icon: Icons.home_outlined,
   ),
   Route(
     index: 1,
-    label: 'Profile',
-    path: PROFILE,
-    icon: Icons.person_outline,
-  ),
-  Route(
-    index: 2,
     label: 'Add Hike',
     path: HIKE_ADD,
     icon: Icons.add,
   ),
   Route(
-    index: 3,
+    index: 2,
     label: 'Add Hut',
     path: HUT_ADD,
     icon: Icons.add_home,
   ),
   Route(
-    index: 4,
+    index: 3,
     label: 'Add Parking',
     path: PARKING_ADD,
     icon: Icons.local_parking,
+  ),
+  Route(
+    index: 4,
+    label: 'Profile',
+    path: PROFILE,
+    icon: Icons.person_outline,
   ),
 ];
 
 final HIKER_NAVIGATION_BAR_ROUTES = [
   Route(
     index: 0,
-    label: 'Home',
-    path: HOME,
+    label: 'Hikes',
+    path: HIKES,
     icon: Icons.home_outlined,
   ),
   Route(
     index: 1,
-    label: 'Profile',
-    path: PROFILE,
-    icon: Icons.person_outline,
-  ),
-  Route(
-    index: 2,
     label: 'Huts',
     path: HUTS,
     icon: Icons.home_work,
+  ),
+  Route(
+    index: 2,
+    label: 'Profile',
+    path: PROFILE,
+    icon: Icons.person_outline,
   ),
 ];

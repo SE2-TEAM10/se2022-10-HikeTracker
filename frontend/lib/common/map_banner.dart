@@ -111,9 +111,16 @@ class _MapBannerState extends State<MapBanner> {
                     }),
                   ),
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          widget.dense ? 0 : 16.0,
+                        ),
+                      ),
+                      child: TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      ),
                     ),
                     BorderPolyline(
                       mapBorders: widget.mapBorders,
@@ -152,9 +159,16 @@ class _MapBannerState extends State<MapBanner> {
                     }),
                   ),
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          widget.dense ? 0 : 16.0,
+                        ),
+                      ),
+                      child: TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      ),
                     ),
                     TrackPolyline(
                       track: widget.mapData!.track,
@@ -292,53 +306,55 @@ class TrackPolyline extends StatelessWidget {
 
 class LocationsMarker extends StatelessWidget {
   const LocationsMarker({
-    required this.startLocation,
-    required this.endLocation,
+    this.startLocation,
+    this.endLocation,
     super.key,
   });
 
-  final MapLocation startLocation;
-  final MapLocation endLocation;
+  final MapLocation? startLocation;
+  final MapLocation? endLocation;
 
   @override
   Widget build(BuildContext context) {
     return MarkerLayer(
       markers: [
-        ...[startLocation, endLocation].map(
-          (e) => Marker(
-            point: LatLng(
-              e.coordinates.latitude,
-              e.coordinates.longitude,
-            ),
-            width: 24,
-            height: 24,
-            builder: (context) => Stack(
-              children: [
-                Container(
-                  height: 24,
-                  width: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.4),
-                  ),
+        ...[startLocation, endLocation].where((e) => e != null).map(
+              (e) => Marker(
+                point: LatLng(
+                  e!.coordinates.latitude,
+                  e.coordinates.longitude,
                 ),
-                Positioned.fill(
-                  child: Center(
-                    child: Container(
-                      height: 16,
-                      width: 16,
+                width: 24,
+                height: 24,
+                builder: (context) => Stack(
+                  children: [
+                    Container(
+                      height: 24,
+                      width: 24,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.surface,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.4),
                       ),
                     ),
-                  ),
+                    Positioned.fill(
+                      child: Center(
+                        child: Container(
+                          height: 16,
+                          width: 16,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        )
+              ),
+            )
       ],
     );
   }

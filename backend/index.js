@@ -16,6 +16,8 @@ const { check, validationResult, body, param } = require("express-validator"); /
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const { request } = require("express");
+const fs = require("fs");
+const sharp = require("sharp");
 
 // set up the "username and password" login strategy
 // by setting a function to verify username and password
@@ -66,6 +68,7 @@ const corsOptions = {
   credentials: true,
 };
 app.use(cors(corsOptions));
+app.use(express.static('./assets'));
 
 // custom middleware: check if a given request is coming from an authenticated user
 const isLoggedIn = (req, res, next) => {
@@ -233,7 +236,7 @@ app.get(
             row.location = [row.location];
           return row;
         });
-        res.json(lists);
+        res.json(lists[0]);
       })
       .catch((err) => {
         console.log(err);
@@ -312,7 +315,14 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
     const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
     console.log("res4 - ", result4);
 
-    //console.log(result1);
+    const imagePath = await saveHikeImage(
+      req.body.image_base_64,
+      result1,
+      "cover"
+    );
+
+    await db.addNewHikeImage(imagePath, result1, "cover");
+
     res.status(201).json("Hike " + result1 + " correctly created!");
   } catch (err) {
     console.error(err);
@@ -617,6 +627,31 @@ app.post("/api/linkParking", isLoggedIn, [],
       res.status(503).json(err);
     }
   });
+const saveHikeImage = async function (imageBase64, hike_ID, type) {
+  const image = Buffer.from(imageBase64, "base64");
+  const path =
+    "./assets/hike/" +
+    type +
+    "/hike_" +
+    hike_ID +
+    "_" +
+    generateRandomString(16) +
+    ".png";
+
+  await sharp(image).resize(1000).png({ quality: 90 }).toFile(path);
+
+  console.log("image saved as" + path);
+  return path;
+};
+
+const generateRandomString = function (n) {
+  let str = "";
+  for (let i = 0; i < n; i++) {
+    let randomNumber = Math.floor(Math.random() * 36);
+    str += randomNumber.toString(36);
+  }
+  return str;
+};
 
 //APIs for regions, provinces, municipalities and borders
 

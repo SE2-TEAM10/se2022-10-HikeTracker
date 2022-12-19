@@ -1,11 +1,8 @@
 import 'package:HikeTracker/common/main_scaffold.dart';
 import 'package:HikeTracker/common/sub_scaffold.dart';
 import 'package:HikeTracker/models/user.dart';
-import 'package:HikeTracker/pages/add_hut/add_hut.dart';
-import 'package:HikeTracker/pages/add_parking/add_parking.dart';
-import 'package:HikeTracker/pages/hike_detail/hike_detail.dart';
+import 'package:HikeTracker/pages/hikes/hike_detail/hike_detail_page.dart';
 import 'package:HikeTracker/pages/pages.dart';
-import 'package:HikeTracker/pages/signup/signup.dart';
 import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
@@ -16,36 +13,76 @@ GoRouter getRouter({
   required bool showSplash,
   required User? currentUser,
   required Function onLogged,
+  required Function onThemeChanged,
 }) {
+  final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  final _mainShellNavigatorKey = GlobalKey<NavigatorState>();
   return GoRouter(
-    initialLocation: HOME,
-    routes: <GoRoute>[
+    initialLocation: HIKES,
+    navigatorKey: _rootNavigatorKey,
+    routes: [
       GoRoute(
         path: HOME,
-        builder: (BuildContext context, GoRouterState state) {
-          return MainScaffold(
-            currentPath: state.path!,
-            currentUser: currentUser,
-            child: Home(
-              client: client,
-            ),
-          );
-        },
+        redirect: (_, __) => HIKES,
       ),
-      GoRoute(
-        path: HUTS,
-        builder: (BuildContext context, GoRouterState state) {
-          return MainScaffold(
-            currentPath: state.path!,
-            currentUser: currentUser,
-            child: HutsPage(
-              client: client,
+      ShellRoute(
+        navigatorKey: _mainShellNavigatorKey,
+        builder: (BuildContext context, GoRouterState state, Widget child) =>
+            MainScaffold(
+          currentPath: state.path!,
+          currentUser: currentUser,
+          onThemeChanged: onThemeChanged,
+          child: child,
+        ),
+        routes: [
+          GoRoute(
+            path: HIKES,
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: Hikes(
+                client: client,
+              ),
             ),
-          );
-        },
+            routes: [
+              GoRoute(
+                path: ':hikeID',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: HikeDetail(
+                    client: client,
+                    hikeID: int.tryParse(state.params['hikeID'] ?? '0') ?? 0,
+                    user: currentUser,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: HUTS,
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return NoTransitionPage(
+                child: HutsPage(
+                  client: client,
+                ),
+              );
+            },
+          ),
+          if (currentUser != null)
+            GoRoute(
+              path: PROFILE,
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return NoTransitionPage(
+                  child: ProfilePage(
+                    client: client,
+                    onLogged: onLogged,
+                    user: currentUser,
+                  ),
+                );
+              },
+            ),
+        ],
       ),
       if (currentUser == null)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: LOGIN,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -58,6 +95,7 @@ GoRouter getRouter({
         ),
       if (currentUser == null)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: SIGNUP,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -68,34 +106,9 @@ GoRouter getRouter({
             );
           },
         ),
-      if (currentUser != null)
-        GoRoute(
-          path: PROFILE,
-          builder: (BuildContext context, GoRouterState state) {
-            return SubScaffold(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('PROFILE PAGE: ${currentUser.name}'),
-                    TextButton.icon(
-                      onPressed: () async {
-                        await client.delete(
-                          api: 'sessions/current',
-                        );
-                        onLogged(null);
-                      },
-                      icon: const Icon(Icons.logout),
-                      label: const Text('Logout'),
-                    )
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
       if (currentUser?.role == UserRole.LocalGuide)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: HIKE_ADD,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -107,6 +120,7 @@ GoRouter getRouter({
         ),
       if (currentUser?.role == UserRole.LocalGuide)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: HUT_ADD,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -118,6 +132,7 @@ GoRouter getRouter({
         ),
       if (currentUser?.role == UserRole.LocalGuide)
         GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
           path: PARKING_ADD,
           builder: (BuildContext context, GoRouterState state) {
             return SubScaffold(
@@ -133,18 +148,6 @@ GoRouter getRouter({
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
-            ),
-          );
-        },
-      ),
-      GoRoute(
-        path: HIKE_DETAIL,
-        builder: (BuildContext context, GoRouterState state) {
-          return SubScaffold(
-            child: HikeDetail(
-              client: client,
-              hikeID: int.tryParse(state.params['hikeID'] ?? '0') ?? 0,
-              user: currentUser,
             ),
           );
         },

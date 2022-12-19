@@ -1,6 +1,6 @@
-import 'package:HikeTracker/pages/home/models/hike.dart';
-import 'package:HikeTracker/utils/constants.dart';
+import 'package:HikeTracker/models/hike.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class HikeCard extends StatelessWidget {
   const HikeCard({
@@ -45,9 +45,9 @@ class HikeCard extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary,
-                          image: const DecorationImage(
+                          image: DecorationImage(
                             image: NetworkImage(
-                              LOGIN_BANNER_IMAGE,
+                              '${dotenv.env['ASSETS_ENDPOINT']}${hike.coverUrl}',
                               scale: 0.5,
                             ),
                             fit: BoxFit.cover,
@@ -60,9 +60,6 @@ class HikeCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 8.0,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),

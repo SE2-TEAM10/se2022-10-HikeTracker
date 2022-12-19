@@ -1,16 +1,15 @@
 import 'package:HikeTracker/common/input_field.dart';
 import 'package:HikeTracker/pages/add_parking/models/new_parking.dart';
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AddParkingForm extends StatefulWidget {
   const AddParkingForm({
     required this.onSubmit,
-    this.isSmall = false,
     super.key,
   });
 
-  final bool isSmall;
   final Function(NewParking) onSubmit;
 
   @override
@@ -30,14 +29,13 @@ class _AddParkingFormState extends State<AddParkingForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 3,
-      child: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.symmetric(
-          vertical: 16,
-          horizontal: widget.isSmall ? 16 : 128,
-        ),
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 16,
+        horizontal: context.isMobile ? 16 : 128,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             'Add parking lot',
@@ -74,17 +72,17 @@ class _AddParkingFormState extends State<AddParkingForm> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              TextButton.icon(
+              OutlinedButton.icon(
                 onPressed: () => widget.onSubmit(
                   parking,
                 ),
-                icon: const Icon(Icons.login),
+                icon: const Icon(Icons.check_rounded),
                 label: const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
                     'Confirm',
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 24.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -92,7 +90,6 @@ class _AddParkingFormState extends State<AddParkingForm> {
               ),
             ],
           ),
-          const Spacer(),
         ],
       ),
     );

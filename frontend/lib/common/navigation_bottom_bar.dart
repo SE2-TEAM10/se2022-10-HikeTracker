@@ -29,9 +29,14 @@ class NavigationBottomBar extends StatelessWidget {
           )
           .toList(),
       onDestinationSelected: (value) => currentPath != routes[value].path
-          ? GoRouter.of(context).push(routes[value].path)
+          ? GoRouter.of(context).go(routes[value].path)
           : null,
-      selectedIndex: routes.firstWhere((r) => r.path == currentPath).index,
+      selectedIndex: routes
+          .firstWhere(
+            (r) => r.path == currentPath,
+            orElse: () => routes.first,
+          )
+          .index,
     );
   }
 }

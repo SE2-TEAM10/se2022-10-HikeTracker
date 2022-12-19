@@ -11,8 +11,8 @@ class Hike {
     required this.ascent,
     required this.difficulty,
     required this.description,
-    required this.hikeID,
     required this.locations,
+    required this.coverUrl,
   });
 
   final int id;
@@ -23,7 +23,7 @@ class Hike {
   final String difficulty;
   final String description;
   final List<Location> locations;
-  final int hikeID;
+  final String coverUrl;
 
   static Hike fromJson(String jsonString) {
     final res = jsonDecode(jsonString);
@@ -43,8 +43,8 @@ class Hike {
       ascent: res['ascent'] ?? 0,
       difficulty: res['difficulty'] ?? 'NA',
       description: res['description'] ?? 'NA',
-      hikeID: res['hike_ID'] ?? 0,
       locations: ls,
+      coverUrl: res['coverUrl'] ?? 'NA',
     );
   }
 

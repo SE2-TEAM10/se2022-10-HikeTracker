@@ -1,5 +1,5 @@
+import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:layout/layout.dart';
 
 class FilteredCardsLayout extends StatefulWidget {
   const FilteredCardsLayout({
@@ -28,7 +28,7 @@ class _FilteredCardsState extends State<FilteredCardsLayout> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        context.breakpoint > LayoutBreakpoint.sm
+        !context.isMobile
             ? Row(
                 children: [
                   AnimatedSize(
@@ -68,7 +68,7 @@ class _FilteredCardsState extends State<FilteredCardsLayout> {
               ),
             ),
             onPressed: () {
-              if (context.breakpoint <= LayoutBreakpoint.sm) {
+              if (context.isMobile) {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
