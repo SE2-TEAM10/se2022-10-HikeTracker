@@ -638,6 +638,40 @@ class Database {
     });
   };
 
+  addSchedule = (schedule) => {
+    return new Promise((resolve, reject) => {
+      /*try {
+        if (
+            typeof hike.name !== "string" ||
+            typeof hike.expected_time !== "string" ||
+            typeof hike.difficulty !== "string" ||
+            typeof hike.description !== "string" ||
+            typeof gpx_string !== "string" ||
+            typeof user_ID !== "number"
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }*/
+      const sql =
+          "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going',?,?,?)";
+      this.db.run(
+          sql,
+          [
+            schedule.start_time,
+            schedule.duration,
+            schedule.hike_ID,
+            schedule.userID,
+          ],
+          function (err) {
+            if (err) reject(err);
+            else resolve(this.lastID);
+          }
+      );
+    });
+  };
+
   addUser = (user) => {
     return new Promise((resolve, reject) => {
       try {

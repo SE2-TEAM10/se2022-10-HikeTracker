@@ -350,6 +350,22 @@ app.post(
   }
 );
 
+app.post("/api/addSchedule", async (req, res) => {
+  try {
+    let user = await db.getUserByID(req.user.ID);
+    if (user.role !== "Hiker") {
+      return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
+    }
+
+    const result1 = await db.addSchedule(req.body);
+    res.status(201).json(result1);
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
+
 app.post("/api/addUser", async (req, res) => {
   try {
     const result1 = await db.addUser(req.body);
