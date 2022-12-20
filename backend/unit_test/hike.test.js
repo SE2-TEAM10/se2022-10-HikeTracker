@@ -357,7 +357,6 @@ describe.only('hikeController Tests', () => {
 
     })
 
-
     describe('addParking method test', () => {
         test('successful use of addParking', async () => {
 
@@ -525,6 +524,53 @@ describe.only('hikeController Tests', () => {
 
     })
 
+    describe('addSchedule method test', () => {
+        test('successful use of addSchedule', async () => {
 
+            let reqbody = {
+                start_time: "2022-01-01 22:00",
+                duration: "on going",
+                hike_ID: 2,
+            };
+
+            await hikeController.deleteScheduleByID(2);
+
+            const user_ID = 5;
+
+            const schedule_ID = await hikeController.addSchedule(reqbody, user_ID);
+
+            const result = await hikeController.getScheduleByID(schedule_ID);
+
+            assert.equal(result.start_time, reqbody.start_time);
+            assert.equal(result.end_time, "on going");
+            assert.equal(result.status, "on going");
+            assert.equal(result.duration, "on going");
+            assert.equal(result.hike_ID, reqbody.hike_ID);
+            assert.equal(result.user_ID, user_ID);
+
+        })
+
+        test('try to add a scheduled hike with wrong params', async () => {
+
+            let reqbody = {
+                start_time: 3,
+                duration: 3,
+                hike_ID: "hike_ID"
+            };
+
+            const user_ID = "user_ID";
+
+            const result = await hikeController.addSchedule(reqbody, user_ID).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to add a scheduled hike with empty params', async () => {
+
+            const result = await hikeController.addSchedule().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+    })
 
 })

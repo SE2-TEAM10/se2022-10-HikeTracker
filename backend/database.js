@@ -227,7 +227,7 @@ class Database {
             return this.getCoverImageByHikeID(h.ID);
           });
           const results = await Promise.all(promises);
-  
+
           array.forEach((element, index) => {
             array[index] = {
               ...element,
@@ -287,7 +287,7 @@ class Database {
         res = res.path;
         res = res.split('./assets/')
 
-        resolve(res[res.length-1]);
+        resolve(res[res.length - 1]);
       });
     });
   };
@@ -358,26 +358,35 @@ class Database {
     });
   };
 
-  getHikeUserHut = (hike_ID,user_ID,hut_ID) => {
+  getHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
-      this.db.all(sql, [hike_ID,user_ID,hut_ID], function (err,rows) {
+      this.db.all(sql, [hike_ID, user_ID, hut_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
     });
   };
 
-  getHikeUserParking = (hike_ID,user_ID,parking_ID) => {
+  getHikeUserParking = (hike_ID, user_ID, parking_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
-      this.db.all(sql, [hike_ID,user_ID,parking_ID], function (err,rows) {
+      this.db.all(sql, [hike_ID, user_ID, parking_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
     });
   };
 
+  getScheduleByID = (schedule_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_schedule WHERE ID=?";
+      this.db.get(sql, [schedule_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
 
 
   deleteHikeByID = (ID) => {
@@ -485,20 +494,30 @@ class Database {
     });
   };
 
-  deleteHikeUserHut = (hike_ID,user_ID,hut_ID) => {
+  deleteHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
-      this.db.run(sql, [hike_ID,user_ID,hut_ID], function (err) {
+      this.db.run(sql, [hike_ID, user_ID, hut_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });
     });
   };
 
-  deleteHikeUserParking = (hike_ID,user_ID,parking_ID) => {
+  deleteHikeUserParking = (hike_ID, user_ID, parking_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
-      this.db.run(sql, [hike_ID,user_ID,parking_ID], function (err) {
+      this.db.run(sql, [hike_ID, user_ID, parking_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+  
+  deleteScheduleByID = (schedule_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_schedule WHERE ID=?";
+      this.db.run(sql, [schedule_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });
@@ -638,36 +657,34 @@ class Database {
     });
   };
 
-  addSchedule = (schedule) => {
+  addSchedule = (schedule, user_ID) => {
     return new Promise((resolve, reject) => {
-      /*try {
+      try {
         if (
-            typeof hike.name !== "string" ||
-            typeof hike.expected_time !== "string" ||
-            typeof hike.difficulty !== "string" ||
-            typeof hike.description !== "string" ||
-            typeof gpx_string !== "string" ||
-            typeof user_ID !== "number"
+          typeof schedule.start_time !== "string" ||
+          typeof schedule.duration !== "string" ||
+          typeof schedule.hike_ID !== "number" ||
+          typeof user_ID !== "number"
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
-      }*/
+      }
       const sql =
-          "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going',?,?,?)";
+        "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going',?,?,?)";
       this.db.run(
-          sql,
-          [
-            schedule.start_time,
-            schedule.duration,
-            schedule.hike_ID,
-            schedule.userID,
-          ],
-          function (err) {
-            if (err) reject(err);
-            else resolve(this.lastID);
-          }
+        sql,
+        [
+          schedule.start_time,
+          schedule.duration,
+          schedule.hike_ID,
+          user_ID,
+        ],
+        function (err) {
+          if (err) reject(err);
+          else resolve(this.lastID);
+        }
       );
     });
   };

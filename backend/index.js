@@ -357,7 +357,7 @@ app.post("/api/addSchedule", async (req, res) => {
       return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
     }
 
-    const result1 = await db.addSchedule(req.body);
+    const result1 = await db.addSchedule(req.body, req.user.ID);
     res.status(201).json(result1);
   } catch (err) {
     console.error(err);
