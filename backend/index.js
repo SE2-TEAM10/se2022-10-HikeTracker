@@ -366,13 +366,7 @@ app.post("/api/addSchedule", async (req, res) => {
 });
 
 function calculateDuration(start, end) {
-  /*STRING: YYYY-MM-DD HH:MM*/
-  //let start = "2022-01-01 22:00";
-  //let end = "2022-01-02 23:00"
-  //result = 48h - 2d
-
   let s_year = parseInt(start.slice(0, 4));
-  //console.log("typeof s_year = ", (typeof s_year));
   let s_month = parseInt(start.slice(5, 7));
   let s_day = parseInt(start.slice(8, 10));
   let s_hour = parseInt(start.slice(11, 13));
@@ -383,32 +377,31 @@ function calculateDuration(start, end) {
   let e_hour = parseInt(end.slice(11, 13));
   let e_mins = parseInt(end.slice(14, 16));
   let duration = "";
+
   let year_diff = e_year - s_year;
-  //year_diff = year_diff.toString().concat("y ");
   let month_diff = e_month - s_month;
   if (year_diff > 0 && month_diff < 0) {
     month_diff = year_diff * 12 + month_diff;
     year_diff -= 1;
-    //console.log("month_diff after conversion", month_diff);
   }
+
   let day_diff = e_day - s_day;
   if (month_diff > 0 && day_diff < 0) {
     day_diff = 30 + day_diff;
     month_diff -= 1;
-    //console.log("month_diff and day_diff after conversion: ", month_diff, " - ", day_diff);
   }
+
   let hour_diff = e_hour - s_hour;
   if (day_diff > 0 && hour_diff < 0) {
     hour_diff = 24 + hour_diff;
     day_diff -= 1;
-    //console.log("day_diff and hour_diff after conversion: ", day_diff, " - ", hour_diff);
   }
   let mins_diff = e_mins - s_mins;
   if (hour_diff > 0 && mins_diff < 0) {
     mins_diff = 60 + mins_diff;
     hour_diff -= 1;
-    //console.log("hour_diff and mins_diff after conversion: ", hour_diff, " - ", mins_diff);
   }
+
   if (year_diff > 0)
     duration += year_diff.toString().concat("Y ");
   if (month_diff > 0)
@@ -420,26 +413,18 @@ function calculateDuration(start, end) {
   if (mins_diff > 0)
     duration += mins_diff.toString().concat("m ");
   duration = duration.slice(0, duration.length - 1);
-  //console.log("FINAL - duration:", duration);
   return duration;
 }
 
 app.put("/api/updateSchedule", async (req, res) => {
   try {
-    /* let user = await db.getUserByID(req.user.ID);
+    let user = await db.getUserByID(req.user.ID);
     if (user.role !== "Hiker") {
       return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
     }
-    */
     const schedule = await db.getScheduleByID(req.body.ID);
-    const sch_end_time = req.body.end_time;
-    //console.log("end_time = ", sch_end_time)
-    const sch_start_time = schedule.start_time;
-    //console.log("start_time = ", sch_start_time)
-    //calculateDuration();
-    let duration = calculateDuration(sch_start_time, sch_end_time);
+    let duration = calculateDuration(schedule.start_time, req.body.end_time);
 
-    //console.log("duration - SHOULD BE 1D 1h: ", duration);
     const result = await db.updateSchedule(req.body.ID, req.body.end_time, duration);
     res.status(200).json(result);
   } catch (err) {
@@ -491,9 +476,6 @@ app.post(
       return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
     }
 
-    console.log("TYPE USER", req.user.role);
-    console.log("USER ID", req.user.ID);
-
     try {
       // check if a user is a local guide or a hut worker
       if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
@@ -514,9 +496,6 @@ app.post("/api/addParking", isLoggedIn, [], async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
   }
-
-  console.log("TYPE USER", req.user.role);
-  console.log("USER ID", req.user.ID);
 
   try {
     // check if a user is a local guide or a hut worker

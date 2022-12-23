@@ -2,18 +2,9 @@
 
 /* UNIT TEST FILE FOR HIKE APIS */
 const { expect, assert } = require('chai');
-//const dbManager = require('../databaseManager');
 const Database = require('../database');
 
 const hikeController = new Database('./hiketracker.db');
-
-/* beforeEach(async () => {
-    await dbManager.deleteAllData()
-});
-
-afterEach(async () => {
-    await dbManager.deleteAllData()
-}); */
 
 describe.only('hikeController Tests', () => {
 
@@ -582,14 +573,9 @@ describe.only('hikeController Tests', () => {
             };
 
             const schedule = await hikeController.getScheduleByID(reqbody.ID);
-
-            console.log("schedule.start_time", schedule.start_time);
-            console.log("schedule.end_time", reqbody.end_time);
-
             await hikeController.updateSchedule(reqbody.ID, reqbody.end_time, "1D 1h");
             
             const result = await hikeController.getScheduleByID(reqbody.ID);
-            console.log("RESULT SCHEDULE UPDATED: ", result);
 
             assert.equal(result.end_time, reqbody.end_time);
             assert.equal(result.status, "completed");
