@@ -573,4 +573,48 @@ describe.only('hikeController Tests', () => {
 
     })
 
+    describe('updateSchedule method test', () => {
+        test('successful use of updateSchedule', async () => {
+
+            let reqbody = {
+                ID: 2,
+                end_time: "2022-01-02 23:00",
+            };
+
+            const schedule = await hikeController.getScheduleByID(reqbody.ID);
+
+            console.log("schedule.start_time", schedule.start_time);
+            console.log("schedule.end_time", reqbody.end_time);
+
+            await hikeController.updateSchedule(reqbody.ID, reqbody.end_time, "1D 1h");
+            
+            const result = await hikeController.getScheduleByID(reqbody.ID);
+            console.log("RESULT SCHEDULE UPDATED: ", result);
+
+            assert.equal(result.end_time, reqbody.end_time);
+            assert.equal(result.status, "completed");
+            assert.equal(result.duration, "1D 1h");
+
+        })
+
+        test('try to update a scheduled hike with wrong params', async () => {
+
+            let reqbody = {
+                ID: "ID",
+                end_time: 2022,
+            };
+
+            const result = await hikeController.updateSchedule(reqbody.ID, reqbody.end_time, 33).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to add a scheduled hike with empty params', async () => {
+
+            const result = await hikeController.updateSchedule().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+    })
+
 })

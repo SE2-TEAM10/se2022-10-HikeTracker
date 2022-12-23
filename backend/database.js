@@ -513,7 +513,7 @@ class Database {
       });
     });
   };
-  
+
   deleteScheduleByID = (schedule_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike_schedule WHERE ID=?";
@@ -684,6 +684,36 @@ class Database {
         function (err) {
           if (err) reject(err);
           else resolve(this.lastID);
+        }
+      );
+    });
+  };
+
+  updateSchedule = (schedule_ID, end_time, duration) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof schedule_ID !== "number" ||
+          typeof end_time !== "string" ||
+          typeof duration !== "string"
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql =
+        "UPDATE hike_schedule SET end_time = ?, duration = ?, status = 'completed' WHERE ID =?";
+      this.db.run(
+        sql,
+        [
+          end_time,
+          duration,
+          schedule_ID,
+        ],
+        function (err) {
+          if (err) reject(err);
+          else resolve(true);
         }
       );
     });

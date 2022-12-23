@@ -365,6 +365,89 @@ app.post("/api/addSchedule", async (req, res) => {
   }
 });
 
+function calculateDuration(start, end) {
+  /*STRING: YYYY-MM-DD HH:MM*/
+  //let start = "2022-01-01 22:00";
+  //let end = "2022-01-02 23:00"
+  //result = 48h - 2d
+
+  let s_year = parseInt(start.slice(0, 4));
+  //console.log("typeof s_year = ", (typeof s_year));
+  let s_month = parseInt(start.slice(5, 7));
+  let s_day = parseInt(start.slice(8, 10));
+  let s_hour = parseInt(start.slice(11, 13));
+  let s_mins = parseInt(start.slice(14, 16));
+  let e_year = parseInt(end.slice(0, 4));
+  let e_month = parseInt(end.slice(5, 7));
+  let e_day = parseInt(end.slice(8, 10));
+  let e_hour = parseInt(end.slice(11, 13));
+  let e_mins = parseInt(end.slice(14, 16));
+  let duration = "";
+  let year_diff = e_year - s_year;
+  //year_diff = year_diff.toString().concat("y ");
+  let month_diff = e_month - s_month;
+  if (year_diff > 0 && month_diff < 0) {
+    month_diff = year_diff * 12 + month_diff;
+    year_diff -= 1;
+    //console.log("month_diff after conversion", month_diff);
+  }
+  let day_diff = e_day - s_day;
+  if (month_diff > 0 && day_diff < 0) {
+    day_diff = 30 + day_diff;
+    month_diff -= 1;
+    //console.log("month_diff and day_diff after conversion: ", month_diff, " - ", day_diff);
+  }
+  let hour_diff = e_hour - s_hour;
+  if (day_diff > 0 && hour_diff < 0) {
+    hour_diff = 24 + hour_diff;
+    day_diff -= 1;
+    //console.log("day_diff and hour_diff after conversion: ", day_diff, " - ", hour_diff);
+  }
+  let mins_diff = e_mins - s_mins;
+  if (hour_diff > 0 && mins_diff < 0) {
+    mins_diff = 60 + mins_diff;
+    hour_diff -= 1;
+    //console.log("hour_diff and mins_diff after conversion: ", hour_diff, " - ", mins_diff);
+  }
+  if (year_diff > 0)
+    duration += year_diff.toString().concat("Y ");
+  if (month_diff > 0)
+    duration += month_diff.toString().concat("M ");
+  if (day_diff > 0)
+    duration += day_diff.toString().concat("D ");
+  if (hour_diff > 0)
+    duration += hour_diff.toString().concat("h ");
+  if (mins_diff > 0)
+    duration += mins_diff.toString().concat("m ");
+  duration = duration.slice(0, duration.length - 1);
+  //console.log("FINAL - duration:", duration);
+  return duration;
+}
+
+app.put("/api/updateSchedule", async (req, res) => {
+  try {
+    /* let user = await db.getUserByID(req.user.ID);
+    if (user.role !== "Hiker") {
+      return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
+    }
+    */
+    const schedule = await db.getScheduleByID(req.body.ID);
+    const sch_end_time = req.body.end_time;
+    //console.log("end_time = ", sch_end_time)
+    const sch_start_time = schedule.start_time;
+    //console.log("start_time = ", sch_start_time)
+    //calculateDuration();
+    let duration = calculateDuration(sch_start_time, sch_end_time);
+
+    //console.log("duration - SHOULD BE 1D 1h: ", duration);
+    const result = await db.updateSchedule(req.body.ID, req.body.end_time, duration);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
 
 app.post("/api/addUser", async (req, res) => {
   try {

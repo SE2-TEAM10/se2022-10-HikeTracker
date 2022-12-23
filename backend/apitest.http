@@ -48,3 +48,12 @@ Content-Type: application/json
 
 ### getHutWithFilters
 GET http://localhost:3001/api/hutWithFilters?min_opening_time=06:00&max_opening_time=10:00
+
+### updateSchedule
+PUT http://localhost:3001/api/updateSchedule
+Content-Type: application/json
+
+{
+ "ID": 2,
+ "end_time": "2022-01-02 23:00"
+}
