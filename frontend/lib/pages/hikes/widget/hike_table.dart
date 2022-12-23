@@ -38,13 +38,13 @@ class _HikesTableState extends State<HikesTable> {
   void initState() {
     future = widget.client.get(
       api: 'hike',
-      filter: widget.filter,
+      queryParameters: widget.filter.toQueryParameters(),
     );
     widget.controller.onFilterChange = (newFilter) {
       setState(() {
         future = widget.client.get(
           api: 'hike',
-          filter: newFilter,
+          queryParameters: newFilter.toQueryParameters(),
         );
       });
     };
@@ -84,6 +84,7 @@ class _HikesTableState extends State<HikesTable> {
             ),
             itemCount: hikes.results?.length ?? 0,
             itemBuilder: (context, index) => HikeCard(
+              user: widget.user,
               hike: hikes.results![index],
               onTap: () => {
                 GoRouter.of(context).push(

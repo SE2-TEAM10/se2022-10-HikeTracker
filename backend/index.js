@@ -223,11 +223,14 @@ app.get("/api/hike", async (req, res) => {
 
 app.get(
   "/api/hikesdetails/:hike_ID",
-  isLoggedIn, async (req, res) => {
-    let thisuser = await db.getUserByID(req.user.ID);
-    if (thisuser.role !== "Hiker") {
-      return res.status(422).json({ error: `the logged in user is not a hiker` }).end();
+  /*isLoggedIn,*/ async function(req, res) {
+    let thisuser
+    if(req.user != undefined){
+      thisuser = await db.getUserByID(req.user.ID);
     }
+    // if (thisuser.role !== "Hiker") {
+    //   return res.status(422).json({ error: `the logged in user is not a hiker` }).end();
+    // }
     await db
       .getHikesDetailsByHikeID(req.params.hike_ID)
       .then((lists) => {
@@ -625,8 +628,9 @@ const sendEmail = async (email, subject, text) => {
 
 app.get("/api/locationToLinkHutOrParking", async (req, res) => {
   try {
-    const loc = await db.getLocationToLink(req.body.hike_ID, req.body.start_end);
-    if (req.body.ref === "hut") {
+    let loc = await db.getLocationToLink(req.query.hike_ID, req.query.start_end);
+    loc = loc[0]
+    if (req.query.ref == "hut") {
       let final_huts = [];
       const huts = await db.getAllHuts();
       huts.map((h) => {
@@ -653,7 +657,7 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
         }
       })
       res.json(final_huts);
-    } else if (req.body.ref === "p_lot") {
+    } else if (req.query.ref == "p_lot") {
       let final_parks = [];
       const parks = await db.getAllParkings();
       parks.map((p) => {

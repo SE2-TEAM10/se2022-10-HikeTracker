@@ -40,6 +40,7 @@ GoRouter getRouter({
             pageBuilder: (context, state) => NoTransitionPage(
               child: Hikes(
                 client: client,
+                user: currentUser,
               ),
             ),
             routes: [

@@ -111,6 +111,7 @@ class Database {
           city: e.city,
           province: e.province,
           hike_ID: e.hike_ID,
+          user_ID: e.user_ID,
         }));
         let array = [];
         list.forEach((i) => {
@@ -132,6 +133,7 @@ class Database {
               });
               array.push({
                 ID: temp[0].ID,
+                userID: temp[0].user_ID,
                 name: temp[0].name,
                 length: temp[0].length,
                 expected_time: temp[0].expected_time,
@@ -186,6 +188,7 @@ class Database {
             city: e.city,
             province: e.province,
             hike_ID: e.hike_ID,
+            user_ID: e.user_ID,
             gpx: e.gpx,
           }));
           let array = [];
@@ -208,6 +211,7 @@ class Database {
                 });
                 array.push({
                   ID: temp[0].ID,
+                  userID: temp[0].user_ID,
                   name: temp[0].name,
                   length: temp[0].length,
                   expected_time: temp[0].expected_time,

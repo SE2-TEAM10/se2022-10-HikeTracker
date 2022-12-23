@@ -1,4 +1,5 @@
 import 'package:HikeTracker/models/hike.dart';
+import 'package:HikeTracker/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -6,11 +7,13 @@ class HikeCard extends StatelessWidget {
   const HikeCard({
     required this.hike,
     required this.onTap,
+    required this.user,
     super.key,
   });
 
   final Hike hike;
   final Function onTap;
+  final User? user;
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +153,20 @@ class HikeCard extends StatelessWidget {
                   ),
                 ),
               ),
+              if (user?.ID == hike.userId)
+                Positioned(
+                  top: 24,
+                  left: 24,
+                  child: Chip(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    label: Text(
+                      'Mine',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

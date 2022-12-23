@@ -1,15 +1,23 @@
+import 'dart:convert';
+
 import 'package:HikeTracker/models/hike.dart';
+import 'package:HikeTracker/models/parking.dart';
 import 'package:HikeTracker/utils/layout_utils.dart';
+import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Details extends StatelessWidget {
   const Details({
     required this.hike,
+    required this.client,
+    this.isMine = false,
     super.key,
   });
 
   final Hike hike;
+  final bool isMine;
+  final RestClient client;
 
   @override
   Widget build(BuildContext context) {
@@ -223,8 +231,231 @@ class Details extends StatelessWidget {
               fontSize: context.isMobile ? 14 : 18,
             ),
           ),
+          if (isMine) ...[
+            const Divider(
+              height: 32,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SelectParking(
+                        client: client,
+                        hikeID: hike.id,
+                        start: true,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      SelectHut(
+                        client: client,
+                        hikeID: hike.id,
+                        start: true,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SelectParking(
+                        client: client,
+                        hikeID: hike.id,
+                        start: false,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      SelectHut(
+                        client: client,
+                        hikeID: hike.id,
+                        start: false,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ]
         ],
       ),
+    );
+  }
+}
+
+class SelectParking extends StatelessWidget {
+  const SelectParking({
+    required this.client,
+    required this.hikeID,
+    required this.start,
+    super.key,
+  });
+
+  final RestClient client;
+  final int hikeID;
+  final bool start;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: client.get(
+        api: 'locationToLinkHutOrParking',
+        queryParameters: {
+          'hike_ID': hikeID,
+          'start_end': 'start',
+          'ref': 'p_lot',
+        },
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final res = jsonDecode(snapshot.data!.body) as List<dynamic>;
+
+          final parkingLots =
+              res.map((e) => Parking.fromJson(jsonEncode(e))).toList();
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Select a parking lot to link to the ${start ? 'starting point' : 'ending point'}:',
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: DropdownButton(
+                    icon: const Icon(Icons.arrow_drop_down),
+                    elevation: 16,
+                    underline: const SizedBox(),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onChanged: (int? value) {
+                      if (value == null) {
+                        return;
+                      }
+                      client.post(
+                        api: 'linkParking',
+                        body: {
+                          'hike_ID': hikeID,
+                          'parking_ID': value,
+                          'ref_type': 'point'
+                        },
+                      );
+                    },
+                    items: parkingLots
+                        .map(
+                          (Parking p) => DropdownMenuItem<int>(
+                            value: p.id,
+                            child: Text(p.name),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+        return Container();
+      },
+    );
+  }
+}
+
+class SelectHut extends StatelessWidget {
+  const SelectHut({
+    required this.client,
+    required this.hikeID,
+    required this.start,
+    super.key,
+  });
+
+  final RestClient client;
+  final int hikeID;
+  final bool start;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: client.get(
+        api: 'locationToLinkHutOrParking',
+        queryParameters: {
+          'hike_ID': hikeID,
+          'start_end': 'start',
+          'ref': 'hut',
+        },
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final res = jsonDecode(snapshot.data!.body) as List<dynamic>;
+
+          final parkingLots =
+              res.map((e) => Parking.fromJson(jsonEncode(e))).toList();
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Select a hut to link to the ${start ? 'starting point' : 'ending point'}:',
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: DropdownButton(
+                    icon: const Icon(Icons.arrow_drop_down),
+                    elevation: 16,
+                    underline: const SizedBox(),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onChanged: (String? value) {},
+                    items: parkingLots
+                        .map(
+                          (Parking p) => DropdownMenuItem<String>(
+                            value: p.name,
+                            child: Text(p.name),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+        return Container();
+      },
     );
   }
 }
