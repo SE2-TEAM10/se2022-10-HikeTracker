@@ -57,3 +57,11 @@ Content-Type: application/json
  "ID": 2,
  "end_time": "2022-01-02 23:00"
 }
+
+### getCompletedHikes (the user is in the body just to test the API)
+GET http://localhost:3001/api/completedHike
+Content-Type: application/json
+
+{
+ "ID": 5
+}

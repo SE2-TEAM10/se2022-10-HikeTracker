@@ -165,7 +165,7 @@ class Database {
     });
   };
 
-
+/*
   getCompletedHikeWithFilters = (filters) => {
     console.log(filters);
     console.log(Object.keys(filters).length);
@@ -293,7 +293,7 @@ class Database {
       });
     });
   };
-
+*/
   
 
 
@@ -524,9 +524,22 @@ class Database {
     });
   };
 
-  getCompletedHikeByUserID = (user_ID) => {
+  /*
+  "SELECT * FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE user_ID=? AND status = 'completed'"
+  */
+
+  getCompletedHikesByUserID = (user_ID) => {
     return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM hike_schedule WHERE user_ID=? AND status = 'completed'";
+      try {
+        if (
+          typeof user_ID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "SELECT * FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE hike_schedule.user_ID=? AND status = 'completed'";
       this.db.all(sql, [ user_ID ], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);

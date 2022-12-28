@@ -294,7 +294,7 @@ describe.only('hikeController Tests', () => {
                 website: "testhut.it"
             };
 
-            await hikeController.deleteHutByID(20);
+            await hikeController.deleteHutByID(21);
 
             let user_ID = 3;
 
@@ -360,7 +360,7 @@ describe.only('hikeController Tests', () => {
                 province: "Lecce"
             };
 
-            await hikeController.deleteParkingLotByID(4);
+            await hikeController.deleteParkingLotByID(6);
 
             let user_ID = 3;
             const parking_lot_ID = await hikeController.addParking(reqbody, user_ID);
@@ -417,7 +417,7 @@ describe.only('hikeController Tests', () => {
             };
 
             const result = await hikeController.getHutsWithFilters(filters);
-            assert.equal(result.length, 20);
+            assert.equal(result.length, 21);
         })
     })
 
@@ -603,4 +603,31 @@ describe.only('hikeController Tests', () => {
 
     })
 
+    describe('getCompletedHikes method test', () => {
+        test('successful use of getCompletedHikes', async () => {
+
+            let user_ID = 5;
+
+            const result = await hikeController.getCompletedHikesByUserID(user_ID);
+            
+            assert.equal(result.length, 2);
+
+        })
+
+        test('try to get the completed hikes with wrong params', async () => {
+
+            let user_ID = "user_ID"
+
+            const result = await hikeController.getCompletedHikesByUserID(user_ID).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to get the completed hikes with empty params', async () => {
+
+            const result = await hikeController.getCompletedHikesByUserID().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+    })
 })

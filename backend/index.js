@@ -274,9 +274,9 @@ app.get("/api/hike", async (req, res) => {
 
 app.get(
   "/api/hikesdetails/:hike_ID",
-  /*isLoggedIn,*/ async function(req, res) {
+  /*isLoggedIn,*/ async function (req, res) {
     let thisuser
-    if(req.user != undefined){
+    if (req.user != undefined) {
       thisuser = await db.getUserByID(req.user.ID);
     }
     // if (thisuser.role !== "Hiker") {
@@ -335,35 +335,37 @@ app.get("/api/sendEmail", async (req, res) => {
 
 app.get("/api/hutWithFilters", async (req, res) => {
   await db
-      .getHutsWithFilters(req.query)
-      .then((lists) => {
-        res.json(lists);
-      })
-      .catch((err) => {
-        console.log(err);
-        res
-            .status(500)
-            .json({ error: `Database error while retrieving hike` })
-            .end();
-      });
+    .getHutsWithFilters(req.query)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
 });
 
-/* //api get completed hikes
+//api get completed hikes
 app.get("/api/completedHike", async (req, res) => {
+  //.getCompletedHikesByUserID(req.body.ID)
   await db
-      .getCompletedHikeByUserID(5)
-      .then((lists) => {
-        res.json(lists);
-      })
-      .catch((err) => {
-        console.log(err);
-        res
-            .status(500)
-            .json({ error: `Database error while retrieving hike` })
-            .end();
-      });
-}); */
+    .getCompletedHikesByUserID(req.user.ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
+});
 
+/*
 app.get("/api/completedHike", async (req, res) => {
   await db
     .getCompletedHikeWithFilters(req.user.ID)
@@ -383,21 +385,22 @@ app.get("/api/completedHike", async (req, res) => {
         .end();
     });
 });
+*/
 
 //api get parking from hike_ID
 app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
   await db
-      .getParkingFromHike(req.params.hike_ID)
-      .then((lists) => {
-        res.json(lists);
-      })
-      .catch((err) => {
-        console.log(err);
-        res
-            .status(500)
-            .json({ error: `Database error while retrieving hike` })
-            .end();
-      });
+    .getParkingFromHike(req.params.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
 });
 
 
