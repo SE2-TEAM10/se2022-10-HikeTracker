@@ -348,7 +348,7 @@ app.get("/api/hutWithFilters", async (req, res) => {
       });
 });
 
-//api get completed hikes
+/* //api get completed hikes
 app.get("/api/completedHike", async (req, res) => {
   await db
       .getCompletedHikeByUserID(5)
@@ -362,6 +362,26 @@ app.get("/api/completedHike", async (req, res) => {
             .json({ error: `Database error while retrieving hike` })
             .end();
       });
+}); */
+
+app.get("/api/completedHike", async (req, res) => {
+  await db
+    .getCompletedHikeWithFilters(req.user.ID)
+    .then((lists) => {
+      lists.map((row) => {
+        if (row.location !== null && !Array.isArray(row.location))
+          row.location = [row.location];
+        return row;
+      });
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
 });
 
 //api get parking from hike_ID
