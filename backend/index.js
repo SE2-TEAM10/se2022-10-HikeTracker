@@ -130,6 +130,57 @@ function toRad(Value) {
   return Value * Math.PI / 180;
 }
 
+function calculateDuration(start, end) {
+  let s_year = parseInt(start.slice(0, 4));
+  let s_month = parseInt(start.slice(5, 7));
+  let s_day = parseInt(start.slice(8, 10));
+  let s_hour = parseInt(start.slice(11, 13));
+  let s_mins = parseInt(start.slice(14, 16));
+  let e_year = parseInt(end.slice(0, 4));
+  let e_month = parseInt(end.slice(5, 7));
+  let e_day = parseInt(end.slice(8, 10));
+  let e_hour = parseInt(end.slice(11, 13));
+  let e_mins = parseInt(end.slice(14, 16));
+  let duration = "";
+
+  let year_diff = e_year - s_year;
+  let month_diff = e_month - s_month;
+  if (year_diff > 0 && month_diff < 0) {
+    month_diff = year_diff * 12 + month_diff;
+    year_diff -= 1;
+  }
+
+  let day_diff = e_day - s_day;
+  if (month_diff > 0 && day_diff < 0) {
+    day_diff = 30 + day_diff;
+    month_diff -= 1;
+  }
+
+  let hour_diff = e_hour - s_hour;
+  if (day_diff > 0 && hour_diff < 0) {
+    hour_diff = 24 + hour_diff;
+    day_diff -= 1;
+  }
+  let mins_diff = e_mins - s_mins;
+  if (hour_diff > 0 && mins_diff < 0) {
+    mins_diff = 60 + mins_diff;
+    hour_diff -= 1;
+  }
+
+  if (year_diff > 0)
+    duration += year_diff.toString().concat("Y ");
+  if (month_diff > 0)
+    duration += month_diff.toString().concat("M ");
+  if (day_diff > 0)
+    duration += day_diff.toString().concat("D ");
+  if (hour_diff > 0)
+    duration += hour_diff.toString().concat("h ");
+  if (mins_diff > 0)
+    duration += mins_diff.toString().concat("m ");
+  duration = duration.slice(0, duration.length - 1);
+  return duration;
+}
+
 
 // POST /sessions
 // login
@@ -280,6 +331,84 @@ app.get("/api/sendEmail", async (req, res) => {
   });
 });
 
+
+
+app.get("/api/hutWithFilters", async (req, res) => {
+  await db
+      .getHutsWithFilters(req.query)
+      .then((lists) => {
+        res.json(lists);
+      })
+      .catch((err) => {
+        console.log(err);
+        res
+            .status(500)
+            .json({ error: `Database error while retrieving hike` })
+            .end();
+      });
+});
+
+//api get completed hikes
+app.get("/api/completedHike", async (req, res) => {
+  await db
+      .getCompletedHikeByUserID(5)
+      .then((lists) => {
+        res.json(lists);
+      })
+      .catch((err) => {
+        console.log(err);
+        res
+            .status(500)
+            .json({ error: `Database error while retrieving hike` })
+            .end();
+      });
+});
+
+//api get parking from hike_ID
+app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
+  await db
+      .getParkingFromHike(req.params.hike_ID)
+      .then((lists) => {
+        res.json(lists);
+      })
+      .catch((err) => {
+        console.log(err);
+        res
+            .status(500)
+            .json({ error: `Database error while retrieving hike` })
+            .end();
+      });
+});
+
+
+//api per la verifica
+app.get("/api/user/verify/:token", (req, res) => {
+  const { token } = req.params;
+
+  // Verifing the JWT token
+  jwt.verify(token, "ourSecretKey", async function (err, decoded) {
+    console.log("Decoded", decoded);
+    try {
+      const userToAdd = await db.getUserByID(decoded.id);
+      console.log("user to add: ", userToAdd);
+      const verifyToCheck = userToAdd.verified;
+      console.log(verifyToCheck);
+      if (err || verifyToCheck === 1) {
+        /* user already registered */
+        console.log(err);
+        res.sendFile(path.join(__dirname + "/indexNotVerified.html"));
+      } else if (verifyToCheck === 0) {
+        await db.setVerified(decoded.id);
+        res.sendFile(path.join(__dirname + "/indexVerified.html"));
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(503).json(error);
+    }
+  });
+});
+
+
 app.post("/api/hike", isLoggedIn, [], async (req, res) => {
   try {
     let thisuser = await db.getUserByID(req.user.ID);
@@ -368,56 +497,6 @@ app.post("/api/addSchedule", async (req, res) => {
   }
 });
 
-function calculateDuration(start, end) {
-  let s_year = parseInt(start.slice(0, 4));
-  let s_month = parseInt(start.slice(5, 7));
-  let s_day = parseInt(start.slice(8, 10));
-  let s_hour = parseInt(start.slice(11, 13));
-  let s_mins = parseInt(start.slice(14, 16));
-  let e_year = parseInt(end.slice(0, 4));
-  let e_month = parseInt(end.slice(5, 7));
-  let e_day = parseInt(end.slice(8, 10));
-  let e_hour = parseInt(end.slice(11, 13));
-  let e_mins = parseInt(end.slice(14, 16));
-  let duration = "";
-
-  let year_diff = e_year - s_year;
-  let month_diff = e_month - s_month;
-  if (year_diff > 0 && month_diff < 0) {
-    month_diff = year_diff * 12 + month_diff;
-    year_diff -= 1;
-  }
-
-  let day_diff = e_day - s_day;
-  if (month_diff > 0 && day_diff < 0) {
-    day_diff = 30 + day_diff;
-    month_diff -= 1;
-  }
-
-  let hour_diff = e_hour - s_hour;
-  if (day_diff > 0 && hour_diff < 0) {
-    hour_diff = 24 + hour_diff;
-    day_diff -= 1;
-  }
-  let mins_diff = e_mins - s_mins;
-  if (hour_diff > 0 && mins_diff < 0) {
-    mins_diff = 60 + mins_diff;
-    hour_diff -= 1;
-  }
-
-  if (year_diff > 0)
-    duration += year_diff.toString().concat("Y ");
-  if (month_diff > 0)
-    duration += month_diff.toString().concat("M ");
-  if (day_diff > 0)
-    duration += day_diff.toString().concat("D ");
-  if (hour_diff > 0)
-    duration += hour_diff.toString().concat("h ");
-  if (mins_diff > 0)
-    duration += mins_diff.toString().concat("m ");
-  duration = duration.slice(0, duration.length - 1);
-  return duration;
-}
 
 app.put("/api/updateSchedule", async (req, res) => {
   try {
@@ -513,64 +592,6 @@ app.post("/api/addParking", isLoggedIn, [], async (req, res) => {
   }
 });
 
-app.get("/api/hutWithFilters", async (req, res) => {
-  await db
-    .getHutsWithFilters(req.query)
-    .then((lists) => {
-      res.json(lists);
-    })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(500)
-        .json({ error: `Database error while retrieving hike` })
-        .end();
-    });
-});
-
-//api get parking from hike_ID
-app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
-  await db
-    .getParkingFromHike(req.params.hike_ID)
-    .then((lists) => {
-      res.json(lists);
-    })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(500)
-        .json({ error: `Database error while retrieving hike` })
-        .end();
-    });
-});
-
-
-//api per la verifica
-app.get("/api/user/verify/:token", (req, res) => {
-  const { token } = req.params;
-
-  // Verifing the JWT token
-  jwt.verify(token, "ourSecretKey", async function (err, decoded) {
-    console.log("Decoded", decoded);
-    try {
-      const userToAdd = await db.getUserByID(decoded.id);
-      console.log("user to add: ", userToAdd);
-      const verifyToCheck = userToAdd.verified;
-      console.log(verifyToCheck);
-      if (err || verifyToCheck === 1) {
-        /* user already registered */
-        console.log(err);
-        res.sendFile(path.join(__dirname + "/indexNotVerified.html"));
-      } else if (verifyToCheck === 0) {
-        await db.setVerified(decoded.id);
-        res.sendFile(path.join(__dirname + "/indexVerified.html"));
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(503).json(error);
-    }
-  });
-});
 
 //set a boolean value (verified) to 1
 app.put("/api/:id/setVerified", async (req, res) => {

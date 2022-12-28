@@ -392,6 +392,16 @@ class Database {
     });
   };
 
+  getCompletedHikeByUserID = (user_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_schedule WHERE user_ID=? AND status = 'completed'";
+      this.db.all(sql, [ user_ID ], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
 
   deleteHikeByID = (ID) => {
     return new Promise((resolve, reject) => {

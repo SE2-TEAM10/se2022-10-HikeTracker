@@ -13,6 +13,7 @@ const HIKE_ADD = '/hike/add';
 const HUT_ADD = '/hut/add';
 const PARKING_ADD = '/parking/add';
 const HUTS = '/huts';
+const COMPLETED_HIKES = '/completedHikes';
 
 class Route {
   Route({
@@ -124,5 +125,11 @@ final HIKER_NAVIGATION_BAR_ROUTES = [
     label: 'Profile',
     path: PROFILE,
     icon: Icons.person_outline,
+  ),
+  Route(
+    index: 3,
+    label: 'Completed hikes',
+    path: COMPLETED_HIKES,
+    icon: Icons.check_circle_outline,
   ),
 ];
