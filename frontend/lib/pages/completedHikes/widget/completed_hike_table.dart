@@ -1,32 +1,27 @@
-import 'package:HikeTracker/models/hike.dart';
+//import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/user.dart';
 //import 'package:HikeTracker/pages/hikes/models/filter.dart';
-import 'package:HikeTracker/pages/hikes/widget/hike_card.dart';
+import 'package:HikeTracker/pages/completedHikes/models/hike.dart';
+import 'package:HikeTracker/pages/completedHikes/widget/completed_hike_card.dart';
+//import 'package:HikeTracker/pages/hikes/widget/hike_card.dart';
 import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:HikeTracker/pages/completedHikes/models/filter.dart';
+//import 'package:HikeTracker/pages/completedHikes/models/filter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
 
-class CompletedHikesTableController {
-  Function(Filter)? onFilterChange;
-}
 
 class CompletedHikesTable extends StatefulWidget {
   const CompletedHikesTable({
     required this.client,
-    required this.filter,
-    required this.controller,
     this.user,
     super.key,
   });
 
-  final Filter filter;
   final RestClient client;
   final User? user;
-  final CompletedHikesTableController controller;
 
   @override
   State<CompletedHikesTable> createState() => _CompletedHikesTableState();
@@ -39,16 +34,7 @@ class _CompletedHikesTableState extends State<CompletedHikesTable> {
   void initState() {
     future = widget.client.get(
       api: 'completedHike',
-      queryParameters: widget.filter.toQueryParameters(),
     );
-    widget.controller.onFilterChange = (newFilter) {
-      setState(() {
-        future = widget.client.get(
-          api: 'completedHike',
-          queryParameters: widget.filter.toQueryParameters(),
-        );
-      });
-    };
     super.initState();
   }
 
@@ -84,14 +70,14 @@ class _CompletedHikesTableState extends State<CompletedHikesTable> {
                       : 3,
             ),
             itemCount: hikes.results?.length ?? 0,
-            itemBuilder: (context, index) => HikeCard(
+            itemBuilder: (context, index) => CompletedHikeCard(
               user: widget.user,
-              hike: hikes.results![index],
+              hike: hikes.results![index],  
               onTap: () => {
                 GoRouter.of(context).push(
                   '$HIKES/${hikes.results![index].id}',
                 )
-              },
+              },           
             ),
           );
         }

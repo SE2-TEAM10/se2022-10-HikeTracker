@@ -1,14 +1,19 @@
 import 'package:HikeTracker/pages/completedHikes/models/hike.dart';
 import 'package:HikeTracker/utils/constants.dart';
+import 'package:HikeTracker/models/user.dart';
 import 'package:flutter/material.dart';
 
 class CompletedHikeCard extends StatelessWidget {
   const CompletedHikeCard({
     required this.hike,
+    required this.onTap,
+    required this.user,
     super.key,
   });
 
   final Hike hike;
+  final Function onTap;
+  final User? user;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +29,12 @@ class CompletedHikeCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
+          onTap: () => onTap(),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(
+              16.0,
+            ),
+          ),
           child: Stack(
             children: [
               Column(
@@ -82,7 +93,7 @@ class CompletedHikeCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Length: ',
+                              'Start Time: ',
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -91,7 +102,35 @@ class CompletedHikeCard extends StatelessWidget {
                             ),
                             Expanded(
                               child: Text(
-                                '${hike.length} m',
+                                '${hike.start_time} ',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSecondaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'End Time: ',
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                '${hike.end_time} ',
                                 style: TextStyle(
                                   color: Theme.of(context)
                                       .colorScheme

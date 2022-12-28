@@ -11,7 +11,8 @@ class Hike {
     required this.ascent,
     required this.difficulty,
     required this.description,
-    required this.locations,
+    required this.start_time,
+    required this.end_time,
     required this.coverUrl,
     required this.userId,
   });
@@ -23,19 +24,13 @@ class Hike {
   final int ascent;
   final String difficulty;
   final String description;
-  final List<Location> locations;
   final String coverUrl;
+  final String start_time;
+  final String end_time;
   final int userId;
 
   static Hike fromJson(String jsonString) {
     final res = jsonDecode(jsonString);
-
-    final ls = List<Location>.from(
-      res['location']
-          .map((e) => e != null ? Location.fromJson(json.encode(e)) : null)
-          .toList()
-          .whereType<Location>(),
-    );
 
     return Hike(
       id: res['ID'] ?? 0,
@@ -45,7 +40,8 @@ class Hike {
       ascent: res['ascent'] ?? 0,
       difficulty: res['difficulty'] ?? 'NA',
       description: res['description'] ?? 'NA',
-      locations: ls,
+      start_time: res['start_time'] ?? 'NA',
+      end_time: res['end_time'] ?? 'NA',
       coverUrl: res['coverUrl'] ?? 'NA',
       userId: res['userID'] ?? 0,
     );
@@ -119,30 +115,3 @@ class Hikes {
   }
 }
 
-class Location {
-  Location({
-    this.name = 'Undefined',
-    this.latitude = 0.0,
-    this.longitude = 0.0,
-    this.city = 'NA',
-    this.province = 'NA',
-  });
-
-  String name;
-  double latitude;
-  double longitude;
-  String city;
-  String province;
-
-  static Location fromJson(String jsonString) {
-    final res = jsonDecode(jsonString);
-
-    return Location(
-      name: res['name'],
-      latitude: (res['latitude'] as num).toDouble(),
-      longitude: (res['longitude'] as num).toDouble(),
-      city: res['city'],
-      province: res['province'],
-    );
-  }
-}
