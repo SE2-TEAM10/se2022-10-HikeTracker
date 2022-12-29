@@ -331,7 +331,20 @@ app.get("/api/sendEmail", async (req, res) => {
   });
 });
 
-
+app.get("/api/hut", async (req, res) => {
+  await db
+      .getAllHuts()
+      .then((lists) => {
+        res.json(lists);
+      })
+      .catch((err) => {
+        console.log(err);
+        res
+            .status(500)
+            .json({ error: `Database error while retrieving hike` })
+            .end();
+      });
+});
 
 app.get("/api/hutWithFilters", async (req, res) => {
   await db

@@ -30,12 +30,11 @@ class _CompletedHikesState extends State<Completedhikes> {
 
    @override
   Widget build(BuildContext context) {
-    return FilteredCardsLayout(
-
+     return FilteredCardsLayout(
       Table: CompletedHikesTable(
         client: widget.client,
         user: widget.user,
       ),
-    ); 
+    );  
   }
 }
