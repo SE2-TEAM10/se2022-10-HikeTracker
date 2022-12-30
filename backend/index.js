@@ -333,17 +333,17 @@ app.get("/api/sendEmail", async (req, res) => {
 
 app.get("/api/hut", async (req, res) => {
   await db
-      .getAllHuts()
-      .then((lists) => {
-        res.json(lists);
-      })
-      .catch((err) => {
-        console.log(err);
-        res
-            .status(500)
-            .json({ error: `Database error while retrieving hike` })
-            .end();
-      });
+    .getAllHuts()
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
 });
 
 app.get("/api/hutWithFilters", async (req, res) => {
@@ -743,7 +743,6 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
   }
 });
 
-/*index.js - link hut to the hike*/
 app.post("/api/linkHut", isLoggedIn, [],
   async (req, res) => {
     try {
@@ -755,7 +754,6 @@ app.post("/api/linkHut", isLoggedIn, [],
     }
   });
 
-/*index.js - link parking lot to the hike*/
 app.post("/api/linkParking", isLoggedIn, [],
   async (req, res) => {
     try {
@@ -765,7 +763,46 @@ app.post("/api/linkParking", isLoggedIn, [],
       console.error(err);
       res.status(503).json(err);
     }
-  });
+  }); 
+
+app.get("/api/pointToLinkHut", async (req, res) => {
+  try {
+    if (req.body.ref == "hut") {
+      let final_huts = [];
+      const huts = await db.getAllHuts();
+      huts.map((h) => {
+        let distance = getDistanceFromLatLonInKm(req.body.latitude, req.body.longitude, h.latitude, h.longitude);
+        if (distance < 5) {
+          console.log("HUTS - DISTANCE: ", distance);
+          final_huts.push({
+            ID: h.ID,
+            name: h.name,
+            description: h.description,
+            opening_time: h.opening_time,
+            closing_time: h.closing_time,
+            bed_num: h.bed_num,
+            altitude: h.altitude,
+            latitude: h.latitude,
+            longitude: h.longitude,
+            city: h.city,
+            province: h.province,
+            phone: h.phone,
+            mail: h.mail,
+            website: h.website
+          })
+          return final_huts;
+        }
+      })
+      res.json(final_huts);
+    } else {
+      res.status(422).json("The reference point is not defined correctly!");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
 const saveHikeImage = async function (imageBase64, hike_ID, type) {
   const image = Buffer.from(imageBase64, "base64");
   const path =
