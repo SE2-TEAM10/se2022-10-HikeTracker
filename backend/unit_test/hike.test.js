@@ -524,9 +524,9 @@ describe.only('hikeController Tests', () => {
                 hike_ID: 2,
             };
 
-            await hikeController.deleteScheduleByID(2);
+            await hikeController.deleteScheduleByID(4);
 
-            const user_ID = 5;
+            const user_ID = 6;
 
             const schedule_ID = await hikeController.addSchedule(reqbody, user_ID);
 
@@ -568,7 +568,7 @@ describe.only('hikeController Tests', () => {
         test('successful use of updateSchedule', async () => {
 
             let reqbody = {
-                ID: 2,
+                ID: 4,
                 end_time: "2022-01-02 23:00",
             };
 
@@ -625,6 +625,53 @@ describe.only('hikeController Tests', () => {
         test('try to get the completed hikes with empty params', async () => {
 
             const result = await hikeController.getCompletedHikesByUserID().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+    })
+
+    describe('addHikeUserHut HT-9 method test', () => {
+        test('successful use of add a hut as a point for hike', async () => {
+
+            let reqbody = {
+                hike_ID: 5,
+                hut_ID: 5,
+                ref_type: "generic point"
+            };
+
+            await hikeController.deleteHikeUserHut(5, 1, 5);
+
+            const user_ID = 1;
+
+            await hikeController.addHikeUserHut(reqbody.hike_ID, user_ID, reqbody.hut_ID, reqbody.ref_type);
+
+            const result = await hikeController.getHikeUserHut(reqbody.hike_ID, user_ID, reqbody.hut_ID);
+
+            assert.equal(result[0].hike_ID, reqbody.hike_ID);
+            assert.equal(result[0].user_ID, user_ID);
+            assert.equal(result[0].hut_ID, reqbody.hut_ID);
+            assert.equal(result[0].ref_type, reqbody.ref_type);
+
+        })
+
+        test('try to add a hut as a point for a hike with wrong params', async () => {
+
+            let reqbody = {
+                hike_ID: "hike_ID",
+                hut_ID: "hut_ID",
+                ref_type: "generic point"
+            };
+
+            const user_ID = 1;
+
+            const result = await hikeController.addHikeUserHut(reqbody.hike_ID, user_ID, reqbody.hut_ID, reqbody.ref_type).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to add a hut as a point for a hike with empty params', async () => {
+
+            const result = await hikeController.addHikeUserHut().catch(() => { });
             expect(result).to.be.undefined;
 
         })
