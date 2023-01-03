@@ -487,6 +487,17 @@ class Database {
     });
   };
 
+  getHikeUserReference = () => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user_reference";
+      this.db.get(sql, [], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+
   getLinkHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
@@ -1212,6 +1223,19 @@ class Database {
     });
   };
 
+  getReferencePointByHike = (hike_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT *\n" +
+          "FROM hike_user_ref INNER JOIN hike ON hike_user_ref.hike_ID = hike.ID INNER JOIN reference_point ON hike_user_ref.ref_ID = reference_point.ID\n" +
+          "WHERE hike_ID = ?";
+      this.db.all(sql, [hike_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+
   /*HT-8 - GET ALL PARKING LOTS*/
   getAllParkings = () => {
     return new Promise((resolve, reject) => {
@@ -1248,6 +1272,53 @@ class Database {
         });
     });
   };
+
+  addHikeUserReference = (hike_ID, user_ID, reference_ID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+            typeof hike_ID !== 'number' ||
+            typeof user_ID !== 'number' ||
+            typeof reference_ID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "INSERT INTO hike_user_reference(hike_ID, user_ID, reference_ID, state) VALUES(?,?,?,0)";
+      this.db.run(
+          sql, [hike_ID, user_ID, reference_ID], function (err) {
+            if (err) reject(err);
+            else {
+              resolve(true);
+            }
+          });
+    });
+  };
+
+  updateHikeUserReference = (reference_ID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+            typeof reference_ID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "UPDATE hike_user_reference SET state = 1 WHERE reference_ID = ?";
+      this.db.run(
+          sql, [reference_ID], function (err) {
+            if (err) reject(err);
+            else {
+              resolve(true);
+            }
+          });
+    });
+  };
+
 
   /*HT-8 - ADD PARKING LOT LINKED TO THE HIKE*/
   addHikeUserParking = (hike_ID, user_ID, parking_ID, ref_type) => {
