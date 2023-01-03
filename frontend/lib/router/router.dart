@@ -153,6 +153,18 @@ GoRouter getRouter({
             );
           },
         ),
+      if (currentUser?.role == UserRole.LocalGuide)
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          path: REFERENCE_POINT_ADD,
+          builder: (BuildContext context, GoRouterState state) {
+            return SubScaffold(
+              child: AddReferencePoint(
+                client: client,
+              ),
+            );
+          },
+        ),
       GoRoute(
         path: LOADING,
         builder: (BuildContext context, GoRouterState state) {

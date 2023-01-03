@@ -12,6 +12,7 @@ const PROFILE = '/profile';
 const HIKE_ADD = '/hike/add';
 const HUT_ADD = '/hut/add';
 const PARKING_ADD = '/parking/add';
+const REFERENCE_POINT_ADD = '/referencePoint/add';
 const HUTS = '/huts';
 const COMPLETED_HIKES = '/completedHikes';
 
@@ -101,6 +102,12 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
   ),
   Route(
     index: 4,
+    label: 'Add Reference Point',
+    path: REFERENCE_POINT_ADD,
+    icon: Icons.local_parking,
+  ),
+  Route(
+    index: 5,
     label: 'Profile',
     path: PROFILE,
     icon: Icons.person_outline,
