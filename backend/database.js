@@ -575,10 +575,6 @@ class Database {
     });
   };
 
-  /*
-  "SELECT * FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE user_ID=? AND status = 'completed'"
-  */
-
   getCompletedHikesByUserID = (user_ID) => {
     return new Promise((resolve, reject) => {
       try {
@@ -592,6 +588,17 @@ class Database {
       }
       const sql = "SELECT * FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE hike_schedule.user_ID=? AND status = 'completed'";
       this.db.all(sql, [user_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
+  getRefReached = (hike_ID, user_ID, ref_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql =
+        "SELECT * FROM ref_reached WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
+      this.db.all(sql, [hike_ID, user_ID, ref_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
@@ -901,7 +908,7 @@ class Database {
         return reject(503); // 503 - UNAVAILABLE
       }
       const sql =
-        "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going','',?,?)";
+        "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going','on going',?,?)";
       this.db.run(
         sql,
         [
