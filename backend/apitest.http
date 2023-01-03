@@ -75,11 +75,11 @@ Content-Type: application/json
  "ref": "hut"
 }
 
-### addSchedule 
-POST http://localhost:3001/api/addSchedule
+### updateRefReached 
+PUT http://localhost:3001/api/updateRefReached
 Content-Type: application/json
 
-{"start_time": "2022-01-01 22:00",
-"duration": "on going",
-"hike_ID": 1
+{"hike_ID": 1,
+"user_ID": 7,
+"ref_ID": 2
 }

@@ -570,15 +570,15 @@ app.put("/api/updateSchedule", async (req, res) => {
   }
 });
 
-app.put("/api/updateHikeUserReference", async (req, res) => {
+app.put("/api/updateRefReached", async (req, res) => {
   try {
-    let user = await db.getUserByID(req.user.ID);
+    /* let user = await db.getUserByID(req.user.ID);
     if (user.role !== "Hiker") {
       return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
     }
-
-    const result = await db.updateRefReached(req.body.reference_ID);
-    res.status(200).json(result);
+ */
+    const result = await db.updateRefReached(req.body.hike_ID, req.body.user_ID, req.body.ref_ID);
+    res.status(200).json("Reference point " + req.body.ref_ID + " reached!");
   } catch (err) {
     console.error(err);
     res.status(503).json(err);
