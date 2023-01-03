@@ -530,12 +530,22 @@ app.post("/api/addSchedule", async (req, res) => {
     }
 
     const result1 = await db.addSchedule(req.body, req.user.ID);
-    res.status(201).json(result1);
 
-    //chiamare getReferencePointByHike(req.body.hike_ID);
+    //res.status(201).json(result1);
+
     const result2 = await db.getReferencePointByHike(req.body.hike_ID);
-    //chiamare addHikeUserReference()
-
+    let references = [];
+    result2.map((res) => {
+      references.push({
+        ID: res.ref_ID
+      })
+      return references;
+    })
+    references.forEach(async (ref) => {
+      await db.addRefReached(req.body.hike_ID, req.user.ID, ref.ID, 0);
+    })
+   
+    res.status(201).json(result2);
   } catch (err) {
     console.error(err);
     res.status(503).json(err);
@@ -560,15 +570,15 @@ app.put("/api/updateSchedule", async (req, res) => {
   }
 });
 
-app.put("/api/updateHikeUserReference", async (req, res) => {
+app.put("/api/updateRefReached", async (req, res) => {
   try {
-    let user = await db.getUserByID(req.user.ID);
+    /* let user = await db.getUserByID(req.user.ID);
     if (user.role !== "Hiker") {
       return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
     }
-
-    const result = await db.updateHikeUserReference(req.body.reference_ID);
-    res.status(200).json(result);
+ */
+    const result = await db.updateRefReached(req.body.hike_ID, req.body.user_ID, req.body.ref_ID);
+    res.status(200).json("Reference point " + req.body.ref_ID + " reached!");
   } catch (err) {
     console.error(err);
     res.status(503).json(err);

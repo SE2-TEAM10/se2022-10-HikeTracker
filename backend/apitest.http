@@ -74,3 +74,12 @@ Content-Type: application/json
  "longitude": 6.98,
  "ref": "hut"
 }
+
+### updateRefReached 
+PUT http://localhost:3001/api/updateRefReached
+Content-Type: application/json
+
+{"hike_ID": 1,
+"user_ID": 7,
+"ref_ID": 2
+}
