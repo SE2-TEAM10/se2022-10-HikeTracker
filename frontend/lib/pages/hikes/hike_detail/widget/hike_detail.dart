@@ -2,52 +2,26 @@ import 'dart:convert';
 
 import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/parking.dart';
+import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-
 
 class Details extends StatelessWidget {
   const Details({
     required this.hike,
     required this.client,
+    required this.user,
     this.isMine = false,
     super.key,
   });
 
   final Hike hike;
   final bool isMine;
+  final User? user;
   final RestClient client;
-
-  Future<void> createSchedule() async {
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(now);
-    final response = await http.post(
-      Uri.parse('http://localhost:3001/api/addSchedule'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'start_time': formattedDate,
-        'duration' : '1D',
-        'hike_ID' : hike.id,
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      print('OK');
-    } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
-      throw Exception('Failed to create album.');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,24 +62,34 @@ class Details extends StatelessWidget {
                   ),
                 ),
               ),
-              OutlinedButton.icon(
-                onPressed: () {
-                  createSchedule();
-                },
-                icon: const Icon(Icons.flag_outlined),
-                label:  Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Start hike',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(
+                width: 16.0,
+              ),
+              if (user != null && user!.role == UserRole.Hiker)
+                OutlinedButton.icon(
+                  onPressed: () {
+                    client.post(
+                      api: 'addSchedule',
+                      body: {
+                        'start_time': DateFormat('yyyy-MM-dd HH:mm')
+                            .format(DateTime.now()),
+                        'duration': '1D',
+                        'hike_ID': hike.id,
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.flag_outlined),
+                  label: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Start hike',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-
-
             ],
           ),
           const SizedBox(

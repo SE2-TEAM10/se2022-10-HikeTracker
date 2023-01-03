@@ -85,6 +85,7 @@ class HikeDetailContent extends StatelessWidget {
               hike: hike!,
               isMine: user?.ID == hike!.userId,
               client: client,
+              user: user,
             )
           : const Center(
               child: CircularProgressIndicator(),

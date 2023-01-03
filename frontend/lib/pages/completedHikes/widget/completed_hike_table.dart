@@ -1,17 +1,10 @@
-//import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/user.dart';
-//import 'package:HikeTracker/pages/hikes/models/filter.dart';
 import 'package:HikeTracker/pages/completedHikes/models/hike.dart';
 import 'package:HikeTracker/pages/completedHikes/widget/completed_hike_card.dart';
-//import 'package:HikeTracker/pages/hikes/widget/hike_card.dart';
-import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
-//import 'package:HikeTracker/pages/completedHikes/models/filter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
-
 
 class CompletedHikesTable extends StatefulWidget {
   const CompletedHikesTable({
@@ -72,12 +65,8 @@ class _CompletedHikesTableState extends State<CompletedHikesTable> {
             itemCount: hikes.results?.length ?? 0,
             itemBuilder: (context, index) => CompletedHikeCard(
               user: widget.user,
-              hike: hikes.results![index],  
-              onTap: () => {
-                GoRouter.of(context).push(
-                  '$HIKES/${hikes.results![index].id}',
-                )
-              },           
+              hike: hikes.results![index],
+              onTap: () => {},
             ),
           );
         }

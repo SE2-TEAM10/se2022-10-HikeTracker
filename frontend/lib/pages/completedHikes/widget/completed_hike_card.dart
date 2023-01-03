@@ -1,6 +1,6 @@
+import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/completedHikes/models/hike.dart';
 import 'package:HikeTracker/utils/constants.dart';
-import 'package:HikeTracker/models/user.dart';
 import 'package:flutter/material.dart';
 
 class CompletedHikeCard extends StatelessWidget {

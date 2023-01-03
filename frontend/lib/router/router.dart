@@ -1,7 +1,6 @@
 import 'package:HikeTracker/common/main_scaffold.dart';
 import 'package:HikeTracker/common/sub_scaffold.dart';
 import 'package:HikeTracker/models/user.dart';
-import 'package:HikeTracker/pages/completedHikes/completed_hikes.dart';
 import 'package:HikeTracker/pages/hikes/hike_detail/hike_detail_page.dart';
 import 'package:HikeTracker/pages/pages.dart';
 import 'package:HikeTracker/router/utils.dart';
