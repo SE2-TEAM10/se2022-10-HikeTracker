@@ -482,11 +482,11 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
       req.body.gpx
     );
     console.log("res3 - ", result3);
-    var gpx_path  = await saveHikeGpx(req.body.gpx, hike_ID)
+    var gpx_path = await saveHikeGpx(req.body.gpx, hike_ID)
     const result4 = await db.addNewHikeGPX(gpx_path, hike_ID);
     console.log("res4 - ", result4);
 
-    if(req.body.image_base_64 != undefined){
+    if (req.body.image_base_64 != undefined) {
       const imagePath = await saveHikeImage(
         req.body.image_base_64,
         hike_ID,
@@ -522,6 +522,21 @@ app.post(
   }
 );
 
+app.get("/api/getReferencePointByHike", async (req, res) => {
+  await db
+    .getReferencePointByHike(req.body.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
+});
+
 app.post("/api/addSchedule", async (req, res) => {
   try {
     let user = await db.getUserByID(req.user.ID);
@@ -544,7 +559,7 @@ app.post("/api/addSchedule", async (req, res) => {
     references.forEach(async (ref) => {
       await db.addRefReached(req.body.hike_ID, req.user.ID, ref.ID, 0);
     })
-   
+
     res.status(201).json(result2);
   } catch (err) {
     console.error(err);
@@ -572,17 +587,32 @@ app.put("/api/updateSchedule", async (req, res) => {
 
 app.put("/api/updateRefReached", async (req, res) => {
   try {
-    /* let user = await db.getUserByID(req.user.ID);
+    let user = await db.getUserByID(req.user.ID);
     if (user.role !== "Hiker") {
       return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
     }
- */
+
     const result = await db.updateRefReached(req.body.hike_ID, req.body.user_ID, req.body.ref_ID);
     res.status(200).json("Reference point " + req.body.ref_ID + " reached!");
   } catch (err) {
     console.error(err);
     res.status(503).json(err);
   }
+});
+
+app.get("/api/getOnGoingHike", async (req, res) => {
+  await db
+    .getOnGoingHikeByUserID(req.user.ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
 });
 
 app.post("/api/addUser", async (req, res) => {
@@ -817,9 +847,9 @@ app.post("/api/linkParking", isLoggedIn, [],
       console.error(err);
       res.status(503).json(err);
     }
-  }); 
+  });
 
-  app.post("/api/linkReferencePoint", isLoggedIn, [],
+app.post("/api/linkReferencePoint", isLoggedIn, [],
   async (req, res) => {
     try {
       const result = await db.addHikeUserRef(req.body.hike_ID, req.user.ID, req.body.ref_ID, req.body.ref_type);
@@ -828,7 +858,7 @@ app.post("/api/linkParking", isLoggedIn, [],
       console.error(err);
       res.status(503).json(err);
     }
-  }); 
+  });
 
 app.get("/api/pointToLinkHut", async (req, res) => {
   try {

@@ -75,11 +75,9 @@ Content-Type: application/json
  "ref": "hut"
 }
 
-### updateRefReached 
-PUT http://localhost:3001/api/updateRefReached
+### getReferencePointByHikE
+GET http://localhost:3001/api/getReferencePointByHike
 Content-Type: application/json
 
-{"hike_ID": 1,
-"user_ID": 7,
-"ref_ID": 2
+{"hike_ID": 1
 }

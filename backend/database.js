@@ -565,6 +565,16 @@ class Database {
     });
   };
 
+  getOnGoingHikeByUserID = (user_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_schedule WHERE user_ID=? AND status = 'on going'";
+      this.db.get(sql, [user_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
   /*
   "SELECT * FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE user_ID=? AND status = 'completed'"
   */
