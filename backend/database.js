@@ -487,9 +487,9 @@ class Database {
     });
   };
 
-  getHikeUserReference = () => {
+  getRefReached = () => {
     return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM hike_user_reference";
+      const sql = "SELECT * FROM ref_reached";
       this.db.get(sql, [], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -1273,7 +1273,7 @@ class Database {
     });
   };
 
-  addHikeUserReference = (hike_ID, user_ID, reference_ID) => {
+  addRefReached = (hike_ID, user_ID, reference_ID) => {
     return new Promise((resolve, reject) => {
       try {
         if (
@@ -1286,7 +1286,7 @@ class Database {
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
-      const sql = "INSERT INTO hike_user_reference(hike_ID, user_ID, reference_ID, state) VALUES(?,?,?,0)";
+      const sql = "INSERT INTO ref_reached(hike_ID, user_ID, reference_ID, state) VALUES(?,?,?,0)";
       this.db.run(
           sql, [hike_ID, user_ID, reference_ID], function (err) {
             if (err) reject(err);
@@ -1297,7 +1297,7 @@ class Database {
     });
   };
 
-  updateHikeUserReference = (reference_ID) => {
+  updateRefReached = (reference_ID) => {
     return new Promise((resolve, reject) => {
       try {
         if (
@@ -1308,7 +1308,7 @@ class Database {
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
-      const sql = "UPDATE hike_user_reference SET state = 1 WHERE reference_ID = ?";
+      const sql = "UPDATE ref_reached SET state = 1 WHERE reference_ID = ?";
       this.db.run(
           sql, [reference_ID], function (err) {
             if (err) reject(err);
@@ -1372,36 +1372,7 @@ class Database {
       });
     };
 
-  /* getParkingFromHike = (hike_ID) => {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM parking_lot INNER JOIN hike_user_parking ON parking_lot.ID = hike_user_parking.parking_ID WHERE hike_ID = ?";
-      this.db.all(sql, [hike_ID], function (err, rows) {
-        if (err) reject(err);
-        else resolve(rows);
-      });
-    });
-  };
-
-  getCoordinatesHike = () => {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT latitude,longitude FROM location WHERE hike_ID = 1";
-      this.db.all(sql, [], function (err, rows) {
-        if (err) reject(err);
-        else resolve(rows);
-      });
-    });
-  };
-
-  getCoordinatesParking = () => {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM parking_lot";
-      this.db.all(sql, [], function (err, rows) {
-        if (err) reject(err);
-        else resolve(rows);
-      });
-    });
-  }; */
-
+  
   addGpx = (gpx1) => {
     return new Promise((resolve, reject) => {
       let gpx = new GpxParser();
