@@ -468,6 +468,16 @@ class Database {
     });
   };
 
+  getReferencePointByID = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM reference_point WHERE ID = ?";
+      this.db.get(sql, [ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
   getLinkHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
@@ -513,6 +523,17 @@ class Database {
       });
     });
   };
+
+  getHikeUserRef = (hike_ID, user_ID, ref_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM hike_user_ref WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
+      this.db.all(sql, [hike_ID, user_ID, ref_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
 
   getScheduleByID = (schedule_ID) => {
     return new Promise((resolve, reject) => {
@@ -673,10 +694,30 @@ class Database {
     });
   };
 
+  deleteHikeUserReferencePoint = (hike_ID, user_ID, ref_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM hike_user_ref WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
+      this.db.run(sql, [hike_ID, user_ID, ref_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
   deleteScheduleByID = (schedule_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM hike_schedule WHERE ID=?";
       this.db.run(sql, [schedule_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
+  deleteReferencePointByID = (rp_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM reference_point WHERE ID=?";
+      this.db.run(sql, [rp_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
       });
@@ -1019,6 +1060,43 @@ class Database {
     });
   };
 
+  addReferencePoint = (referencePoint, user_ID) => {
+    return new Promise((resolve, reject) => {
+      if (
+        typeof referencePoint.name !== "string" ||
+        typeof referencePoint.type !== "string" ||
+        typeof referencePoint.latitude !== "number" ||
+        typeof referencePoint.longitude !== "number" ||
+        typeof referencePoint.city !== "string" ||
+        typeof referencePoint.province !== "string" ||
+        typeof user_ID !== "number"
+      ) {
+        return reject(422); // 422 - UNPROCESSABLE
+      }
+
+      const sql =
+        "INSERT INTO reference_point(name,type,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
+      this.db.run(
+        sql,
+        [
+          referencePoint.name,
+          referencePoint.type,
+          referencePoint.latitude,
+          referencePoint.longitude,
+          referencePoint.city,
+          referencePoint.province,
+          user_ID,
+        ],
+        function (err) {
+          if (err) reject(err);
+          else {
+            resolve(this.lastID);
+          }
+        }
+      );
+    });
+  };
+
   getHutsWithFilters = (filters) => {
     return new Promise((resolve, reject) => {
       let query = "SELECT * FROM hut";
@@ -1187,6 +1265,32 @@ class Database {
         });
     });
   };
+
+    /*HT-33 ADD REFERENCE POINT LINKED TO THE HIKE*/
+    addHikeUserRef = (hike_ID, user_ID, ref_ID, ref_type) => {
+      return new Promise((resolve, reject) => {
+        try {
+          if (
+            typeof hike_ID !== 'number' ||
+            typeof user_ID !== 'number' ||
+            typeof ref_ID !== 'number' ||
+            typeof ref_type !== 'string'
+          ) {
+            return reject(422); // 422 - UNPROCESSABLE
+          }
+        } catch (e) {
+          return reject(503); // 503 - UNAVAILABLE
+        }
+        const sql = "INSERT INTO hike_user_ref(hike_ID, user_ID, ref_ID, ref_type) VALUES(?,?,?,?)";
+        this.db.run(
+          sql, [hike_ID, user_ID, ref_ID, ref_type], function (err) {
+            if (err) reject(err);
+            else {
+              resolve(true);
+            }
+          });
+      });
+    };
 
   /* getParkingFromHike = (hike_ID) => {
     return new Promise((resolve, reject) => {

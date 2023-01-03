@@ -628,6 +628,26 @@ app.post("/api/addParking", isLoggedIn, [], async (req, res) => {
   }
 });
 
+//add reference point
+app.post("/api/addReferencePoint", isLoggedIn, [], async (req, res) => {
+  const errors = validationResult(req).formatWith(errorFormatter); // format error message
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+  }
+
+  try {
+    // check if a user is a local guide
+    if (req.user.role === "LocalGuide") {
+      const result1 = await db.addReferencePoint(req.body, req.user.ID);
+
+      res.status(201).json(result1);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
 
 //set a boolean value (verified) to 1
 app.put("/api/:id/setVerified", async (req, res) => {
@@ -759,6 +779,17 @@ app.post("/api/linkParking", isLoggedIn, [],
   async (req, res) => {
     try {
       const result = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, req.body.parking_ID, req.body.ref_type);
+      res.status(201).json(result);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  }); 
+
+  app.post("/api/linkReferencePoint", isLoggedIn, [],
+  async (req, res) => {
+    try {
+      const result = await db.addHikeUserRef(req.body.hike_ID, req.user.ID, req.body.ref_ID, req.body.ref_type);
       res.status(201).json(result);
     } catch (err) {
       console.error(err);

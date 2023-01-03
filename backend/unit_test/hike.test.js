@@ -677,4 +677,105 @@ describe.only('hikeController Tests', () => {
         })
 
     })
+
+
+    describe('addReferencePoint HT-33 method test', () => {
+        test('successful use of addReferencePoint', async () => {
+
+            let reqbody = {
+                name: "Testing Reference Point",
+                type: "village",
+                latitude: 45.111111,
+                longitude: 7.22222,
+                city: "Lecce",
+                province: "Lecce"
+            };
+
+            await hikeController.deleteReferencePointByID(17);
+
+            let user_ID = 3;
+            const reference_point_ID = await hikeController.addReferencePoint(reqbody, user_ID);
+
+            const result = await hikeController.getReferencePointByID(reference_point_ID);
+
+            assert.equal(result.name, reqbody.name);
+            assert.equal(result.type, reqbody.type);
+            assert.equal(result.latitude, reqbody.latitude);
+            assert.equal(result.longitude, reqbody.longitude);
+            assert.equal(result.city, reqbody.city);
+            assert.equal(result.province, reqbody.province);assert.equal(result.user_ID, user_ID);
+
+        })
+
+        test('try to add reference point with wrong params', async () => {
+            let reqbody2 = {
+                name: "Parking lot testing",
+                type: 100,
+                latitude: 45.111111,
+                longitude: 7.22222,
+                city: 40,
+                province: 41
+            };
+
+            const result = await hikeController.addReferencePoint(reqbody2, "user").catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to add reference point with empty params', async () => {
+
+            const result = await hikeController.addReferencePoint().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+    })
+    
+
+    describe(' addHikeUserRef method test', () => {
+        test('successful use of add a reference point for a hike', async () => {
+
+            let reqbody = {
+                hike_ID: 1,
+                ref_ID: 2,
+                ref_type: "test_point_parking"
+            };
+
+            await hikeController.deleteHikeUserReferencePoint(1, 1, 2);
+
+            const user_ID = 1;
+
+            await hikeController.addHikeUserRef(reqbody.hike_ID, user_ID, reqbody.ref_ID, reqbody.ref_type);
+
+            const result = await hikeController.getHikeUserRef(reqbody.hike_ID, user_ID, reqbody.ref_ID);
+
+            assert.equal(result[0].hike_ID, reqbody.hike_ID);
+            assert.equal(result[0].user_ID, user_ID);
+            assert.equal(result[0].ref_ID, reqbody.ref_ID);
+            assert.equal(result[0].ref_type, reqbody.ref_type);
+
+        })
+
+        test('try to add aa reference point for a hike with wrong params', async () => {
+
+            let reqbody = {
+                hike_ID: "hike_ID",
+                ref_ID: "ref_ID",
+                ref_type: "test_point_parking"
+            };
+
+            const user_ID = 1;
+
+            const result = await hikeController.addHikeUserRef(reqbody.hike_ID, user_ID, reqbody.ref_ID, reqbody.ref_type).catch(() => { });
+            expect(result).to.be.undefined;
+        })
+
+        test('try to a reference point for a hike with empty params', async () => {
+
+            const result = await hikeController.addHikeUserRef().catch(() => { });
+            expect(result).to.be.undefined;
+
+        })
+
+    })
+
 })
