@@ -882,7 +882,6 @@ class Database {
       try {
         if (
           typeof schedule.start_time !== "string" ||
-          typeof schedule.duration !== "string" ||
           typeof schedule.hike_ID !== "number" ||
           typeof user_ID !== "number"
         ) {
@@ -892,12 +891,11 @@ class Database {
         return reject(503); // 503 - UNAVAILABLE
       }
       const sql =
-        "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going',?,?,?)";
+        "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going','',?,?)";
       this.db.run(
         sql,
         [
           schedule.start_time,
-          schedule.duration,
           schedule.hike_ID,
           user_ID,
         ],

@@ -73,7 +73,6 @@ class Details extends StatelessWidget {
                       body: {
                         'start_time': DateFormat('yyyy-MM-dd HH:mm')
                             .format(DateTime.now()),
-                        'duration': '1D',
                         'hike_ID': hike.id,
                       },
                     );
