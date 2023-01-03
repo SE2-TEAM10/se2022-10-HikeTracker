@@ -448,7 +448,7 @@ app.get("/api/user/verify/:token", (req, res) => {
 app.post("/api/hike", isLoggedIn, [], async (req, res) => {
   try {
     let thisuser = await db.getUserByID(req.user.ID);
-    if (thisuser.role !== "Local Guide") {
+    if (thisuser.role !== "LocalGuide") {
       return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
     }
     if (typeof req.body.gpx !== "string") {
@@ -460,38 +460,42 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
       res.status(422).json("Error: the gpx file is empty!"); //UNPROCESSABLE
     }
 
-    const result1 = await db.addNewHike(
+
+    const hike_ID = await db.addNewHike(
       req.body.hike,
       req.body.gpx,
       req.user.ID
     );
-    console.log("res1 - ", result1);
+
+    console.log("res1 - ", hike_ID);
     const result2 = await db.addNewLocation(
       req.body.startp,
       "start",
-      result1,
+      hike_ID,
       req.body.gpx
     );
     console.log("res2 - ", result2);
     const result3 = await db.addNewLocation(
       req.body.endp,
       "end",
-      result1,
+      hike_ID,
       req.body.gpx
     );
     console.log("res3 - ", result3);
-    const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
+    var gpx_path  = await saveHikeGpx(req.body.gpx, hike_ID)
+    const result4 = await db.addNewHikeGPX(gpx_path, hike_ID);
     console.log("res4 - ", result4);
 
-    const imagePath = await saveHikeImage(
-      req.body.image_base_64,
-      result1,
-      "cover"
-    );
+    if(req.body.image_base_64 != undefined){
+      const imagePath = await saveHikeImage(
+        req.body.image_base_64,
+        hike_ID,
+        "cover"
+      );
+      await db.addNewHikeImage(imagePath, hike_ID, "cover");
+    }
 
-    await db.addNewHikeImage(imagePath, result1, "cover");
-
-    res.status(201).json("Hike " + result1 + " correctly created!");
+    res.status(201).json("Hike " + hike_ID + " correctly created!");
   } catch (err) {
     console.error(err);
     res.status(503).json(err);
@@ -505,7 +509,7 @@ app.post(
   async (req, res) => {
     try {
       let thisuser = await db.getUserByID(req.user.ID);
-      if (thisuser.role !== "Local Guide") {
+      if (thisuser.role !== "LocalGuide") {
         return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
       }
       const result5 = await db.addGpx(req.body.gpx);
@@ -849,6 +853,20 @@ const saveHikeImage = async function (imageBase64, hike_ID, type) {
   await sharp(image).resize(1000).png({ quality: 90 }).toFile(path);
 
   console.log("image saved as" + path);
+  return path;
+};
+
+const saveHikeGpx = async function (gpx, hike_ID) {
+  const path =
+    "./assets/gpx/" +
+    hike_ID +
+    "_" +
+    generateRandomString(16) +
+    ".gpx";
+
+  await fs.promises.writeFile(path, gpx)
+
+  console.log("gpx saved as" + path);
   return path;
 };
 

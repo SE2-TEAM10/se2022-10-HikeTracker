@@ -359,16 +359,25 @@ class Database {
             }
           });
 
-          const promises = array.map(async (h) => {
+          var promises = array.map(async (h) => {
             return this.getCoverImageByHikeID(h.ID);
           });
-          const results = await Promise.all(promises);
+          var results = await Promise.all(promises);
 
           array.forEach((element, index) => {
             array[index] = {
               ...element,
               coverUrl: results[index],
             };
+          });
+
+          promises = array.map(async (h) => {
+            return fs.promises.readFile(h.gpx, 'utf8')
+          });
+          results = await Promise.all(promises);
+
+          array.forEach((element, index) => {
+            array[index].gpx = results[index]
           });
 
           return resolve(array);
@@ -401,7 +410,7 @@ class Database {
   getGpxByHikeID = (hike_ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike_gpx WHERE hike_ID = ?";
-      this.db.all(sql, [hike_ID], function (err, rows) {
+      this.db.all(sql, [hike_ID], async function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
       });
@@ -823,17 +832,17 @@ class Database {
     });
   };
 
-  addNewHikeGPX = (gpx_string, hike_ID) => {
+  addNewHikeGPX = (gpx_path, hike_ID) => {
     return new Promise((resolve, reject) => {
       try {
-        if (typeof gpx_string !== "string" || typeof hike_ID !== "number") {
+        if (typeof gpx_path !== "string" || typeof hike_ID !== "number") {
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
       const sql = "INSERT INTO hike_gpx(gpx,hike_ID) VALUES(?,?)";
-      this.db.run(sql, [gpx_string, hike_ID], function (err) {
+      this.db.run(sql, [gpx_path, hike_ID], function (err) {
         if (err) reject(err);
         else resolve(this.lastID);
       });
