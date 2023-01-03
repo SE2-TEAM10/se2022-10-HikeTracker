@@ -14,6 +14,7 @@ class HikeDetail extends StatefulWidget {
   const HikeDetail({
     required this.client,
     required this.hikeID,
+    required this.onHikeStart,
     this.user,
     super.key,
   });
@@ -21,6 +22,7 @@ class HikeDetail extends StatefulWidget {
   final RestClient client;
   final int hikeID;
   final User? user;
+  final Function onHikeStart;
 
   @override
   State<HikeDetail> createState() => _HikeDetailState();
@@ -46,6 +48,7 @@ class _HikeDetailState extends State<HikeDetail> {
           client: widget.client,
           hike: snapshot.hasData ? Hike.fromJson(snapshot.data!.body) : null,
           gpx: snapshot.hasData ? jsonDecode(snapshot.data!.body)['gpx'] : null,
+          onHikeStart: widget.onHikeStart,
         );
       },
     );
@@ -57,6 +60,7 @@ class HikeDetailContent extends StatelessWidget {
     required this.client,
     required this.hike,
     required this.gpx,
+    required this.onHikeStart,
     this.user,
     super.key,
   });
@@ -65,6 +69,7 @@ class HikeDetailContent extends StatelessWidget {
   final RestClient client;
   final String? gpx;
   final Hike? hike;
+  final Function onHikeStart;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +91,7 @@ class HikeDetailContent extends StatelessWidget {
               isMine: user?.ID == hike!.userId,
               client: client,
               user: user,
+              onHikeStart: onHikeStart,
             )
           : const Center(
               child: CircularProgressIndicator(),

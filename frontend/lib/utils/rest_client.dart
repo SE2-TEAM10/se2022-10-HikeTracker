@@ -70,9 +70,10 @@ class RestClient {
 
     return Requests.put(
       '$e$api',
-      json: true,
+      body: body,
       withCredentials: true,
-      body: jsonEncode(body),
+      verify: false,
+      persistCookies: false,
     );
   }
 }

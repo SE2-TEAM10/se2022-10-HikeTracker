@@ -14,6 +14,7 @@ class Details extends StatelessWidget {
     required this.hike,
     required this.client,
     required this.user,
+    required this.onHikeStart,
     this.isMine = false,
     super.key,
   });
@@ -22,6 +23,7 @@ class Details extends StatelessWidget {
   final bool isMine;
   final User? user;
   final RestClient client;
+  final Function onHikeStart;
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +69,8 @@ class Details extends StatelessWidget {
               ),
               if (user != null && user!.role == UserRole.Hiker)
                 OutlinedButton.icon(
-                  onPressed: () {
-                    client.post(
+                  onPressed: () async {
+                    await client.post(
                       api: 'addSchedule',
                       body: {
                         'start_time': DateFormat('yyyy-MM-dd HH:mm')
@@ -76,6 +78,7 @@ class Details extends StatelessWidget {
                         'hike_ID': hike.id,
                       },
                     );
+                    onHikeStart.call();
                   },
                   icon: const Icon(Icons.flag_outlined),
                   label: const Padding(

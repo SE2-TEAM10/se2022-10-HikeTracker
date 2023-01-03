@@ -577,7 +577,7 @@ app.put("/api/updateSchedule", async (req, res) => {
     const schedule = await db.getScheduleByID(req.body.ID);
     let duration = calculateDuration(schedule.start_time, req.body.end_time);
 
-    const result = await db.updateSchedule(req.body.ID, req.body.end_time, duration);
+    const result = await db.updateSchedule(Number(req.body.ID), req.body.end_time, duration);
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
@@ -600,7 +600,8 @@ app.put("/api/updateRefReached", async (req, res) => {
   }
 });
 
-app.get("/api/getOnGoingHike", async (req, res) => {
+app.get("/api/getOnGoingHike",
+isLoggedIn, async (req, res) => {
   await db
     .getOnGoingHikeByUserID(req.user.ID)
     .then((lists) => {

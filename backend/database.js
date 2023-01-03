@@ -567,7 +567,7 @@ class Database {
 
   getOnGoingHikeByUserID = (user_ID) => {
     return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM hike_schedule WHERE user_ID=? AND status = 'on going'";
+      const sql = "SELECT hike_schedule.ID as hike_schedule_id, hike.ID as hike_ID, hike.name FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE hike_schedule.user_ID=? AND hike_schedule.status = 'on going'";
       this.db.get(sql, [user_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);

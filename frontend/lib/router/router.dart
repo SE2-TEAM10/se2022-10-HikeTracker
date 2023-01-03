@@ -2,6 +2,7 @@ import 'package:HikeTracker/common/main_scaffold.dart';
 import 'package:HikeTracker/common/sub_scaffold.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/hikes/hike_detail/hike_detail_page.dart';
+import 'package:HikeTracker/pages/hiking/hiking.dart';
 import 'package:HikeTracker/pages/pages.dart';
 import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
@@ -14,9 +15,35 @@ GoRouter getRouter({
   required User? currentUser,
   required Function onLogged,
   required Function onThemeChanged,
+  required Function onHikeStart,
+  required bool hikeOnGoing,
 }) {
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
   final _mainShellNavigatorKey = GlobalKey<NavigatorState>();
+
+  if (currentUser != null && hikeOnGoing) {
+    return GoRouter(
+      initialLocation: HIKING,
+      routes: [
+        GoRoute(
+          path: HIKING,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return NoTransitionPage(
+              child: Hiking(
+                client: client,
+                user: currentUser,
+                onHikeStart: onHikeStart,
+              ),
+            );
+          },
+        ),
+      ],
+      redirect: (context, state) {
+        return HIKING;
+      },
+    );
+  }
+
   return GoRouter(
     initialLocation: HIKES,
     navigatorKey: _rootNavigatorKey,
@@ -51,6 +78,7 @@ GoRouter getRouter({
                     client: client,
                     hikeID: int.tryParse(state.params['hikeID'] ?? '0') ?? 0,
                     user: currentUser,
+                    onHikeStart: onHikeStart,
                   ),
                 ),
               ),

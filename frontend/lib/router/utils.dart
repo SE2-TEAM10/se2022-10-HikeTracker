@@ -15,6 +15,7 @@ const PARKING_ADD = '/parking/add';
 const REFERENCE_POINT_ADD = '/referencePoint/add';
 const HUTS = '/huts';
 const COMPLETED_HIKES = '/completedHikes';
+const HIKING = '/hiking';
 
 class Route {
   Route({
