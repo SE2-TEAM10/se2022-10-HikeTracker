@@ -92,36 +92,19 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-/*function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  let R = 6371; // Radius of the earth in km
-  let dLat = deg2rad(lat2-lat1);  // deg2rad below
-  let dLon = deg2rad(lon2-lon1);
-  let a =
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-  ;
-  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  let d = R * c; // Distance in km
-  return d;
-}
-
-function deg2rad(deg) {
-  return deg * (Math.PI/180)
-}*/
 
 //This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  var R = 6371; // km
-  var dLat = toRad(lat2 - lat1);
-  var dLon = toRad(lon2 - lon1);
-  var lat1 = toRad(lat1);
-  var lat2 = toRad(lat2);
+  let R = 6371; // km
+  let dLat = toRad(lat2 - lat1);
+  let dLon = toRad(lon2 - lon1);
+  let lat1 = toRad(lat1);
+  let lat2 = toRad(lat2);
 
-  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+  let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var d = R * c;
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  let d = R * c;
   return d;
 }
 
@@ -241,36 +224,6 @@ app.get("/api/hike", async (req, res) => {
     });
 });
 
-/* app.get("/api/distance", async (req, res) => {
-
-  let parking = [];
-  try {
-    let array = await db.getCoordinatesHike();
-    await db.getCoordinatesParking().then((coordinates) => {
-      coordinates.map((row) => {
-          let distance = getDistanceFromLatLonInKm(44.699197, 7.156556, row.latitude, row.longitude);
-          if (distance < 45) {
-            console.log("DISTANCE", distance);
-            parking.push({
-              name: row.name,
-              capacity: row.capacity,
-              latitude: row.latitude,
-              longitude: row.longitude,
-              city: row.city,
-              province: row.province,
-              distanceFromPoint: distance,
-            })
-            return parking;
-          }
-        })
-
-      });
-      res.json(parking);
-  } catch (err) {
-    console.error(err);
-    res.status(503).json(err);
-  }
-}); */
 
 app.get(
   "/api/hikesdetails/:hike_ID",
@@ -378,27 +331,6 @@ app.get("/api/completedHike", async (req, res) => {
     });
 });
 
-/*
-app.get("/api/completedHike", async (req, res) => {
-  await db
-    .getCompletedHikeWithFilters(req.user.ID)
-    .then((lists) => {
-      lists.map((row) => {
-        if (row.location !== null && !Array.isArray(row.location))
-          row.location = [row.location];
-        return row;
-      });
-      res.json(lists);
-    })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(500)
-        .json({ error: `Database error while retrieving hike` })
-        .end();
-    });
-});
-*/
 
 //api get parking from hike_ID
 app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
@@ -482,7 +414,7 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
       req.body.gpx
     );
     console.log("res3 - ", result3);
-    var gpx_path = await saveHikeGpx(req.body.gpx, hike_ID)
+    let gpx_path = await saveHikeGpx(req.body.gpx, hike_ID)
     const result4 = await db.addNewHikeGPX(gpx_path, hike_ID);
     console.log("res4 - ", result4);
 
