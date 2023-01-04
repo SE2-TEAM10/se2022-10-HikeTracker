@@ -454,9 +454,9 @@ app.post(
   }
 );
 
-app.get("/api/getReferencePointByHike", async (req, res) => {
+app.get("/api/getReferencePointByHike/:hike_ID", async (req, res) => {
   await db
-    .getReferencePointByHike(req.body.hike_ID)
+    .getReferencePointByHike(req.params.hike_ID)
     .then((lists) => {
       res.json(lists);
     })
