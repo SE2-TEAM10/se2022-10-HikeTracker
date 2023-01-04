@@ -756,16 +756,6 @@ const sendEmail = async (email, subject, text) => {
   });
 };
 
-/* const getLinkUser = async (req,res) => {
-  // check if a user is a local guide or a hut worker
-  const user_res = await db.getLinkUser(req.body.hike_ID);
-  console.log("USER ID :", req.user.ID);
-  if (user_res !== req.user.ID) {
-    res.status(422).json("User and hike not linked");
-  } else if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
-    res.status(422).json("User isnt't a local guide or a hut worker");
-  }
-}; */
 
 app.get("/api/locationToLinkHutOrParking", async (req, res) => {
   try {
