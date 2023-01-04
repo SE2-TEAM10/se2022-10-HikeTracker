@@ -88,7 +88,7 @@ class _AddReferencePoint extends State<AddReferencePoint> {
             ) =>
             onSubmit(
               newReferencePoint: newReferencePoint,
-            ),
+            ), client: widget.client,
       ),
     );
   }

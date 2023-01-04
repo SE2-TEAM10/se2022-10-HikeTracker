@@ -105,7 +105,7 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
     index: 4,
     label: 'Add Reference Point',
     path: REFERENCE_POINT_ADD,
-    icon: Icons.local_parking,
+    icon: Icons.add_location_alt,
   ),
   Route(
     index: 5,
