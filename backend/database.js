@@ -1250,6 +1250,19 @@ class Database {
     });
   };
 
+  getReferencePointOfScheduledHike = (hike_ID,user_ID) => {
+    return new Promise((resolve, reject) => {
+      console.log(user_ID);
+      const sql = "SELECT *\n" +
+        "FROM ref_reached INNER JOIN reference_point ON ref_reached.ref_ID = reference_point.ID\n" +
+        "WHERE hike_ID = ? AND ref_reached.user_ID = ?";
+      this.db.all(sql, [hike_ID, user_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
 
   /*HT-8 - GET ALL PARKING LOTS*/
   getAllParkings = () => {

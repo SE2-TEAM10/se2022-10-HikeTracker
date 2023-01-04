@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:HikeTracker/common/two_columns_layout.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/pages/hiking/widget/reference_points.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -43,41 +45,46 @@ class _HikingState extends State<Hiking> {
           }
           if (snapshot.hasData) {
             final data = jsonDecode(snapshot.data!.body);
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('You are currently hiking on: ${data['name']}'),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: () async {
-                      await widget.client.put(
-                        api: 'updateSchedule',
-                        body: {
-                          'end_time': DateFormat('yyyy-MM-dd HH:mm')
-                              .format(DateTime.now()),
-                          'ID': data['hike_schedule_id'],
+            return TwoColumnsLayout(
+                leftChild: RefPointTable(
+                  client: widget.client,
+                  hike: data['hike_schedule_id'],
+                ),
+                rightChild: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('You are currently hiking on: ${data['name']}'),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () async {
+                          await widget.client.put(
+                            api: 'updateSchedule',
+                            body: {
+                              'end_time': DateFormat('yyyy-MM-dd HH:mm')
+                                  .format(DateTime.now()),
+                              'ID': data['hike_schedule_id'],
+                            },
+                          );
+                          widget.onHikeStart();
                         },
-                      );
-                      widget.onHikeStart();
-                    },
-                    icon: const Icon(Icons.flag_outlined),
-                    label: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Complete hike',
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
+                        icon: const Icon(Icons.flag_outlined),
+                        label: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Complete hike',
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            );
+                ));
           }
           return Container();
         },
