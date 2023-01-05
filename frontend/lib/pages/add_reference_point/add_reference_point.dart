@@ -131,7 +131,12 @@ class _AddReferencePoint extends State<AddReferencePoint> {
       api: 'addReferencePoint',
     );
 
-    if (res.statusCode == 201) {
+    final res1 = await widget.client.post(
+      body: newReferencePoint.toMap(),
+      api: 'linkReferencePoint',
+    );
+
+    if (res.statusCode == 201 && res1.statusCode == 201) {
       Message(
         context: context,
         message: 'Reference Point added successfully.',
@@ -150,5 +155,6 @@ class _AddReferencePoint extends State<AddReferencePoint> {
         messageType: MessageType.Error,
       ).show();
     }
+
   }
 }
