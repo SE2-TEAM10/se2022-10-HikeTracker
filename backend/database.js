@@ -1252,7 +1252,6 @@ class Database {
 
   getReferencePointOfScheduledHike = (hike_ID,user_ID) => {
     return new Promise((resolve, reject) => {
-      console.log(user_ID);
       const sql = "SELECT *\n" +
         "FROM ref_reached INNER JOIN reference_point ON ref_reached.ref_ID = reference_point.ID\n" +
         "WHERE hike_ID = ? AND ref_reached.user_ID = ?";
@@ -1333,6 +1332,9 @@ class Database {
           typeof user_ID !== 'number' ||
           typeof ref_ID !== 'number'
         ) {
+          console.log(typeof hike_ID  +
+          typeof user_ID  +
+          typeof ref_ID )
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {

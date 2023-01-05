@@ -33,6 +33,15 @@ class _RefPointTableState extends State<RefPointTable> {
     super.initState();
   }
 
+  Future<void> onSubmit(
+    int refID,
+  ) async {
+    final res = await widget.client.put(api: 'updateRefReached', body: {
+      'hike_ID': widget.hike,
+      'ref_ID': refID,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -58,17 +67,13 @@ class _RefPointTableState extends State<RefPointTable> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisSpacing: 32,
               mainAxisSpacing: 32,
-              crossAxisCount: context.isMobile
-                  ? 1
-                  : context.isLaptop
-                      ? 2
-                      : 3,
+              crossAxisCount: 1,
             ),
             itemCount: points.results?.length ?? 0,
             itemBuilder: (context, index) => PointCard(
               user: widget.user,
               point: points.results![index],
-              onTap: () => {},
+              onTap: onSubmit,
             ),
           );
         }

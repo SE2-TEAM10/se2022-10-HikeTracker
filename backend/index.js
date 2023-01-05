@@ -524,7 +524,8 @@ app.put("/api/updateRefReached", async (req, res) => {
       return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
     }
 
-    const result = await db.updateRefReached(req.body.hike_ID, req.body.user_ID, req.body.ref_ID);
+    const result = await db.updateRefReached(req.body.hike_ID, req.user.ID, req.body.ref_ID);
+    
     res.status(200).json("Reference point " + req.body.ref_ID + " reached!");
   } catch (err) {
     console.error(err);

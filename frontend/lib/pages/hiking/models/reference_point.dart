@@ -5,11 +5,15 @@ class ReferencePoint {
     required this.id,
     required this.name,
     required this.type,
+    required this.city,
+    required this.state,
   });
 
   final int id;
   final String type;
   final String name;
+  final String city;
+  final bool state;
 
   static ReferencePoint fromJson(String jsonString) {
     final res = jsonDecode(jsonString);
@@ -17,7 +21,9 @@ class ReferencePoint {
     return ReferencePoint(
       id: res['ref_ID'] ?? 0,
       name: res['name'] ?? 'NA',
-      type: res['ref_type'] ?? 'NA',
+      type: res['type'] ?? 'NA',
+      city: res['city'] ?? 'NA',
+      state: res['state'] == 0 ? false : true,
     );
   }
 /*
