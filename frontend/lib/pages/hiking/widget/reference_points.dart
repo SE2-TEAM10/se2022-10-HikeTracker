@@ -36,10 +36,13 @@ class _RefPointTableState extends State<RefPointTable> {
   Future<void> onSubmit(
     int refID,
   ) async {
-    final res = await widget.client.put(api: 'updateRefReached', body: {
-      'hike_ID': widget.hike,
-      'ref_ID': refID,
-    });
+    final res = await widget.client.put(
+      api: 'updateRefReached',
+      body: {
+        'hike_ID': widget.hike,
+        'ref_ID': refID,
+      },
+    );
   }
 
   @override

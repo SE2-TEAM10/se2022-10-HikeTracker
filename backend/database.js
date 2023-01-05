@@ -1332,9 +1332,6 @@ class Database {
           typeof user_ID !== 'number' ||
           typeof ref_ID !== 'number'
         ) {
-          console.log(typeof hike_ID  +
-          typeof user_ID  +
-          typeof ref_ID )
           return reject(422); // 422 - UNPROCESSABLE
         }
       } catch (e) {
