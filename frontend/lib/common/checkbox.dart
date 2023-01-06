@@ -1,42 +1,33 @@
 import 'package:flutter/material.dart';
 
-class CustomCheckbox extends StatefulWidget {
+class CustomCheckbox extends StatelessWidget {
   const CustomCheckbox({
-    this.onChange,
-    this.disabled = false,
+    required this.checked,
     super.key,
-    this.startingState,
   });
 
-  final void Function()? onChange;
-  final bool disabled;
-  final startingState;
-
-  @override
-  State<CustomCheckbox> createState() => _CustomCheckbox();
-}
-
-class _CustomCheckbox extends State<CustomCheckbox> {
-  late bool state;
-
-  @override
-  void initState() {
-    state = widget.startingState ?? false;
-    super.initState();
-  }
+  final bool checked;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Checkbox(
-        value: state,
-        onChanged: (value) {
-          widget.onChange!();
-          setState(() {
-            state = true;
-          });
-        },
+      child: Container(
+        height: 32,
+        width: 32,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(32)),
+          border: Border.all(
+            width: 2,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
+        child: checked
+            ? Icon(
+                Icons.check,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              )
+            : Container(),
       ),
     );
   }

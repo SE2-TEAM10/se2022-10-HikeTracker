@@ -1,8 +1,12 @@
 import 'dart:convert';
 
+import 'package:HikeTracker/common/main_scaffold.dart';
 import 'package:HikeTracker/common/two_columns_layout.dart';
+import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/user.dart';
+import 'package:HikeTracker/pages/hikes/hike_detail/widget/hike_detail.dart';
 import 'package:HikeTracker/pages/hiking/widget/reference_points.dart';
+import 'package:HikeTracker/router/utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -34,8 +38,11 @@ class _HikingState extends State<Hiking> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
+    return MainScaffold(
+      currentPath: HIKING,
+      currentUser: widget.user,
+      onThemeChanged: () => {},
+      child: FutureBuilder(
         future: future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -46,45 +53,75 @@ class _HikingState extends State<Hiking> {
           if (snapshot.hasData) {
             final data = jsonDecode(snapshot.data!.body);
             return TwoColumnsLayout(
-                leftChild: RefPointTable(
-                  client: widget.client,
-                  hike: data['hike_schedule_id'],
+              leftChild: RefPointTable(
+                client: widget.client,
+                hikeSchedule: data['hike_schedule_id'],
+                hikeID: data['hike_ID'],
+              ),
+              rightChild: FutureBuilder(
+                future: widget.client.get(
+                  api: 'hikesdetails/${data['hike_ID']}',
                 ),
-                rightChild: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('You are currently hiking on: ${data['name']}'),
-                      const SizedBox(
-                        height: 16,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        snapshot.error.toString(),
                       ),
-                      OutlinedButton.icon(
-                        onPressed: () async {
-                          await widget.client.put(
-                            api: 'updateSchedule',
-                            body: {
-                              'end_time': DateFormat('yyyy-MM-dd HH:mm')
-                                  .format(DateTime.now()),
-                              'ID': data['hike_schedule_id'],
-                            },
-                          );
-                          widget.onHikeStart();
-                        },
-                        icon: const Icon(Icons.flag_outlined),
-                        label: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Complete hike',
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    final hike = Hike.fromJson(snapshot.data!.body);
+
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        Details(
+                          hike: hike,
+                          isMine: widget.user.ID == hike.userId,
+                          client: widget.client,
+                          user: widget.user,
+                        ),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                await widget.client.put(
+                                  api: 'updateSchedule',
+                                  body: {
+                                    'end_time': DateFormat('yyyy-MM-dd HH:mm')
+                                        .format(DateTime.now()),
+                                    'ID': data['hike_schedule_id'],
+                                  },
+                                );
+                                widget.onHikeStart();
+                              },
+                              icon: const Icon(Icons.flag_outlined),
+                              label: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Complete hike',
+                                  style: TextStyle(
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ));
+                      ],
+                    );
+                  }
+                  return Container();
+                },
+              ),
+            );
           }
           return Container();
         },

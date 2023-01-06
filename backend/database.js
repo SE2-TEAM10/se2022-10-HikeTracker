@@ -954,6 +954,34 @@ class Database {
     });
   };
 
+  cleanRefReached = (hike_ID, user_ID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike_ID !== "number" ||
+          typeof user_ID !== "number"
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql =
+        "DELETE from ref_reached WHERE hike_ID = ? AND user_ID = ?";
+      this.db.run(
+        sql,
+        [
+          hike_ID,
+          user_ID,
+        ],
+        function (err) {
+          if (err) reject(err);
+          else resolve(true);
+        }
+      );
+    });
+  };
+
   addUser = (user) => {
     return new Promise((resolve, reject) => {
       try {
@@ -1382,8 +1410,8 @@ class Database {
         if (
           typeof hike_ID !== 'number' ||
           typeof user_ID !== 'number' ||
-          typeof ref_ID !== 'number' ||
-          typeof ref_type !== 'string'
+          typeof ref_ID !== 'number' //||
+          //typeof ref_type !== 'string'
         ) {
           return reject(422); // 422 - UNPROCESSABLE
         }
@@ -1392,7 +1420,7 @@ class Database {
       }
       const sql = "INSERT INTO hike_user_ref(hike_ID, user_ID, ref_ID, ref_type) VALUES(?,?,?,?)";
       this.db.run(
-        sql, [hike_ID, user_ID, ref_ID, ref_type], function (err) {
+        sql, [hike_ID, user_ID, ref_ID, "point"], function (err) {
           if (err) reject(err);
           else {
             resolve(true);

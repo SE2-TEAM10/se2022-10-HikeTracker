@@ -18,23 +18,23 @@ class NewReferencePoint {
   final String? longitude;
 
   Map<String, dynamic> toMap() => {
-    'name': name,
-    'type': type,
-    'hike_id': hike_ID,
-    'latitude': double.parse(latitude!),
-    'longitude': double.parse(longitude!),
-    'city': city,
-    'province': province,
-  };
+        'name': name,
+        'type': type,
+        'hike_id': hike_ID,
+        'latitude': double.parse(latitude!),
+        'longitude': double.parse(longitude!),
+        'city': city,
+        'province': province,
+      };
 
   bool isFull() =>
       name != null &&
-          city != null &&
-          hike_ID != null &&
-          province != null &&
-          type != null &&
-          latitude != null &&
-          longitude != null;
+      city != null &&
+      hike_ID != null &&
+      province != null &&
+      type != null &&
+      latitude != null &&
+      longitude != null;
 
   NewReferencePoint copyWith({
     String? name,

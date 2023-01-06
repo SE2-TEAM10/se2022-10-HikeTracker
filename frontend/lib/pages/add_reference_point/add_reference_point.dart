@@ -34,63 +34,64 @@ class _AddReferencePoint extends State<AddReferencePoint> {
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(
-      child: CircularProgressIndicator(),
-    )
-        : TwoColumnsLayout(
-      leftFlex: 2,
-      rightFlex: 3,
-      leftChild: Stack(
-        children: [
-          Positioned.fill(
-            child: MapBanner(
-              client: widget.client,
-              mapBorders: mapBorders,
-              onTap: (value) {
-                setState(() {
-                  selectedCoordinate = value;
-                });
-              },
-              selectedCoordinates: selectedCoordinate != null
-                  ? [selectedCoordinate!]
-                  : null,
-            ),
-          ),
-          Positioned(
-            top: 32,
-            left: 32,
-            right: 32,
-            child: Card(
-              color: Theme.of(context).colorScheme.surfaceVariant,
-              child: CityInputField(
-                client: widget.client,
-                onProvinceChange: (province) => {
-                  setState(() {
-                    selectedProvince = province;
-                  })
-                },
-                onCityChange: (city) async {
-                  final b = await getBorders(city);
-                  setState(() {
-                    mapBorders = b;
-                  });
-                  setState(() {
-                    selectedCity = city;
-                  });
-                },
-              ),
-            ),
+            child: CircularProgressIndicator(),
           )
-        ],
-      ),
-      rightChild: AddReferencePointForm(
-        onSubmit: (
-            newReferencePoint,
-            ) =>
-            onSubmit(
-              newReferencePoint: newReferencePoint,
-            ), client: widget.client,
-      ),
-    );
+        : TwoColumnsLayout(
+            leftFlex: 2,
+            rightFlex: 3,
+            leftChild: Stack(
+              children: [
+                Positioned.fill(
+                  child: MapBanner(
+                    client: widget.client,
+                    mapBorders: mapBorders,
+                    onTap: (value) {
+                      setState(() {
+                        selectedCoordinate = value;
+                      });
+                    },
+                    selectedCoordinates: selectedCoordinate != null
+                        ? [selectedCoordinate!]
+                        : null,
+                  ),
+                ),
+                Positioned(
+                  top: 32,
+                  left: 32,
+                  right: 32,
+                  child: Card(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    child: CityInputField(
+                      client: widget.client,
+                      onProvinceChange: (province) => {
+                        setState(() {
+                          selectedProvince = province;
+                        })
+                      },
+                      onCityChange: (city) async {
+                        final b = await getBorders(city);
+                        setState(() {
+                          mapBorders = b;
+                        });
+                        setState(() {
+                          selectedCity = city;
+                        });
+                      },
+                    ),
+                  ),
+                )
+              ],
+            ),
+            rightChild: AddReferencePointForm(
+              onSubmit: (
+                newReferencePoint,
+              ) =>
+                  onSubmit(
+                newReferencePoint: newReferencePoint,
+              ),
+              client: widget.client,
+            ),
+          );
   }
 
   Future<MapBorders> getBorders(City city) async {
@@ -118,7 +119,7 @@ class _AddReferencePoint extends State<AddReferencePoint> {
       province: selectedProvince!.name,
     );
 
-    if (newReferencePoint.isFull() == false) {
+    if (!newReferencePoint.isFull()) {
       Message(
         context: context,
         message: 'Fill all the fields',
@@ -132,7 +133,10 @@ class _AddReferencePoint extends State<AddReferencePoint> {
     );
 
     final res1 = await widget.client.post(
-      body: newReferencePoint.toMap(),
+      body: {
+        ...newReferencePoint.toMap(),
+        'ref_ID': res.body,
+      },
       api: 'linkReferencePoint',
     );
 
@@ -155,6 +159,5 @@ class _AddReferencePoint extends State<AddReferencePoint> {
         messageType: MessageType.Error,
       ).show();
     }
-
   }
 }

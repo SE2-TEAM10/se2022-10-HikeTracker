@@ -1,7 +1,6 @@
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/hiking/models/reference_point.dart';
 import 'package:HikeTracker/pages/hiking/widget/point_card.dart';
-import 'package:HikeTracker/utils/layout_utils.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -9,14 +8,16 @@ import 'package:http/http.dart';
 class RefPointTable extends StatefulWidget {
   const RefPointTable({
     required this.client,
-    required this.hike,
+    required this.hikeSchedule,
+    required this.hikeID,
     this.user,
     super.key,
   });
 
   final RestClient client;
   final User? user;
-  final int hike;
+  final int hikeSchedule;
+  final int hikeID;
 
   @override
   State<RefPointTable> createState() => _RefPointTableState();
@@ -28,7 +29,7 @@ class _RefPointTableState extends State<RefPointTable> {
   @override
   void initState() {
     future = widget.client.get(
-      api: 'getReferencePointByHike/${widget.hike}',
+      api: 'getReferencePointByHike/${widget.hikeID}',
     );
     super.initState();
   }
@@ -36,13 +37,18 @@ class _RefPointTableState extends State<RefPointTable> {
   Future<void> onSubmit(
     int refID,
   ) async {
-    final res = await widget.client.put(
+    await widget.client.put(
       api: 'updateRefReached',
       body: {
-        'hike_ID': widget.hike,
+        'hike_ID': widget.hikeID,
         'ref_ID': refID,
       },
     );
+    setState(() {
+      future = widget.client.get(
+        api: 'getReferencePointByHike/${widget.hikeID}',
+      );
+    });
   }
 
   @override
@@ -57,26 +63,19 @@ class _RefPointTableState extends State<RefPointTable> {
         }
         if (snapshot.hasData) {
           final points = ReferencePoints.fromJson(snapshot.data!.body);
-          return GridView.builder(
-            padding: context.isMobile
-                ? const EdgeInsets.symmetric(
-                    vertical: 16.0,
-                    horizontal: 16.0,
-                  )
-                : const EdgeInsets.symmetric(
-                    vertical: 80.0,
-                    horizontal: 64.0,
-                  ),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisSpacing: 32,
-              mainAxisSpacing: 32,
-              crossAxisCount: 1,
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
             ),
             itemCount: points.results?.length ?? 0,
-            itemBuilder: (context, index) => PointCard(
-              user: widget.user,
-              point: points.results![index],
-              onTap: onSubmit,
+            itemBuilder: (context, index) => Padding(
+              padding: EdgeInsets.only(top: index == 0 ? 64 : 16.0),
+              child: PointCard(
+                user: widget.user,
+                point: points.results![index],
+                onTap: () => onSubmit.call(points.results![index].id),
+              ),
             ),
           );
         }

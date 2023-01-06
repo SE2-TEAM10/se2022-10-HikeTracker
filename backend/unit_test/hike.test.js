@@ -737,7 +737,7 @@ describe.only('hikeController Tests', () => {
             let reqbody = {
                 hike_ID: 1,
                 ref_ID: 2,
-                ref_type: "test_point_parking"
+                ref_type: "point"
             };
 
             await hikeController.deleteHikeUserReferencePoint(1, 1, 2);
@@ -760,7 +760,7 @@ describe.only('hikeController Tests', () => {
             let reqbody = {
                 hike_ID: "hike_ID",
                 ref_ID: "ref_ID",
-                ref_type: "test_point_parking"
+                ref_type: "point"
             };
 
             const user_ID = 1;

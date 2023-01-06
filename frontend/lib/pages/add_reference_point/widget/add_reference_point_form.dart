@@ -1,14 +1,10 @@
 import 'package:HikeTracker/common/input_field.dart';
+import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/pages/add_reference_point/models/new_reference.dart';
 import 'package:HikeTracker/utils/layout_utils.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart';
 import 'package:HikeTracker/utils/rest_client.dart';
-import 'package:HikeTracker/models/hike.dart';
-
-
-import '../../add_hike/models/new_hike.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class AddReferencePointForm extends StatefulWidget {
   const AddReferencePointForm({
@@ -26,20 +22,12 @@ class AddReferencePointForm extends StatefulWidget {
 
 class _AddReferencePointFormState extends State<AddReferencePointForm> {
   late NewReferencePoint referencePoint;
-  late NewHike hike;
-  final List<String> difficulties = ['T', 'PH', 'H'];
   late Future<Response> future;
   String? gpxContent;
 
   @override
   void initState() {
     referencePoint = NewReferencePoint();
-    hike = NewHike(
-      hh: '00',
-      mm: '00',
-      startp: NewLocation(),
-      endp: NewLocation(),
-    );
     future = widget.client.get(
       api: 'hike',
     );
@@ -48,11 +36,9 @@ class _AddReferencePointFormState extends State<AddReferencePointForm> {
 
   @override
   Widget build(BuildContext context) {
-
     return FutureBuilder(
       future: future,
-      builder: (context, snapshot)
-      {
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Expanded(
             child: Center(
@@ -62,14 +48,10 @@ class _AddReferencePointFormState extends State<AddReferencePointForm> {
         }
 
         if (snapshot.hasData) {
-          final hikes = Hikes
-              .fromJson(snapshot.data!.body)
-              .results;
-
-          final hike_name = hikes
-              ?.map((e) => e.id)
-              .toSet()
-              .toList();
+          final hikes = Hikes.fromJson(snapshot.data!.body).results!
+            ..sort(
+              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+            );
 
           return Padding(
             padding: EdgeInsets.symmetric(
@@ -89,94 +71,77 @@ class _AddReferencePointFormState extends State<AddReferencePointForm> {
                 const SizedBox(
                   height: 32,
                 ),
+                Text(
+                  'Choose hike: ',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Theme.of(context).colorScheme.outline,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 8.0,
+                ),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                    ),
+                    child: DropdownButton(
+                      value: referencePoint.hike_ID != null
+                          ? hikes.firstWhere(
+                              (h) => h.id.toString() == referencePoint.hike_ID,
+                            )
+                          : null,
+                      icon: const Icon(Icons.arrow_drop_down),
+                      elevation: 16,
+                      underline: const SizedBox(),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          referencePoint = referencePoint.copyWith(
+                            hike_ID: value?.id.toString(),
+                          );
+                        });
+                      },
+                      items: hikes
+                          .map(
+                            (Hike h) => DropdownMenuItem(
+                              value: h,
+                              child: Text(h.name.toString()),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 32,
+                ),
                 InputField(
                   label: 'Name',
-                  onChange: (value) =>
-                      setState(
-                            () =>
-                        referencePoint = referencePoint.copyWith(name: value),
-                      ),
+                  onChange: (value) => setState(
+                    () => referencePoint = referencePoint.copyWith(name: value),
+                  ),
                 ),
                 const SizedBox(
                   height: 32,
                 ),
                 InputField(
                   label: 'Type',
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  onChange: (value) =>
-                      setState(
-                            () =>
-                        referencePoint = referencePoint.copyWith(type: value),
-                      ),
-                ),
-                const SizedBox(
-                  height: 32,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                            'Choose hike: ',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 8.0,
-                          ),
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .outline,
-                              ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8.0),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0),
-                              child: DropdownButton(
-                                value: referencePoint.hike_ID,
-                                icon: const Icon(Icons.arrow_drop_down),
-                                elevation: 16,
-                                underline: const SizedBox(),
-                                style: TextStyle(
-                                  color: Theme
-                                      .of(context)
-                                      .colorScheme
-                                      .secondary,
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    //hike = hike.copyWith(name: value);
-                                    referencePoint = referencePoint.copyWith(hike_ID: value);
-                                  });
-                                },
-                                items: hike_name
-                                    ?.map(
-                                      (int value) =>
-                                      DropdownMenuItem<String>(
-                                        value: value.toString(),
-                                        child: Text(value.toString()),
-                                      ),
-                                )
-                                    .toList(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  onChange: (value) => setState(
+                    () => referencePoint = referencePoint.copyWith(type: value),
+                  ),
                 ),
                 const SizedBox(
                   height: 32,
@@ -185,10 +150,9 @@ class _AddReferencePointFormState extends State<AddReferencePointForm> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     OutlinedButton.icon(
-                      onPressed: () =>
-                          widget.onSubmit(
-                            referencePoint,
-                          ),
+                      onPressed: () => widget.onSubmit(
+                        referencePoint,
+                      ),
                       icon: const Icon(Icons.check_rounded),
                       label: const Padding(
                         padding: EdgeInsets.all(8.0),

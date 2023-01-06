@@ -510,6 +510,7 @@ app.put("/api/updateSchedule", async (req, res) => {
     let duration = calculateDuration(schedule.start_time, req.body.end_time);
 
     const result = await db.updateSchedule(Number(req.body.ID), req.body.end_time, duration);
+    await db.cleanRefReached(Number(schedule.hike_ID),Number(req.user.ID))
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
@@ -776,7 +777,7 @@ app.post("/api/linkParking", isLoggedIn, [],
 app.post("/api/linkReferencePoint", isLoggedIn, [],
   async (req, res) => {
     try {
-      const result = await db.addHikeUserRef(req.body.hike_ID, req.user.ID, req.body.ref_ID, req.body.ref_type);
+      const result = await db.addHikeUserRef(Number(req.body.hike_id), req.user.ID, Number(req.body.ref_ID), req.body.ref_type);
       res.status(201).json(result);
     } catch (err) {
       console.error(err);

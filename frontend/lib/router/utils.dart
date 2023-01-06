@@ -103,7 +103,7 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
   ),
   Route(
     index: 4,
-    label: 'Add Reference Point',
+    label: 'Add R.Point',
     path: REFERENCE_POINT_ADD,
     icon: Icons.add_location_alt,
   ),
