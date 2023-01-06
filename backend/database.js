@@ -1302,6 +1302,30 @@ class Database {
     });
   };
 
+    /*HT-8 - GET HUTS LINKED TO THE HIKE*/
+    getHutsLinkedToHike = (hike_ID, user_ID) => {
+      return new Promise((resolve, reject) => {
+        try {
+          if (
+            typeof hike_ID !== 'number' ||
+            typeof user_ID !== 'number'
+          ) {
+            return reject(422); // 422 - UNPROCESSABLE
+          }
+        } catch (e) {
+          return reject(503); // 503 - UNAVAILABLE
+        }
+        const sql = "Select hut.*, hike_user_hut.ref_type from hike_user_hut JOIN hut ON hike_user_hut.hut_ID = hut.ID WHERE hike_user_hut.user_ID = ? AND hike_user_hut.hike_ID = ?";
+        this.db.all(
+          sql, [user_ID, hike_ID], function (err, rows) {
+            if (err) reject(err);
+            else {
+              resolve(rows);
+            }
+          });
+      });
+    };
+
   /*HT-8 - ADD HUT LINKED TO THE HIKE*/
   addHikeUserHut = (hike_ID, user_ID, hut_ID, ref_type) => {
     return new Promise((resolve, reject) => {
@@ -1371,6 +1395,30 @@ class Database {
           if (err) reject(err);
           else {
             resolve(true);
+          }
+        });
+    });
+  };
+
+  /*HT-8 - GET PARKINGS LINKED TO THE HIKE*/
+  getParkingsLinkedToHike = (hike_ID, user_ID) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike_ID !== 'number' ||
+          typeof user_ID !== 'number'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+      const sql = "Select parking_lot.*, hike_user_parking.ref_type from hike_user_parking JOIN parking_lot ON hike_user_parking.parking_ID = parking_lot.ID WHERE hike_user_parking.user_ID = ? AND hike_user_parking.hike_ID = ?";
+      this.db.all(
+        sql, [user_ID, hike_ID], function (err, rows) {
+          if (err) reject(err);
+          else {
+            resolve(rows);
           }
         });
     });

@@ -8,6 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong2/latlong.dart';
 
+class Reference {
+  const Reference({
+    required this.name,
+    required this.coordinates,
+  });
+
+  final String name;
+  final LatLng coordinates;
+}
+
 class MapBanner extends StatefulWidget {
   const MapBanner({
     required this.client,
@@ -19,6 +29,8 @@ class MapBanner extends StatefulWidget {
     this.mapBorders,
     this.isLoading = false,
     this.selectedCoordinates,
+    this.refNearEndingPoint,
+    this.refNearStartingPoint,
     super.key,
   });
 
@@ -31,6 +43,8 @@ class MapBanner extends StatefulWidget {
   final MapBorders? mapBorders;
   final bool isLoading;
   final List<LatLng>? selectedCoordinates;
+  final Reference? refNearStartingPoint;
+  final Reference? refNearEndingPoint;
 
   @override
   State<MapBanner> createState() => _MapBannerState();
@@ -192,6 +206,117 @@ class _MapBannerState extends State<MapBanner> {
                     SelectedCoordinatesMarkerLayer(
                       selectedCoordinates: widget.selectedCoordinates,
                     ),
+                    if (widget.refNearStartingPoint != null)
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: LatLng(
+                              widget.refNearStartingPoint!.coordinates.latitude,
+                              widget
+                                  .refNearStartingPoint!.coordinates.longitude,
+                            ),
+                            width: 64,
+                            height: 64,
+                            builder: (context) => Column(
+                              children: [
+                                Text(
+                                  widget.refNearStartingPoint!.name,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Stack(
+                                  children: [
+                                    Container(
+                                      height: 24,
+                                      width: 24,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                            .withOpacity(0.4),
+                                      ),
+                                    ),
+                                    Positioned.fill(
+                                      child: Center(
+                                        child: Container(
+                                          height: 16,
+                                          width: 16,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (widget.refNearEndingPoint != null)
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: LatLng(
+                              widget.refNearEndingPoint!.coordinates.latitude,
+                              widget.refNearEndingPoint!.coordinates.longitude,
+                            ),
+                            width: 64,
+                            height: 64,
+                            builder: (context) => Column(
+                              children: [
+                                Text(
+                                  widget.refNearEndingPoint!.name,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Stack(
+                                  children: [
+                                    Container(
+                                      height: 24,
+                                      width: 24,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiary
+                                            .withOpacity(0.4),
+                                      ),
+                                    ),
+                                    Positioned.fill(
+                                      child: Center(
+                                        child: Container(
+                                          height: 16,
+                                          width: 16,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     if (widget.onGpxLoaded != null)
                       Positioned(
                         top: 16,

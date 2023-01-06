@@ -751,6 +751,21 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
   }
 });
 
+app.get("/api/linkHut/:hike_ID", isLoggedIn, async (req, res) => {
+  await db
+    .getHutsLinkedToHike(Number(req.params.hike_ID), req.user.ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving huts` })
+        .end();
+    });
+});
+
 app.post("/api/linkHut", isLoggedIn, [],
   async (req, res) => {
     try {
@@ -762,6 +777,21 @@ app.post("/api/linkHut", isLoggedIn, [],
       res.status(503).json(err);
     }
   });
+
+app.get("/api/linkParking/:hike_ID", isLoggedIn, async (req, res) => {
+  await db
+    .getParkingsLinkedToHike(Number(req.params.hike_ID), req.user.ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving parkings` })
+        .end();
+    });
+});
 
 app.post("/api/linkParking", isLoggedIn, [],
   async (req, res) => {
