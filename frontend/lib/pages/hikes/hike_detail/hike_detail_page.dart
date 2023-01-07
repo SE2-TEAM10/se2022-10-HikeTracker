@@ -33,6 +33,7 @@ class _HikeDetailState extends State<HikeDetail> {
   Reference? startingRef;
   Reference? endingRef;
   List<Reference>? selectableReferences;
+  List<Reference>? otherReferences;
   late Future future;
 
   bool start = false;
@@ -68,6 +69,7 @@ class _HikeDetailState extends State<HikeDetail> {
           startingRef: startingRef,
           endingRef: endingRef,
           selectableReferences: selectableReferences,
+          otherReferences: otherReferences,
           onDisplayReferences: (references, s, p) {
             setState(() {
               selectableReferences = references
@@ -174,6 +176,26 @@ class _HikeDetailState extends State<HikeDetail> {
         });
       }
     });
+
+    widget.client
+        .get(
+      api: 'getAllReferencePointByHike/${widget.hikeID}',
+    )
+        .then((value) {
+      final List<dynamic> res = jsonDecode(value.body);
+
+      setState(() {
+        otherReferences = res
+            .map(
+              (e) => Reference(
+                id: e['ref_ID'],
+                name: e['name'],
+                coordinates: LatLng(e['latitude'], e['longitude']),
+              ),
+            )
+            .toList();
+      });
+    });
   }
 }
 
@@ -188,6 +210,7 @@ class HikeDetailContent extends StatelessWidget {
     this.onSelectReference,
     this.startingRef,
     this.endingRef,
+    this.otherReferences,
     this.user,
     super.key,
   });
@@ -202,6 +225,7 @@ class HikeDetailContent extends StatelessWidget {
   final Function(List<Reference>, bool, bool)? onDisplayReferences;
   final List<Reference>? selectableReferences;
   final Function(Reference)? onSelectReference;
+  final List<Reference>? otherReferences;
 
   @override
   Widget build(BuildContext context) {
@@ -219,6 +243,7 @@ class HikeDetailContent extends StatelessWidget {
               refNearEndingPoint: endingRef,
               selectableReferences: selectableReferences,
               onSelectReference: onSelectReference,
+              otherReferences: otherReferences,
             )
           : Container(),
       rightChild: hike != null

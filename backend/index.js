@@ -464,7 +464,23 @@ app.get("/api/getReferencePointByHike/:hike_ID", async (req, res) => {
       console.log(err);
       res
         .status(500)
-        .json({ error: `Database error while retrieving hike` })
+        .json({ error: `Database error while retrieving reference points` })
+        .end();
+    });
+});
+
+//THIS IS THE SAME AS THE PREVIOUS FUNCTION BUT DOESNT FILTER FOR USER ID
+app.get("/api/getAllReferencePointByHike/:hike_ID", async (req, res) => {
+  await db
+    .getReferencePointByHike(req.params.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving reference points` })
         .end();
     });
 });
@@ -753,7 +769,7 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
 
 app.get("/api/linkHut/:hike_ID", isLoggedIn, async (req, res) => {
   await db
-    .getHutsLinkedToHike(Number(req.params.hike_ID), req.user.ID)
+    .getHutsLinkedToHike(Number(req.params.hike_ID))
     .then((lists) => {
       res.json(lists);
     })
@@ -782,7 +798,7 @@ app.post("/api/linkHut", isLoggedIn, [],
 
 app.get("/api/linkParking/:hike_ID", isLoggedIn, async (req, res) => {
   await db
-    .getParkingsLinkedToHike(Number(req.params.hike_ID), req.user.ID)
+    .getParkingsLinkedToHike(Number(req.params.hike_ID))
     .then((lists) => {
       res.json(lists);
     })

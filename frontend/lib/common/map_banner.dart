@@ -35,6 +35,7 @@ class MapBanner extends StatefulWidget {
     this.refNearStartingPoint,
     this.selectableReferences,
     this.onSelectReference,
+    this.otherReferences,
     super.key,
   });
 
@@ -51,6 +52,7 @@ class MapBanner extends StatefulWidget {
   final Reference? refNearEndingPoint;
   final List<Reference>? selectableReferences;
   final Function(Reference)? onSelectReference;
+  final List<Reference>? otherReferences;
 
   @override
   State<MapBanner> createState() => _MapBannerState();
@@ -340,6 +342,64 @@ class _MapBannerState extends State<MapBanner> {
                                   child: SelectableMarkerContent(
                                     ref: e,
                                   ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    if (widget.otherReferences != null)
+                      MarkerLayer(
+                        markers: widget.otherReferences!
+                            .map(
+                              (e) => Marker(
+                                point: LatLng(
+                                  e.coordinates.latitude,
+                                  e.coordinates.longitude,
+                                ),
+                                width: 80,
+                                height: 80,
+                                builder: (context) => Column(
+                                  children: [
+                                    Text(
+                                      e.name,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Stack(
+                                      children: [
+                                        Container(
+                                          height: 24,
+                                          width: 24,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary
+                                                .withOpacity(0.4),
+                                          ),
+                                        ),
+                                        Positioned.fill(
+                                          child: Center(
+                                            child: Container(
+                                              height: 16,
+                                              width: 16,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surface,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             )
