@@ -770,6 +770,8 @@ app.post("/api/linkHut", isLoggedIn, [],
   async (req, res) => {
     try {
       /*ref_type = HT-8: "start"/"end"; HT-9: "generic point"; */
+      await db.deleteLinkedHut(req.body.hike_ID, req.body.ref_type);
+      await db.deleteLinkedParking(req.body.hike_ID, req.body.ref_type);
       const result = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, req.body.hut_ID, req.body.ref_type);
       res.status(201).json(result);
     } catch (err) {
@@ -796,6 +798,8 @@ app.get("/api/linkParking/:hike_ID", isLoggedIn, async (req, res) => {
 app.post("/api/linkParking", isLoggedIn, [],
   async (req, res) => {
     try {
+      await db.deleteLinkedParking(req.body.hike_ID, req.body.ref_type);
+      await db.deleteLinkedHut(req.body.hike_ID, req.body.ref_type);
       const result = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, req.body.parking_ID, req.body.ref_type);
       res.status(201).json(result);
     } catch (err) {

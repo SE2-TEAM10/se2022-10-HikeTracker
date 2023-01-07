@@ -10,10 +10,12 @@ import 'package:latlong2/latlong.dart';
 
 class Reference {
   const Reference({
+    required this.id,
     required this.name,
     required this.coordinates,
   });
 
+  final int id;
   final String name;
   final LatLng coordinates;
 }
@@ -31,6 +33,8 @@ class MapBanner extends StatefulWidget {
     this.selectedCoordinates,
     this.refNearEndingPoint,
     this.refNearStartingPoint,
+    this.selectableReferences,
+    this.onSelectReference,
     super.key,
   });
 
@@ -45,6 +49,8 @@ class MapBanner extends StatefulWidget {
   final List<LatLng>? selectedCoordinates;
   final Reference? refNearStartingPoint;
   final Reference? refNearEndingPoint;
+  final List<Reference>? selectableReferences;
+  final Function(Reference)? onSelectReference;
 
   @override
   State<MapBanner> createState() => _MapBannerState();
@@ -317,6 +323,28 @@ class _MapBannerState extends State<MapBanner> {
                           ),
                         ],
                       ),
+                    if (widget.selectableReferences != null)
+                      MarkerLayer(
+                        markers: widget.selectableReferences!
+                            .map(
+                              (e) => Marker(
+                                point: LatLng(
+                                  e.coordinates.latitude,
+                                  e.coordinates.longitude,
+                                ),
+                                width: 80,
+                                height: 80,
+                                builder: (context) => InkWell(
+                                  onTap: () =>
+                                      widget.onSelectReference?.call(e),
+                                  child: SelectableMarkerContent(
+                                    ref: e,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
                     if (widget.onGpxLoaded != null)
                       Positioned(
                         top: 16,
@@ -584,6 +612,90 @@ class SelectedCoordinatesMarkerLayer extends StatelessWidget {
               .toList()
               .expand((e) => e)
               .toList()
+      ],
+    );
+  }
+}
+
+class SelectableMarkerContent extends StatefulWidget {
+  const SelectableMarkerContent({
+    required this.ref,
+    super.key,
+  });
+
+  final Reference ref;
+
+  @override
+  State<SelectableMarkerContent> createState() =>
+      _SelectableMarkerContentState();
+}
+
+class _SelectableMarkerContentState extends State<SelectableMarkerContent> {
+  late bool hover;
+
+  @override
+  void initState() {
+    hover = false;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          widget.ref.name,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        MouseRegion(
+          onEnter: (event) => setState(() {
+            hover = true;
+          }),
+          onExit: (event) => setState(() {
+            hover = false;
+          }),
+          child: Stack(
+            children: [
+              const SizedBox(
+                height: 32,
+                width: 32,
+              ),
+              Positioned.fill(
+                child: Center(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 100),
+                    height: hover ? 32 : 24,
+                    width: hover ? 32 : 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.4),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: Center(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 100),
+                    height: hover ? 24 : 16,
+                    width: hover ? 24 : 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

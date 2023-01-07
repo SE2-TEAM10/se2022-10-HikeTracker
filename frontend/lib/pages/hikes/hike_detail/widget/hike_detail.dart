@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:HikeTracker/common/map_banner.dart';
 import 'package:HikeTracker/models/hike.dart';
 import 'package:HikeTracker/models/parking.dart';
 import 'package:HikeTracker/models/user.dart';
@@ -14,6 +15,7 @@ class Details extends StatelessWidget {
     required this.hike,
     required this.client,
     required this.user,
+    this.onDisplayReferences,
     this.onHikeStart,
     this.isMine = false,
     super.key,
@@ -24,6 +26,7 @@ class Details extends StatelessWidget {
   final User? user;
   final RestClient client;
   final Function? onHikeStart;
+  final Function(List<Reference>, bool, bool)? onDisplayReferences;
 
   @override
   Widget build(BuildContext context) {
@@ -281,6 +284,9 @@ class Details extends StatelessWidget {
                         client: client,
                         hikeID: hike.id,
                         start: true,
+                        onTap: onDisplayReferences != null
+                            ? onDisplayReferences!
+                            : (___, __, _) => {},
                       ),
                       const SizedBox(
                         height: 16,
@@ -289,6 +295,9 @@ class Details extends StatelessWidget {
                         client: client,
                         hikeID: hike.id,
                         start: true,
+                        onTap: onDisplayReferences != null
+                            ? onDisplayReferences!
+                            : (___, __, _) => {},
                       ),
                     ],
                   ),
@@ -301,6 +310,9 @@ class Details extends StatelessWidget {
                         client: client,
                         hikeID: hike.id,
                         start: false,
+                        onTap: onDisplayReferences != null
+                            ? onDisplayReferences!
+                            : (___, __, _) => {},
                       ),
                       const SizedBox(
                         height: 16,
@@ -309,6 +321,9 @@ class Details extends StatelessWidget {
                         client: client,
                         hikeID: hike.id,
                         start: false,
+                        onTap: onDisplayReferences != null
+                            ? onDisplayReferences!
+                            : (___, __, _) => {},
                       ),
                     ],
                   ),
@@ -327,12 +342,14 @@ class SelectParking extends StatelessWidget {
     required this.client,
     required this.hikeID,
     required this.start,
+    required this.onTap,
     super.key,
   });
 
   final RestClient client;
   final int hikeID;
   final bool start;
+  final Function(List<Reference>, bool, bool) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -341,7 +358,7 @@ class SelectParking extends StatelessWidget {
         api: 'locationToLinkHutOrParking',
         queryParameters: {
           'hike_ID': hikeID,
-          'start_end': 'start',
+          'start_end': start ? 'start' : 'end',
           'ref': 'p_lot',
         },
       ),
@@ -352,61 +369,25 @@ class SelectParking extends StatelessWidget {
           final parkingLots =
               res.map((e) => Parking.fromJson(jsonEncode(e))).toList();
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Select a parking lot to link to the ${start ? 'starting point' : 'ending point'}:',
-                style: const TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: DropdownButton(
-                    icon: const Icon(Icons.arrow_drop_down),
-                    elevation: 16,
-                    underline: const SizedBox(),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
+          return TextButton(
+            onPressed: () => onTap.call(
+              parkingLots
+                  .map(
+                    (e) => Reference(
+                      id: e.id,
+                      name: e.name,
+                      coordinates: e.coordinate,
                     ),
-                    onChanged: (int? value) {
-                      if (value == null) {
-                        return;
-                      }
-                      client.post(
-                        api: 'linkParking',
-                        body: {
-                          'hike_ID': hikeID,
-                          'parking_ID': value,
-                          'ref_type': 'point'
-                        },
-                      );
-                    },
-                    items: parkingLots
-                        .map(
-                          (Parking p) => DropdownMenuItem<int>(
-                            value: p.id,
-                            child: Text(p.name),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
-            ],
+                  )
+                  .toList(),
+              start,
+              true,
+            ),
+            child: Text(
+              start
+                  ? 'Select the starting parking lot'
+                  : 'Select the ending parking lot',
+            ),
           );
         }
         return Container();
@@ -420,12 +401,14 @@ class SelectHut extends StatelessWidget {
     required this.client,
     required this.hikeID,
     required this.start,
+    required this.onTap,
     super.key,
   });
 
   final RestClient client;
   final int hikeID;
   final bool start;
+  final Function(List<Reference>, bool, bool) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -434,7 +417,7 @@ class SelectHut extends StatelessWidget {
         api: 'locationToLinkHutOrParking',
         queryParameters: {
           'hike_ID': hikeID,
-          'start_end': 'start',
+          'start_end': start ? 'start' : 'end',
           'ref': 'hut',
         },
       ),
@@ -445,49 +428,23 @@ class SelectHut extends StatelessWidget {
           final parkingLots =
               res.map((e) => Parking.fromJson(jsonEncode(e))).toList();
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Select a hut to link to the ${start ? 'starting point' : 'ending point'}:',
-                style: const TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: DropdownButton(
-                    icon: const Icon(Icons.arrow_drop_down),
-                    elevation: 16,
-                    underline: const SizedBox(),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
+          return TextButton(
+            onPressed: () => onTap.call(
+              parkingLots
+                  .map(
+                    (e) => Reference(
+                      id: e.id,
+                      name: e.name,
+                      coordinates: e.coordinate,
                     ),
-                    onChanged: (String? value) {},
-                    items: parkingLots
-                        .map(
-                          (Parking p) => DropdownMenuItem<String>(
-                            value: p.name,
-                            child: Text(p.name),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
-            ],
+                  )
+                  .toList(),
+              start,
+              false,
+            ),
+            child: Text(
+              start ? 'Select the starting hut' : 'Select the ending hut',
+            ),
           );
         }
         return Container();

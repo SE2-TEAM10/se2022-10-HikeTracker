@@ -1326,6 +1326,31 @@ class Database {
       });
     };
 
+       /*HT-8 - DELETE LINKED HUTS*/
+   deleteLinkedHut = (hike_ID, ref_type) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike_ID !== 'number' ||
+          typeof ref_type !== 'string'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+
+      const sql = "DELETE FROM hike_user_hut where hike_ID = ? AND ref_type = ?";
+      this.db.run(
+        sql, [hike_ID, ref_type], function (err) {
+          if (err) reject(err);
+          else {
+            resolve(true);
+          }
+        });
+    });
+  };
+
   /*HT-8 - ADD HUT LINKED TO THE HIKE*/
   addHikeUserHut = (hike_ID, user_ID, hut_ID, ref_type) => {
     return new Promise((resolve, reject) => {
@@ -1424,6 +1449,31 @@ class Database {
     });
   };
 
+   /*HT-8 - DELETE LINKED PARKING OR HUTS*/
+   deleteLinkedParking = (hike_ID, ref_type) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (
+          typeof hike_ID !== 'number' ||
+          typeof ref_type !== 'string'
+        ) {
+          return reject(422); // 422 - UNPROCESSABLE
+        }
+      } catch (e) {
+        return reject(503); // 503 - UNAVAILABLE
+      }
+
+      const sql = "DELETE FROM hike_user_parking where hike_ID = ? AND ref_type = ?";
+      this.db.run(
+        sql, [hike_ID, ref_type], function (err) {
+          if (err) reject(err);
+          else {
+            resolve(true);
+          }
+        });
+    });
+  };
+
 
   /*HT-8 - ADD PARKING LOT LINKED TO THE HIKE*/
   addHikeUserParking = (hike_ID, user_ID, parking_ID, ref_type) => {
@@ -1440,6 +1490,7 @@ class Database {
       } catch (e) {
         return reject(503); // 503 - UNAVAILABLE
       }
+
       const sql = "INSERT INTO hike_user_parking(hike_ID, user_ID, parking_ID, ref_type) VALUES(?,?,?,?)";
       this.db.run(
         sql, [hike_ID, user_ID, parking_ID, ref_type], function (err) {
