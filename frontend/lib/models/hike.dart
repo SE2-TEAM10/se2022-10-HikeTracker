@@ -107,13 +107,14 @@ class Hikes {
     final res = jsonDecode(jsonString);
     final results = res as List<dynamic>;
 
-    final result = Hikes(
-      results: results.map((p) {
-        return Hike.fromJson(
-          json.encode(p),
-        );
-      }).toList(),
-    );
+    final listOfHikes = results.map((p) {
+      return Hike.fromJson(
+        json.encode(p),
+      );
+    }).toList()
+      ..sort((a, b) => a.id.compareTo(b.id));
+
+    final result = Hikes(results: listOfHikes);
 
     return result;
   }

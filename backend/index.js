@@ -464,7 +464,23 @@ app.get("/api/getReferencePointByHike/:hike_ID", async (req, res) => {
       console.log(err);
       res
         .status(500)
-        .json({ error: `Database error while retrieving hike` })
+        .json({ error: `Database error while retrieving reference points` })
+        .end();
+    });
+});
+
+//THIS IS THE SAME AS THE PREVIOUS FUNCTION BUT DOESNT FILTER FOR USER ID
+app.get("/api/getAllReferencePointByHike/:hike_ID", async (req, res) => {
+  await db
+    .getReferencePointByHike(req.params.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving reference points` })
         .end();
     });
 });
@@ -753,7 +769,7 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
 
 app.get("/api/linkHut/:hike_ID", isLoggedIn, async (req, res) => {
   await db
-    .getHutsLinkedToHike(Number(req.params.hike_ID), req.user.ID)
+    .getHutsLinkedToHike(Number(req.params.hike_ID))
     .then((lists) => {
       res.json(lists);
     })
@@ -770,6 +786,8 @@ app.post("/api/linkHut", isLoggedIn, [],
   async (req, res) => {
     try {
       /*ref_type = HT-8: "start"/"end"; HT-9: "generic point"; */
+      await db.deleteLinkedHut(req.body.hike_ID, req.body.ref_type);
+      await db.deleteLinkedParking(req.body.hike_ID, req.body.ref_type);
       const result = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, req.body.hut_ID, req.body.ref_type);
       res.status(201).json(result);
     } catch (err) {
@@ -780,7 +798,7 @@ app.post("/api/linkHut", isLoggedIn, [],
 
 app.get("/api/linkParking/:hike_ID", isLoggedIn, async (req, res) => {
   await db
-    .getParkingsLinkedToHike(Number(req.params.hike_ID), req.user.ID)
+    .getParkingsLinkedToHike(Number(req.params.hike_ID))
     .then((lists) => {
       res.json(lists);
     })
@@ -796,6 +814,8 @@ app.get("/api/linkParking/:hike_ID", isLoggedIn, async (req, res) => {
 app.post("/api/linkParking", isLoggedIn, [],
   async (req, res) => {
     try {
+      await db.deleteLinkedParking(req.body.hike_ID, req.body.ref_type);
+      await db.deleteLinkedHut(req.body.hike_ID, req.body.ref_type);
       const result = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, req.body.parking_ID, req.body.ref_type);
       res.status(201).json(result);
     } catch (err) {

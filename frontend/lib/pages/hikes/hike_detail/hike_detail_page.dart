@@ -32,9 +32,18 @@ class HikeDetail extends StatefulWidget {
 class _HikeDetailState extends State<HikeDetail> {
   Reference? startingRef;
   Reference? endingRef;
+  List<Reference>? selectableReferences;
+  List<Reference>? otherReferences;
+  late Future future;
+
+  bool start = false;
+  bool parking = false;
 
   @override
   void initState() {
+    future = widget.client.get(
+      api: 'hikesdetails/${widget.hikeID}',
+    );
     loadReferences();
     super.initState();
   }
@@ -42,9 +51,7 @@ class _HikeDetailState extends State<HikeDetail> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.client.get(
-        api: 'hikesdetails/${widget.hikeID}',
-      ),
+      future: future,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(
@@ -61,6 +68,39 @@ class _HikeDetailState extends State<HikeDetail> {
           onHikeStart: widget.onHikeStart,
           startingRef: startingRef,
           endingRef: endingRef,
+          selectableReferences: selectableReferences,
+          otherReferences: otherReferences,
+          onDisplayReferences: (references, s, p) {
+            setState(() {
+              selectableReferences = references
+                  .where(
+                    (r) =>
+                        r.name != startingRef?.name &&
+                        r.name != endingRef?.name,
+                  )
+                  .toList();
+              start = s;
+              parking = p;
+            });
+          },
+          onSelectReference: (r) async {
+            setState(() => selectableReferences = null);
+            await widget.client.post(
+              api: parking ? 'linkParking' : 'linkHut',
+              body: {
+                'hike_ID': Hike.fromJson(snapshot.data!.body).id,
+                if (parking) 'parking_ID': r.id,
+                if (!parking) 'hut_ID': r.id,
+                'ref_type': start ? 'start' : 'end'
+              },
+            );
+            setState(() {
+              future = widget.client.get(
+                api: 'hikesdetails/${widget.hikeID}',
+              );
+            });
+            loadReferences();
+          },
         );
       },
     );
@@ -85,6 +125,7 @@ class _HikeDetailState extends State<HikeDetail> {
       if (start != null) {
         setState(() {
           startingRef = Reference(
+            id: start['ID'],
             name: start['name'],
             coordinates: LatLng(start['latitude'], start['longitude']),
           );
@@ -93,6 +134,7 @@ class _HikeDetailState extends State<HikeDetail> {
       if (end != null) {
         setState(() {
           endingRef = Reference(
+            id: end['ID'],
             name: end['name'],
             coordinates: LatLng(end['latitude'], end['longitude']),
           );
@@ -118,6 +160,7 @@ class _HikeDetailState extends State<HikeDetail> {
       if (start != null) {
         setState(() {
           startingRef = Reference(
+            id: start['ID'],
             name: start['name'],
             coordinates: LatLng(start['latitude'], start['longitude']),
           );
@@ -126,11 +169,32 @@ class _HikeDetailState extends State<HikeDetail> {
       if (end != null) {
         setState(() {
           endingRef = Reference(
+            id: end['ID'],
             name: end['name'],
             coordinates: LatLng(end['latitude'], end['longitude']),
           );
         });
       }
+    });
+
+    widget.client
+        .get(
+      api: 'getAllReferencePointByHike/${widget.hikeID}',
+    )
+        .then((value) {
+      final List<dynamic> res = jsonDecode(value.body);
+
+      setState(() {
+        otherReferences = res
+            .map(
+              (e) => Reference(
+                id: e['ref_ID'],
+                name: e['name'],
+                coordinates: LatLng(e['latitude'], e['longitude']),
+              ),
+            )
+            .toList();
+      });
     });
   }
 }
@@ -141,8 +205,12 @@ class HikeDetailContent extends StatelessWidget {
     required this.hike,
     required this.gpx,
     required this.onHikeStart,
+    this.onDisplayReferences,
+    this.selectableReferences,
+    this.onSelectReference,
     this.startingRef,
     this.endingRef,
+    this.otherReferences,
     this.user,
     super.key,
   });
@@ -154,6 +222,10 @@ class HikeDetailContent extends StatelessWidget {
   final Function onHikeStart;
   final Reference? startingRef;
   final Reference? endingRef;
+  final Function(List<Reference>, bool, bool)? onDisplayReferences;
+  final List<Reference>? selectableReferences;
+  final Function(Reference)? onSelectReference;
+  final List<Reference>? otherReferences;
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +241,9 @@ class HikeDetailContent extends StatelessWidget {
                   gpx != null ? MapData.fromStringGPX(stringGpx: gpx!) : null,
               refNearStartingPoint: startingRef,
               refNearEndingPoint: endingRef,
+              selectableReferences: selectableReferences,
+              onSelectReference: onSelectReference,
+              otherReferences: otherReferences,
             )
           : Container(),
       rightChild: hike != null
@@ -179,6 +254,7 @@ class HikeDetailContent extends StatelessWidget {
               user: user,
               gpx: gpx,
               onHikeStart: onHikeStart,
+              onDisplayReferences: onDisplayReferences,
             )
           : const Center(
               child: CircularProgressIndicator(),
