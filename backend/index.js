@@ -817,11 +817,11 @@ app.post("/api/linkReferencePoint", isLoggedIn, [],
 
 app.get("/api/pointToLinkHut", async (req, res) => {
   try {
-    if (req.body.ref == "hut") {
+    if (req.query.ref == "hut") {
       let final_huts = [];
       const huts = await db.getAllHuts();
       huts.map((h) => {
-        let distance = getDistanceFromLatLonInKm(req.body.latitude, req.body.longitude, h.latitude, h.longitude);
+        let distance = getDistanceFromLatLonInKm(Number(req.query.latitude), Number(req.query.longitude), h.latitude, h.longitude);
         if (distance < 5) {
           console.log("HUTS - DISTANCE: ", distance);
           final_huts.push({

@@ -177,6 +177,7 @@ class HikeDetailContent extends StatelessWidget {
               isMine: user?.ID == hike!.userId,
               client: client,
               user: user,
+              gpx: gpx,
               onHikeStart: onHikeStart,
             )
           : const Center(

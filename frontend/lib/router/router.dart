@@ -2,6 +2,7 @@ import 'package:HikeTracker/common/main_scaffold.dart';
 import 'package:HikeTracker/common/sub_scaffold.dart';
 import 'package:HikeTracker/models/user.dart';
 import 'package:HikeTracker/pages/hikes/hike_detail/hike_detail_page.dart';
+import 'package:HikeTracker/pages/hikes/hike_detail/widget/hut_link/hut_link_page.dart';
 import 'package:HikeTracker/pages/hiking/hiking.dart';
 import 'package:HikeTracker/pages/pages.dart';
 import 'package:HikeTracker/router/utils.dart';
@@ -81,6 +82,21 @@ GoRouter getRouter({
                     onHikeStart: onHikeStart,
                   ),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'link/hut',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      return NoTransitionPage(
+                        child: LinkHut(
+                          client: client,
+                          hikeID:
+                              int.tryParse(state.params['hikeID'] ?? '0') ?? 0,
+                          gpx: state.extra as String,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

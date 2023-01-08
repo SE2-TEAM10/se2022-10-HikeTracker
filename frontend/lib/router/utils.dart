@@ -16,6 +16,7 @@ const REFERENCE_POINT_ADD = '/referencePoint/add';
 const HUTS = '/huts';
 const COMPLETED_HIKES = '/completedHikes';
 const HIKING = '/hiking';
+const HUTLINK = '$HIKE_DETAIL/link/hut';
 
 class Route {
   Route({
