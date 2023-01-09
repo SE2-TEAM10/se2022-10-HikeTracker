@@ -177,6 +177,10 @@ class _HikeDetailState extends State<HikeDetail> {
       }
     });
 
+    setState(() {
+      otherReferences = [];
+    });
+
     widget.client
         .get(
       api: 'getAllReferencePointByHike/${widget.hikeID}',
@@ -185,15 +189,40 @@ class _HikeDetailState extends State<HikeDetail> {
       final List<dynamic> res = jsonDecode(value.body);
 
       setState(() {
-        otherReferences = res
-            .map(
-              (e) => Reference(
-                id: e['ref_ID'],
-                name: e['name'],
-                coordinates: LatLng(e['latitude'], e['longitude']),
-              ),
-            )
-            .toList();
+        otherReferences?.addAll(
+          res
+              .map(
+                (e) => Reference(
+                  id: e['ref_ID'],
+                  name: e['name'],
+                  coordinates: LatLng(e['latitude'], e['longitude']),
+                ),
+              )
+              .toList(),
+        );
+      });
+    });
+
+    widget.client
+        .get(
+      api: 'getGenericHutsPointByHike/${widget.hikeID}',
+    )
+        .then((value) {
+      final List<dynamic> res = jsonDecode(value.body);
+
+      setState(() {
+        otherReferences?.addAll(
+          res
+              .where((e) => e['ref_type'] == 'generic point')
+              .map(
+                (e) => Reference(
+                  id: e['hut_ID'],
+                  name: e['name'],
+                  coordinates: LatLng(e['latitude'], e['longitude']),
+                ),
+              )
+              .toList(),
+        );
       });
     });
   }

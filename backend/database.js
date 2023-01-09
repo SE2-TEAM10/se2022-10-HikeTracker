@@ -1128,6 +1128,19 @@ class Database {
     });
   };
 
+  getGenericHutsPointByHike = (hike_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql =
+        "SELECT *\n" +
+        "FROM hike_user_hut INNER JOIN hike ON hike_user_hut.hike_ID = hike.ID INNER JOIN hut ON hike_user_hut.hut_ID = hut.ID\n" +
+        "WHERE hike_ID = ?";
+      this.db.all(sql, [hike_ID], function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  };
+
   getReferencePointOfScheduledHike = (hike_ID, user_ID) => {
     return new Promise((resolve, reject) => {
       const sql =

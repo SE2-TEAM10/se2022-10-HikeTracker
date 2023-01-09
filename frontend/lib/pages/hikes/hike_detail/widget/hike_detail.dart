@@ -309,28 +309,29 @@ class Details extends StatelessWidget {
                   ),
                   Expanded(
                     child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SelectParking(
-                            client: client,
-                            hikeID: hike.id,
-                            start: false,
-                            onTap: onDisplayReferences != null
-                                ? onDisplayReferences!
-                                : (___, __, _) => {},
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          SelectHut(
-                            client: client,
-                            hikeID: hike.id,
-                            start: false,
-                            onTap: onDisplayReferences != null
-                                ? onDisplayReferences!
-                                : (___, __, _) => {},
-                          ),
-                        ]),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SelectParking(
+                          client: client,
+                          hikeID: hike.id,
+                          start: false,
+                          onTap: onDisplayReferences != null
+                              ? onDisplayReferences!
+                              : (___, __, _) => {},
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        SelectHut(
+                          client: client,
+                          hikeID: hike.id,
+                          start: false,
+                          onTap: onDisplayReferences != null
+                              ? onDisplayReferences!
+                              : (___, __, _) => {},
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
