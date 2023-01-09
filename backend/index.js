@@ -485,6 +485,22 @@ app.get("/api/getAllReferencePointByHike/:hike_ID", async (req, res) => {
     });
 });
 
+//THIS IS THE SAME AS THE PREVIOUS FUNCTION BUT DOESNT FILTER FOR USER ID
+app.get("/api/getGenericHutsPointByHike/:hike_ID", async (req, res) => {
+  await db
+    .getGenericHutsPointByHike(req.params.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving reference points` })
+        .end();
+    });
+});
+
 app.post("/api/addSchedule", async (req, res) => {
   try {
     let user = await db.getUserByID(req.user.ID);
