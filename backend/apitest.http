@@ -48,3 +48,36 @@ Content-Type: application/json
 
 ### getHutWithFilters
 GET http://localhost:3001/api/hutWithFilters?min_opening_time=06:00&max_opening_time=10:00
+
+### updateSchedule
+PUT http://localhost:3001/api/updateSchedule
+Content-Type: application/json
+
+{
+ "ID": 2,
+ "end_time": "2022-01-02 23:00"
+}
+
+### getCompletedHikes (the user is in the body just to test the API)
+GET http://localhost:3001/api/completedHike
+Content-Type: application/json
+
+{
+ "ID": 5
+}
+###pointToLinkHut (the user is in the body just to test the API)
+GET http://localhost:3001/api/pointToLinkHut
+Content-Type: application/json
+
+{
+ "latitude": 44.56,
+ "longitude": 6.98,
+ "ref": "hut"
+}
+
+### getReferencePointByHikE
+GET http://localhost:3001/api/getReferencePointByHike
+Content-Type: application/json
+
+{"hike_ID": 1
+}

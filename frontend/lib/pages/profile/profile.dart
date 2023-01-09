@@ -4,6 +4,8 @@ import 'package:HikeTracker/utils/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../common/message.dart';
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({
     required this.client,
@@ -81,6 +83,10 @@ class ProfilePage extends StatelessWidget {
                                 api: 'sessions/current',
                               );
                               onLogged(null);
+                              Message(
+                                context: context,
+                                message: 'Logout',
+                              ).show();
                             },
                             icon: const Icon(Icons.logout),
                             label: const Padding(

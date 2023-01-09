@@ -27,6 +27,7 @@ class TwoColumnsLayout extends StatelessWidget {
       padding: isNested ? const EdgeInsets.only(top: 64.0) : EdgeInsets.zero,
       child: !context.isMobile
           ? Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (!hideLeftChild)
                   Expanded(

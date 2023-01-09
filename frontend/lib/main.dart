@@ -30,18 +30,26 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool showSplash = true;
+  bool hikeOnGoing = false;
   User? currentUser;
   ThemeMode theme = ThemeMode.light;
 
   @override
   void initState() {
-    widget.client.get(api: 'sessions/current').then((value) {
+    widget.client.get(api: 'sessions/current').then((value) async {
       setState(() {
         currentUser = json.decode(value.body)['error'] == null
             ? User.fromJson(value.body)
             : null;
         showSplash = false;
       });
+
+      if (currentUser != null) {
+        final res = await widget.client.get(api: 'getOnGoingHike');
+        setState(() {
+          hikeOnGoing = res.body.isNotEmpty;
+        });
+      }
     });
     super.initState();
   }
@@ -51,10 +59,25 @@ class _MyAppState extends State<MyApp> {
     return Layout(
       child: MaterialApp.router(
         routerConfig: getRouter(
+          hikeOnGoing: hikeOnGoing,
           client: widget.client,
           showSplash: showSplash,
           currentUser: currentUser,
-          onLogged: (User? val) => setState(() => currentUser = val),
+          onLogged: (User? val) async {
+            setState(() => currentUser = val);
+            if (val != null) {
+              final res = await widget.client.get(api: 'getOnGoingHike');
+              setState(() {
+                hikeOnGoing = res.body.isNotEmpty;
+              });
+            }
+          },
+          onHikeStart: () async {
+            final res = await widget.client.get(api: 'getOnGoingHike');
+            setState(() {
+              hikeOnGoing = res.body.isNotEmpty;
+            });
+          },
           onThemeChanged: () => setState(
             () => theme =
                 theme == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark,

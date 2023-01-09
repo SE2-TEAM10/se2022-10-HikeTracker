@@ -13,6 +13,7 @@ class Hike {
     required this.description,
     required this.locations,
     required this.coverUrl,
+    required this.userId,
   });
 
   final int id;
@@ -24,6 +25,7 @@ class Hike {
   final String description;
   final List<Location> locations;
   final String coverUrl;
+  final int userId;
 
   static Hike fromJson(String jsonString) {
     final res = jsonDecode(jsonString);
@@ -45,6 +47,7 @@ class Hike {
       description: res['description'] ?? 'NA',
       locations: ls,
       coverUrl: res['coverUrl'] ?? 'NA',
+      userId: res['userID'] ?? 0,
     );
   }
 
@@ -104,13 +107,14 @@ class Hikes {
     final res = jsonDecode(jsonString);
     final results = res as List<dynamic>;
 
-    final result = Hikes(
-      results: results.map((p) {
-        return Hike.fromJson(
-          json.encode(p),
-        );
-      }).toList(),
-    );
+    final listOfHikes = results.map((p) {
+      return Hike.fromJson(
+        json.encode(p),
+      );
+    }).toList()
+      ..sort((a, b) => a.id.compareTo(b.id));
+
+    final result = Hikes(results: listOfHikes);
 
     return result;
   }

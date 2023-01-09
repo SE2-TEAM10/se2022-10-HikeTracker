@@ -82,4 +82,6 @@ class Huts {
 
     return result;
   }
+
+  bool isEmpty() => results == null || results!.isEmpty;
 }

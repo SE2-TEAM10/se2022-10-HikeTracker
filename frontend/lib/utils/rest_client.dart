@@ -12,7 +12,8 @@ class RestClient {
     required String api,
     String? endpoint,
     Map<String, String>? headers,
-    dynamic filter,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? body,
   }) async {
     final e = endpoint ?? dotenv.env['ENDPOINT'];
 
@@ -21,7 +22,8 @@ class RestClient {
       withCredentials: true,
       verify: false,
       persistCookies: false,
-      queryParameters: filter?.toQueryParameters(),
+      body: body != null ? jsonEncode(body) : null,
+      queryParameters: queryParameters,
     );
   }
 
@@ -68,9 +70,10 @@ class RestClient {
 
     return Requests.put(
       '$e$api',
-      json: true,
+      body: body,
       withCredentials: true,
-      body: jsonEncode(body),
+      verify: false,
+      persistCookies: false,
     );
   }
 }

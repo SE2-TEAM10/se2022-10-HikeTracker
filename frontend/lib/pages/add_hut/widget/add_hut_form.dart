@@ -81,6 +81,7 @@ class _AddHutFormState extends State<AddHutForm> {
                         hut = hut.copyWith(mmOp: newTime.minute);
                       })
                     },
+                    startingTime: '08:00',
                   ),
                 ),
                 const SizedBox(
@@ -95,6 +96,7 @@ class _AddHutFormState extends State<AddHutForm> {
                         hut = hut.copyWith(mmEd: newTime.minute);
                       })
                     },
+                    startingTime: '22:00',
                   ),
                 )
               ],

@@ -37,13 +37,13 @@ class _HutsTableState extends State<HutsTable> {
   void initState() {
     future = widget.client.get(
       api: 'hutWithFilters',
-      filter: widget.filter,
+      queryParameters: widget.filter.toQueryParameters(),
     );
     widget.controller.onFilterChange = (newFilter) {
       setState(() {
         future = widget.client.get(
           api: 'hutWithFilters',
-          filter: widget.filter,
+          queryParameters: widget.filter.toQueryParameters(),
         );
       });
     };

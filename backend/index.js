@@ -5,22 +5,20 @@ require("dotenv").config();
 const nodemailer = require("nodemailer");
 const express = require("express");
 const path = require("path");
-const morgan = require("morgan"); // logging middleware
+const morgan = require("morgan");
 const cors = require("cors");
 const Database = require("./database.js");
 const db = new Database("./hiketracker.db");
-const passport = require("passport"); // auth middleware
-const LocalStrategy = require("passport-local").Strategy; // username and password for login
-const session = require("express-session"); // enable sessions
-const { check, validationResult, body, param } = require("express-validator"); // validation middleware */
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
+const { check, validationResult, body, param } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const { request } = require("express");
 const fs = require("fs");
 const sharp = require("sharp");
 
-// set up the "username and password" login strategy
-// by setting a function to verify username and password
 passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
     const user = await db.login(username, password);
@@ -31,17 +29,14 @@ passport.use(
   })
 );
 
-// serialize and de-serialize the user (user object <-> session)
-// we serialize the user id and we store it in the session: the session is very small in this way
 passport.serializeUser((user, done) => {
   done(null, user.ID);
 });
 
-// starting from the data in the session, we extract the current (logged-in) user
 passport.deserializeUser((ID, done) => {
   db.getUserByID(ID)
     .then((user) => {
-      done(null, user); // this will be available in req.user
+      done(null, user);
     })
     .catch((err) => {
       done(err, null);
@@ -52,15 +47,12 @@ const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
   return `${location}[${param}]: ${msg}`;
 };
 
-// init express
 const app = express();
 const port = 3001;
 
-// fixing "413 Request Entity Too Large" errors
 app.use(bodyParser.json({ limit: "500mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "500mb" }));
 
-// set-up the middlewares
 app.use(morgan("common"));
 app.use(express.json());
 const corsOptions = {
@@ -70,17 +62,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.static('./assets'));
 
-// custom middleware: check if a given request is coming from an authenticated user
 const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) return next();
 
   return res.status(401).json({ error: "not authenticated" });
 };
 
-// set up the session
 app.use(
   session({
-    // by default, Passport uses a MemoryStore to keep track of the sessions
     secret:
       "a secret sentence not to share with anybody and anywhere, used to sign the session ID cookie",
     resave: false,
@@ -88,59 +77,84 @@ app.use(
   })
 );
 
-// then, init passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-/*function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  let R = 6371; // Radius of the earth in km
-  let dLat = deg2rad(lat2-lat1);  // deg2rad below
-  let dLon = deg2rad(lon2-lon1);
-  let a =
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-  ;
-  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  let d = R * c; // Distance in km
-  return d;
-}
-
-function deg2rad(deg) {
-  return deg * (Math.PI/180)
-}*/
-
-//This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  var R = 6371; // km
-  var dLat = toRad(lat2 - lat1);
-  var dLon = toRad(lon2 - lon1);
-  var lat1 = toRad(lat1);
-  var lat2 = toRad(lat2);
+  let R = 6371;
+  let dLat = toRad(lat2 - lat1);
+  let dLon = toRad(lon2 - lon1);
+  lat1 = toRad(lat1);
+  lat2 = toRad(lat2);
 
-  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+  let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var d = R * c;
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  let d = R * c;
   return d;
 }
 
-// Converts numeric degrees to radians
 function toRad(Value) {
   return Value * Math.PI / 180;
 }
 
+function calculateDuration(start, end) {
+  let s_year = parseInt(start.slice(0, 4));
+  let s_month = parseInt(start.slice(5, 7));
+  let s_day = parseInt(start.slice(8, 10));
+  let s_hour = parseInt(start.slice(11, 13));
+  let s_mins = parseInt(start.slice(14, 16));
+  let e_year = parseInt(end.slice(0, 4));
+  let e_month = parseInt(end.slice(5, 7));
+  let e_day = parseInt(end.slice(8, 10));
+  let e_hour = parseInt(end.slice(11, 13));
+  let e_mins = parseInt(end.slice(14, 16));
+  let duration = "";
 
-// POST /sessions
-// login
+  let year_diff = e_year - s_year;
+  let month_diff = e_month - s_month;
+  if (year_diff > 0 && month_diff < 0) {
+    month_diff = year_diff * 12 + month_diff;
+    year_diff -= 1;
+  }
+
+  let day_diff = e_day - s_day;
+  if (month_diff > 0 && day_diff < 0) {
+    day_diff = 30 + day_diff;
+    month_diff -= 1;
+  }
+
+  let hour_diff = e_hour - s_hour;
+  if (day_diff > 0 && hour_diff < 0) {
+    hour_diff = 24 + hour_diff;
+    day_diff -= 1;
+  }
+  let mins_diff = e_mins - s_mins;
+  if (hour_diff > 0 && mins_diff < 0) {
+    mins_diff = 60 + mins_diff;
+    hour_diff -= 1;
+  }
+
+  if (year_diff > 0)
+    duration += year_diff.toString().concat("Y ");
+  if (month_diff > 0)
+    duration += month_diff.toString().concat("M ");
+  if (day_diff > 0)
+    duration += day_diff.toString().concat("D ");
+  if (hour_diff > 0)
+    duration += hour_diff.toString().concat("h ");
+  if (mins_diff > 0)
+    duration += mins_diff.toString().concat("m ");
+  duration = duration.slice(0, duration.length - 1);
+  return duration;
+}
+
 app.post("/api/sessions", function (req, res, next) {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) {
-      // display wrong login messages
       return res.status(401).json(info);
     }
-    // success, perform the login
     req.login(user, (err) => {
       if (err) return next(err);
       return res.json(req.user);
@@ -148,16 +162,13 @@ app.post("/api/sessions", function (req, res, next) {
   })(req, res, next);
 });
 
-// DELETE /sessions/current
-// logout
 app.delete("/api/sessions/current", (req, res) => {
   req.logout(() => {
     res.end();
   });
 });
 
-// GET /sessions/current
-// check whether the manager is logged in or not
+
 app.get("/api/sessions/current", (req, res) => {
   if (req.isAuthenticated()) {
     res.status(200).json({
@@ -169,7 +180,6 @@ app.get("/api/sessions/current", (req, res) => {
   } else res.status(401).json({ error: "Unauthenticated user!" });
 });
 
-// EXAMPLE OF URL: http://localhost:3001/api/hike?difficulty=T&start_asc=300
 app.get("/api/hike", async (req, res) => {
   await db
     .getHikeWithFilters(req.query)
@@ -190,41 +200,14 @@ app.get("/api/hike", async (req, res) => {
     });
 });
 
-/* app.get("/api/distance", async (req, res) => {
-
-  let parking = [];
-  try {
-    let array = await db.getCoordinatesHike();
-    await db.getCoordinatesParking().then((coordinates) => {
-      coordinates.map((row) => {
-          let distance = getDistanceFromLatLonInKm(44.699197, 7.156556, row.latitude, row.longitude);
-          if (distance < 45) {
-            console.log("DISTANCE", distance);
-            parking.push({
-              name: row.name,
-              capacity: row.capacity,
-              latitude: row.latitude,
-              longitude: row.longitude,
-              city: row.city,
-              province: row.province,
-              distanceFromPoint: distance,
-            })
-            return parking;
-          }
-        })
-
-      });
-      res.json(parking);
-  } catch (err) {
-    console.error(err);
-    res.status(503).json(err);
-  }
-}); */
 
 app.get(
   "/api/hikesdetails/:hike_ID",
-  isLoggedIn, async (req, res) => {
-    let thisuser = await db.getUserByID(req.user.ID);
+  isLoggedIn, async function (req, res) {
+    let thisuser
+    if (req.user != undefined) {
+      thisuser = await db.getUserByID(req.user.ID);
+    }
     if (thisuser.role !== "Hiker") {
       return res.status(422).json({ error: `the logged in user is not a hiker` }).end();
     }
@@ -277,159 +260,19 @@ app.get("/api/sendEmail", async (req, res) => {
   });
 });
 
-app.post("/api/hike", isLoggedIn, [], async (req, res) => {
-  try {
-    let thisuser = await db.getUserByID(req.user.ID);
-    if (thisuser.role !== "Local Guide") {
-      return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
-    }
-    if (typeof req.body.gpx !== "string") {
-      res.status(422).json(err); //UNPROCESSABLE
-    }
-
-    const gpx_len = req.body.gpx.length;
-    if (gpx_len === 0) {
-      res.status(422).json("Error: the gpx file is empty!"); //UNPROCESSABLE
-    }
-
-    const result1 = await db.addNewHike(
-      req.body.hike,
-      req.body.gpx,
-      req.user.ID
-    );
-    console.log("res1 - ", result1);
-    const result2 = await db.addNewLocation(
-      req.body.startp,
-      "start",
-      result1,
-      req.body.gpx
-    );
-    console.log("res2 - ", result2);
-    const result3 = await db.addNewLocation(
-      req.body.endp,
-      "end",
-      result1,
-      req.body.gpx
-    );
-    console.log("res3 - ", result3);
-    const result4 = await db.addNewHikeGPX(req.body.gpx, result1);
-    console.log("res4 - ", result4);
-
-    const imagePath = await saveHikeImage(
-      req.body.image_base_64,
-      result1,
-      "cover"
-    );
-
-    await db.addNewHikeImage(imagePath, result1, "cover");
-
-    res.status(201).json("Hike " + result1 + " correctly created!");
-  } catch (err) {
-    console.error(err);
-    res.status(503).json(err);
-  }
-});
-
-app.post(
-  "/api/gpx",
-  isLoggedIn,
-  [],
-  async (req, res) => {
-    try {
-      let thisuser = await db.getUserByID(req.user.ID);
-      if (thisuser.role !== "Local Guide") {
-        return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
-      }
-      const result5 = await db.addGpx(req.body.gpx);
-
-      res.status(201).json(result5);
-    } catch (err) {
-      console.error(err);
-      res.status(503).json(err);
-    }
-  }
-);
-
-app.post("/api/addUser", async (req, res) => {
-  try {
-    const result1 = await db.addUser(req.body);
-
-    console.log("RESULT", result1);
-    const token_mail_verification = jwt.sign({ id: result1 }, "ourSecretKey", {
-      expiresIn: "1d",
+app.get("/api/hut", async (req, res) => {
+  await db
+    .getAllHuts()
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
     });
-
-    const message = `http://localhost:3001/api/user/verify/${token_mail_verification}`;
-    //to insert: req.body.user.mail
-    await sendEmail(req.body.mail, "Verify Email", message);
-    res.status(201).json(result1);
-  } catch (err) {
-    console.error(err);
-    res.status(503).json(err);
-  }
-});
-
-//addHut
-app.post(
-  "/api/addHut",
-  isLoggedIn,
-  [
-    check("name").isString(),
-    check("description").isString(),
-    check("opening_time").isString(),
-    check("closing_time").isString(),
-    check("bed_num").isInt(),
-    check("altitude").isInt(),
-    check("city").isString(),
-    check("province").isString(),
-    check("phone").isString(),
-    check("mail").isString(),
-    check("website").isString(),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req).formatWith(errorFormatter); // format error message
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
-    }
-
-    console.log("TYPE USER", req.user.role);
-    console.log("USER ID", req.user.ID);
-
-    try {
-      // check if a user is a local guide or a hut worker
-      if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
-        const result1 = await db.addHut(req.body, req.user.ID);
-
-        res.status(201).json(result1);
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(503).json(err);
-    }
-  }
-);
-
-//addParking
-app.post("/api/addParking", isLoggedIn, [], async (req, res) => {
-  const errors = validationResult(req).formatWith(errorFormatter); // format error message
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
-  }
-
-  console.log("TYPE USER", req.user.role);
-  console.log("USER ID", req.user.ID);
-
-  try {
-    // check if a user is a local guide or a hut worker
-    if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
-      const result1 = await db.addParking(req.body, req.user.ID);
-
-      res.status(201).json(result1);
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(503).json(err);
-  }
 });
 
 app.get("/api/hutWithFilters", async (req, res) => {
@@ -447,7 +290,22 @@ app.get("/api/hutWithFilters", async (req, res) => {
     });
 });
 
-//api get parking from hike_ID
+app.get("/api/completedHike", async (req, res) => {
+  await db
+    .getCompletedHikesByUserID(req.user.ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving hike` })
+        .end();
+    });
+});
+
+
 app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
   await db
     .getParkingFromHike(req.params.hike_ID)
@@ -463,21 +321,14 @@ app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
     });
 });
 
-
-//api per la verifica
 app.get("/api/user/verify/:token", (req, res) => {
   const { token } = req.params;
 
-  // Verifing the JWT token
   jwt.verify(token, "ourSecretKey", async function (err, decoded) {
-    console.log("Decoded", decoded);
     try {
       const userToAdd = await db.getUserByID(decoded.id);
-      console.log("user to add: ", userToAdd);
       const verifyToCheck = userToAdd.verified;
-      console.log(verifyToCheck);
       if (err || verifyToCheck === 1) {
-        /* user already registered */
         console.log(err);
         res.sendFile(path.join(__dirname + "/indexNotVerified.html"));
       } else if (verifyToCheck === 0) {
@@ -491,7 +342,271 @@ app.get("/api/user/verify/:token", (req, res) => {
   });
 });
 
-//set a boolean value (verified) to 1
+
+app.post("/api/hike", isLoggedIn, [], async (req, res) => {
+  try {
+    let thisuser = await db.getUserByID(req.user.ID);
+    if (thisuser.role !== "LocalGuide") {
+      return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
+    }
+    if (typeof req.body.gpx !== "string") {
+      res.status(422).json(err);
+    }
+
+    const gpx_len = req.body.gpx.length;
+    if (gpx_len === 0) {
+      res.status(422).json("Error: the gpx file is empty!");
+    }
+
+
+    const hike_ID = await db.addNewHike(
+      req.body.hike,
+      req.body.gpx,
+      req.user.ID
+    );
+    const result2 = await db.addNewLocation(
+      req.body.startp,
+      "start",
+      hike_ID,
+      req.body.gpx
+    );
+    const result3 = await db.addNewLocation(
+      req.body.endp,
+      "end",
+      hike_ID,
+      req.body.gpx
+    );
+    let gpx_path = await saveHikeGpx(req.body.gpx, hike_ID)
+    const result4 = await db.addNewHikeGPX(gpx_path, hike_ID);
+
+    if (req.body.image_base_64 != undefined) {
+      const imagePath = await saveHikeImage(
+        req.body.image_base_64,
+        hike_ID,
+        "cover"
+      );
+      await db.addNewHikeImage(imagePath, hike_ID, "cover");
+    }
+
+    res.status(201).json("Hike " + hike_ID + " correctly created!");
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
+app.get("/api/getReferencePointByHike/:hike_ID", async (req, res) => {
+  await db
+    .getReferencePointOfScheduledHike(req.params.hike_ID, req.user.ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving reference points` })
+        .end();
+    });
+});
+
+app.get("/api/getAllReferencePointByHike/:hike_ID", async (req, res) => {
+  await db
+    .getReferencePointByHike(req.params.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving reference points` })
+        .end();
+    });
+});
+
+app.get("/api/getGenericHutsPointByHike/:hike_ID", async (req, res) => {
+  await db
+    .getGenericHutsPointByHike(req.params.hike_ID)
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving reference points` })
+        .end();
+    });
+});
+
+app.post("/api/addSchedule", async (req, res) => {
+  try {
+    let user = await db.getUserByID(req.user.ID);
+    if (user.role !== "Hiker") {
+      return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
+    }
+
+    const result1 = await db.addSchedule(req.body, req.user.ID);
+    const result2 = await db.getReferencePointByHike(req.body.hike_ID);
+    let references = [];
+    result2.map((res) => {
+      references.push({
+        ID: res.ref_ID
+      })
+      return references;
+    })
+    references.forEach(async (ref) => {
+      await db.addRefReached(req.body.hike_ID, req.user.ID, ref.ID, 0);
+    })
+
+    res.status(201).json(result2);
+  } catch (err) {
+    console.log(err);
+    res.status(503).json(err);
+  }
+});
+
+
+app.put("/api/updateSchedule", async (req, res) => {
+  try {
+    let user = await db.getUserByID(req.user.ID);
+    if (user.role !== "Hiker") {
+      return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
+    }
+    const schedule = await db.getScheduleByID(req.body.ID);
+    let duration = calculateDuration(schedule.start_time, req.body.end_time);
+
+    const result = await db.updateSchedule(Number(req.body.ID), req.body.end_time, duration);
+    await db.cleanRefReached(Number(schedule.hike_ID), Number(req.user.ID))
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(503).json(err);
+  }
+});
+
+app.put("/api/updateRefReached", async (req, res) => {
+  try {
+    let user = await db.getUserByID(req.user.ID);
+    if (user.role !== "Hiker") {
+      return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
+    }
+
+    const result = await db.updateRefReached(Number(req.body.hike_ID), req.user.ID, Number(req.body.ref_ID));
+
+    res.status(200).json("Reference point " + req.body.ref_ID + " reached!");
+  } catch (err) {
+    console.log(err);
+    res.status(503).json(err);
+  }
+});
+
+app.get("/api/getOnGoingHike",
+  isLoggedIn, async (req, res) => {
+    await db
+      .getOnGoingHikeByUserID(req.user.ID)
+      .then((lists) => {
+        res.json(lists);
+      })
+      .catch((err) => {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: `Database error while retrieving hike` })
+          .end();
+      });
+  });
+
+app.post("/api/addUser", async (req, res) => {
+  try {
+    const result1 = await db.addUser(req.body);
+
+    const token_mail_verification = jwt.sign({ id: result1 }, "ourSecretKey", {
+      expiresIn: "1d",
+    });
+
+    const message = `http://localhost:3001/api/user/verify/${token_mail_verification}`;
+    await sendEmail(req.body.mail, "Verify Email", message);
+    res.status(201).json(result1);
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
+
+app.post(
+  "/api/addHut",
+  isLoggedIn,
+  [
+    check("name").isString(),
+    check("description").isString(),
+    check("opening_time").isString(),
+    check("closing_time").isString(),
+    check("bed_num").isInt(),
+    check("altitude").isInt(),
+    check("city").isString(),
+    check("province").isString(),
+    check("phone").isString(),
+    check("mail").isString(),
+    check("website").isString(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req).formatWith(errorFormatter); 
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ error: errors.array().join(", ") });
+    }
+    try {
+      if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
+        const result1 = await db.addHut(req.body, req.user.ID);
+
+        res.status(201).json(result1);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  }
+);
+
+
+app.post("/api/addParking", isLoggedIn, [], async (req, res) => {
+  const errors = validationResult(req).formatWith(errorFormatter); 
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ error: errors.array().join(", ") });
+  }
+
+  try {
+    if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
+      const result1 = await db.addParking(req.body, req.user.ID);
+
+      res.status(201).json(result1);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
+app.post("/api/addReferencePoint", isLoggedIn, [], async (req, res) => {
+  const errors = validationResult(req).formatWith(errorFormatter); 
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ error: errors.array().join(", ") });
+  }
+  try {
+    if (req.user.role === "LocalGuide") {
+      const result1 = await db.addReferencePoint(req.body, req.user.ID);
+
+      res.status(201).json(result1);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
+
 app.put("/api/:id/setVerified", async (req, res) => {
   try {
     const result1 = await db.setVerified(req.params.id);
@@ -534,27 +649,17 @@ const sendEmail = async (email, subject, text) => {
   });
 };
 
-/* const getLinkUser = async (req,res) => {
-  // check if a user is a local guide or a hut worker
-  const user_res = await db.getLinkUser(req.body.hike_ID);
-  console.log("USER ID :", req.user.ID);
-  if (user_res !== req.user.ID) {
-    res.status(422).json("User and hike not linked");
-  } else if (req.user.role !== "LocalGuide" || req.user.role !== "HutWorker") {
-    res.status(422).json("User isnt't a local guide or a hut worker");
-  }
-}; */
 
 app.get("/api/locationToLinkHutOrParking", async (req, res) => {
   try {
-    const loc = await db.getLocationToLink(req.body.hike_ID, req.body.start_end);
-    if (req.body.ref === "hut") {
+    let loc = await db.getLocationToLink(req.query.hike_ID, req.query.start_end);
+    loc = loc[0]
+    if (req.query.ref == "hut") {
       let final_huts = [];
       const huts = await db.getAllHuts();
       huts.map((h) => {
         let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, h.latitude, h.longitude);
         if (distance < 5) {
-          console.log("HUTS - DISTANCE: ", distance);
           final_huts.push({
             ID: h.ID,
             name: h.name,
@@ -575,13 +680,12 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
         }
       })
       res.json(final_huts);
-    } else if (req.body.ref === "p_lot") {
+    } else if (req.query.ref == "p_lot") {
       let final_parks = [];
       const parks = await db.getAllParkings();
       parks.map((p) => {
         let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, p.latitude, p.longitude);
         if (distance < 5) {
-          console.log("PARKING LOTS - DISTANCE: ", distance);
           final_parks.push({
             ID: p.ID,
             name: p.name,
@@ -604,11 +708,27 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
   }
 });
 
-/*index.js - link hut to the hike*/
+app.get("/api/linkHut/:hike_ID", isLoggedIn, async (req, res) => {
+  await db
+    .getHutsLinkedToHike(Number(req.params.hike_ID))
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving huts` })
+        .end();
+    });
+});
+
 app.post("/api/linkHut", isLoggedIn, [],
   async (req, res) => {
     try {
-      const result = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, req.body.hut_ID, req.body.ref_type);
+      await db.deleteLinkedHut(req.body.hike_ID, req.body.ref_type);
+      await db.deleteLinkedParking(req.body.hike_ID, req.body.ref_type);
+      const result = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, req.body.hut_ID);
       res.status(201).json(result);
     } catch (err) {
       console.error(err);
@@ -616,10 +736,26 @@ app.post("/api/linkHut", isLoggedIn, [],
     }
   });
 
-/*index.js - link parking lot to the hike*/
+app.get("/api/linkParking/:hike_ID", isLoggedIn, async (req, res) => {
+  await db
+    .getParkingsLinkedToHike(Number(req.params.hike_ID))
+    .then((lists) => {
+      res.json(lists);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: `Database error while retrieving parkings` })
+        .end();
+    });
+});
+
 app.post("/api/linkParking", isLoggedIn, [],
   async (req, res) => {
     try {
+      await db.deleteLinkedParking(req.body.hike_ID, req.body.ref_type);
+      await db.deleteLinkedHut(req.body.hike_ID, req.body.ref_type);
       const result = await db.addHikeUserParking(req.body.hike_ID, req.user.ID, req.body.parking_ID, req.body.ref_type);
       res.status(201).json(result);
     } catch (err) {
@@ -627,6 +763,55 @@ app.post("/api/linkParking", isLoggedIn, [],
       res.status(503).json(err);
     }
   });
+
+app.post("/api/linkReferencePoint", isLoggedIn, [],
+  async (req, res) => {
+    try {
+      const result = await db.addHikeUserRef(Number(req.body.hike_id), req.user.ID, Number(req.body.ref_ID), req.body.ref_type);
+      res.status(201).json(result);
+    } catch (err) {
+      console.error(err);
+      res.status(503).json(err);
+    }
+  });
+
+app.get("/api/pointToLinkHut", async (req, res) => {
+  try {
+    if (req.query.ref == "hut") {
+      let final_huts = [];
+      const huts = await db.getAllHuts();
+      huts.map((h) => {
+        let distance = getDistanceFromLatLonInKm(Number(req.query.latitude), Number(req.query.longitude), h.latitude, h.longitude);
+        if (distance < 5) {
+          final_huts.push({
+            ID: h.ID,
+            name: h.name,
+            description: h.description,
+            opening_time: h.opening_time,
+            closing_time: h.closing_time,
+            bed_num: h.bed_num,
+            altitude: h.altitude,
+            latitude: h.latitude,
+            longitude: h.longitude,
+            city: h.city,
+            province: h.province,
+            phone: h.phone,
+            mail: h.mail,
+            website: h.website
+          })
+          return final_huts;
+        }
+      })
+      res.json(final_huts);
+    } else {
+      res.status(422).json("The reference point is not defined correctly!");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(503).json(err);
+  }
+});
+
 const saveHikeImage = async function (imageBase64, hike_ID, type) {
   const image = Buffer.from(imageBase64, "base64");
   const path =
@@ -644,6 +829,20 @@ const saveHikeImage = async function (imageBase64, hike_ID, type) {
   return path;
 };
 
+const saveHikeGpx = async function (gpx, hike_ID) {
+  const path =
+    "./assets/gpx/" +
+    hike_ID +
+    "_" +
+    generateRandomString(16) +
+    ".gpx";
+
+  await fs.promises.writeFile(path, gpx)
+
+  console.log("gpx saved as" + path);
+  return path;
+};
+
 const generateRandomString = function (n) {
   let str = "";
   for (let i = 0; i < n; i++) {
@@ -652,8 +851,6 @@ const generateRandomString = function (n) {
   }
   return str;
 };
-
-//APIs for regions, provinces, municipalities and borders
 
 app.get("/api/regions/", async (req, res) => {
   await db
@@ -715,7 +912,6 @@ app.get("/api/border/:ID", async (req, res) => {
     });
 });
 
-// Activate the server
 app.listen(port, () => {
   console.log(`server listening at http://localhost:${port}`);
 });

@@ -12,7 +12,11 @@ const PROFILE = '/profile';
 const HIKE_ADD = '/hike/add';
 const HUT_ADD = '/hut/add';
 const PARKING_ADD = '/parking/add';
+const REFERENCE_POINT_ADD = '/referencePoint/add';
 const HUTS = '/huts';
+const COMPLETED_HIKES = '/completedHikes';
+const HIKING = '/hiking';
+const HUTLINK = '$HIKE_DETAIL/link/hut';
 
 class Route {
   Route({
@@ -100,6 +104,12 @@ final LOCAL_GUIDE_NAVIGATION_BAR_ROUTES = [
   ),
   Route(
     index: 4,
+    label: 'Add R.Point',
+    path: REFERENCE_POINT_ADD,
+    icon: Icons.add_location_alt,
+  ),
+  Route(
+    index: 5,
     label: 'Profile',
     path: PROFILE,
     icon: Icons.person_outline,
@@ -124,5 +134,11 @@ final HIKER_NAVIGATION_BAR_ROUTES = [
     label: 'Profile',
     path: PROFILE,
     icon: Icons.person_outline,
+  ),
+  Route(
+    index: 3,
+    label: 'Completed hikes',
+    path: COMPLETED_HIKES,
+    icon: Icons.check_circle_outline,
   ),
 ];

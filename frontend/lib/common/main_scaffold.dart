@@ -35,18 +35,31 @@ class MainScaffold extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Hike Tracker: ${RouteUtils.getNavigationRoutes(currentUser).firstWhere(
-                            (r) => r.path == GoRouter.of(context).location,
-                            orElse: () => SUPPORT_ROUTE,
-                          ).label}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    currentPath == HIKING
+                        ? Text(
+                            'On an adventure',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : Text(
+                            'Hike Tracker: ${RouteUtils.getNavigationRoutes(currentUser).firstWhere(
+                                  (r) =>
+                                      r.path == GoRouter.of(context).location,
+                                  orElse: () => SUPPORT_ROUTE,
+                                ).label}',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ],
                 ),
               )
@@ -58,28 +71,38 @@ class MainScaffold extends StatelessWidget {
             ? Theme.of(context).colorScheme.secondaryContainer
             : Colors.transparent,
         title: context.isMobile
-            ? Text(
-                'Hike Tracker: ${RouteUtils.getNavigationRoutes(currentUser).firstWhere(
-                      (r) => r.path == GoRouter.of(context).location,
-                      orElse: () => SUPPORT_ROUTE,
-                    ).label}',
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
+            ? currentPath == HIKING
+                ? Text(
+                    'On an adventure',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : Text(
+                    'Hike Tracker: ${RouteUtils.getNavigationRoutes(currentUser).firstWhere(
+                          (r) => r.path == GoRouter.of(context).location,
+                          orElse: () => SUPPORT_ROUTE,
+                        ).label}',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
             : null,
       ),
       extendBodyBehindAppBar: !context.isMobile,
       body: !context.isMobile
           ? Row(
               children: [
-                NavigationSideBar(
-                  currentPath: currentPath,
-                  currentUser: currentUser,
-                  onThemeChanged: onThemeChanged,
-                ),
+                if (currentPath != HIKING)
+                  NavigationSideBar(
+                    currentPath: currentPath,
+                    currentUser: currentUser,
+                    onThemeChanged: onThemeChanged,
+                  ),
                 Expanded(
                   child: child,
                 ),
@@ -90,10 +113,11 @@ class MainScaffold extends StatelessWidget {
                 Expanded(
                   child: child,
                 ),
-                NavigationBottomBar(
-                  currentPath: currentPath,
-                  currentUser: currentUser,
-                ),
+                if (currentPath != HIKING)
+                  NavigationBottomBar(
+                    currentPath: currentPath,
+                    currentUser: currentUser,
+                  ),
               ],
             ),
     );

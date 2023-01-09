@@ -7,11 +7,13 @@ enum UserRole {
 
 class User {
   User({
+    required this.ID,
     required this.name,
     required this.email,
     required this.role,
   });
 
+  final int ID;
   final String name;
   final String email;
   final UserRole role;
@@ -20,6 +22,7 @@ class User {
     final res = jsonDecode(jsonString);
 
     return User(
+      ID: res['ID'],
       name: res['name'],
       email: res['username'],
       role: toRole(res['role']),
