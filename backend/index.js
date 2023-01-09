@@ -5,22 +5,20 @@ require("dotenv").config();
 const nodemailer = require("nodemailer");
 const express = require("express");
 const path = require("path");
-const morgan = require("morgan"); // logging middleware
+const morgan = require("morgan");
 const cors = require("cors");
 const Database = require("./database.js");
 const db = new Database("./hiketracker.db");
-const passport = require("passport"); // auth middleware
-const LocalStrategy = require("passport-local").Strategy; // username and password for login
-const session = require("express-session"); // enable sessions
-const { check, validationResult, body, param } = require("express-validator"); // validation middleware */
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
+const { check, validationResult, body, param } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const { request } = require("express");
 const fs = require("fs");
 const sharp = require("sharp");
 
-// set up the "username and password" login strategy
-// by setting a function to verify username and password
 passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
     const user = await db.login(username, password);
@@ -31,17 +29,14 @@ passport.use(
   })
 );
 
-// serialize and de-serialize the user (user object <-> session)
-// we serialize the user id and we store it in the session: the session is very small in this way
 passport.serializeUser((user, done) => {
   done(null, user.ID);
 });
 
-// starting from the data in the session, we extract the current (logged-in) user
 passport.deserializeUser((ID, done) => {
   db.getUserByID(ID)
     .then((user) => {
-      done(null, user); // this will be available in req.user
+      done(null, user);
     })
     .catch((err) => {
       done(err, null);
@@ -52,15 +47,12 @@ const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
   return `${location}[${param}]: ${msg}`;
 };
 
-// init express
 const app = express();
 const port = 3001;
 
-// fixing "413 Request Entity Too Large" errors
 app.use(bodyParser.json({ limit: "500mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "500mb" }));
 
-// set-up the middlewares
 app.use(morgan("common"));
 app.use(express.json());
 const corsOptions = {
@@ -70,17 +62,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.static('./assets'));
 
-// custom middleware: check if a given request is coming from an authenticated user
 const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) return next();
 
   return res.status(401).json({ error: "not authenticated" });
 };
 
-// set up the session
 app.use(
   session({
-    // by default, Passport uses a MemoryStore to keep track of the sessions
     secret:
       "a secret sentence not to share with anybody and anywhere, used to sign the session ID cookie",
     resave: false,
@@ -88,14 +77,11 @@ app.use(
   })
 );
 
-// then, init passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-//This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  let R = 6371; // km
+  let R = 6371;
   let dLat = toRad(lat2 - lat1);
   let dLon = toRad(lon2 - lon1);
   lat1 = toRad(lat1);
@@ -108,7 +94,6 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   return d;
 }
 
-// Converts numeric degrees to radians
 function toRad(Value) {
   return Value * Math.PI / 180;
 }
@@ -164,17 +149,12 @@ function calculateDuration(start, end) {
   return duration;
 }
 
-
-// POST /sessions
-// login
 app.post("/api/sessions", function (req, res, next) {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) {
-      // display wrong login messages
       return res.status(401).json(info);
     }
-    // success, perform the login
     req.login(user, (err) => {
       if (err) return next(err);
       return res.json(req.user);
@@ -182,16 +162,13 @@ app.post("/api/sessions", function (req, res, next) {
   })(req, res, next);
 });
 
-// DELETE /sessions/current
-// logout
 app.delete("/api/sessions/current", (req, res) => {
   req.logout(() => {
     res.end();
   });
 });
 
-// GET /sessions/current
-// check whether the manager is logged in or not
+
 app.get("/api/sessions/current", (req, res) => {
   if (req.isAuthenticated()) {
     res.status(200).json({
@@ -203,7 +180,6 @@ app.get("/api/sessions/current", (req, res) => {
   } else res.status(401).json({ error: "Unauthenticated user!" });
 });
 
-// EXAMPLE OF URL: http://localhost:3001/api/hike?difficulty=T&start_asc=300
 app.get("/api/hike", async (req, res) => {
   await db
     .getHikeWithFilters(req.query)
@@ -227,14 +203,14 @@ app.get("/api/hike", async (req, res) => {
 
 app.get(
   "/api/hikesdetails/:hike_ID",
-  /*isLoggedIn,*/ async function (req, res) {
+  isLoggedIn, async function (req, res) {
     let thisuser
     if (req.user != undefined) {
       thisuser = await db.getUserByID(req.user.ID);
     }
-    // if (thisuser.role !== "Hiker") {
-    //   return res.status(422).json({ error: `the logged in user is not a hiker` }).end();
-    // }
+    if (thisuser.role !== "Hiker") {
+      return res.status(422).json({ error: `the logged in user is not a hiker` }).end();
+    }
     await db
       .getHikesDetailsByHikeID(req.params.hike_ID)
       .then((lists) => {
@@ -314,9 +290,7 @@ app.get("/api/hutWithFilters", async (req, res) => {
     });
 });
 
-//api get completed hikes
 app.get("/api/completedHike", async (req, res) => {
-  //.getCompletedHikesByUserID(req.body.ID)
   await db
     .getCompletedHikesByUserID(req.user.ID)
     .then((lists) => {
@@ -332,7 +306,6 @@ app.get("/api/completedHike", async (req, res) => {
 });
 
 
-//api get parking from hike_ID
 app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
   await db
     .getParkingFromHike(req.params.hike_ID)
@@ -348,21 +321,14 @@ app.get("/api/parkingFromHike/:hike_ID", async (req, res) => {
     });
 });
 
-
-//api per la verifica
 app.get("/api/user/verify/:token", (req, res) => {
   const { token } = req.params;
 
-  // Verifing the JWT token
   jwt.verify(token, "ourSecretKey", async function (err, decoded) {
-    console.log("Decoded", decoded);
     try {
       const userToAdd = await db.getUserByID(decoded.id);
-      console.log("user to add: ", userToAdd);
       const verifyToCheck = userToAdd.verified;
-      console.log(verifyToCheck);
       if (err || verifyToCheck === 1) {
-        /* user already registered */
         console.log(err);
         res.sendFile(path.join(__dirname + "/indexNotVerified.html"));
       } else if (verifyToCheck === 0) {
@@ -384,12 +350,12 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
       return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
     }
     if (typeof req.body.gpx !== "string") {
-      res.status(422).json(err); //UNPROCESSABLE
+      res.status(422).json(err);
     }
 
     const gpx_len = req.body.gpx.length;
     if (gpx_len === 0) {
-      res.status(422).json("Error: the gpx file is empty!"); //UNPROCESSABLE
+      res.status(422).json("Error: the gpx file is empty!");
     }
 
 
@@ -398,25 +364,20 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
       req.body.gpx,
       req.user.ID
     );
-
-    console.log("res1 - ", hike_ID);
     const result2 = await db.addNewLocation(
       req.body.startp,
       "start",
       hike_ID,
       req.body.gpx
     );
-    console.log("res2 - ", result2);
     const result3 = await db.addNewLocation(
       req.body.endp,
       "end",
       hike_ID,
       req.body.gpx
     );
-    console.log("res3 - ", result3);
     let gpx_path = await saveHikeGpx(req.body.gpx, hike_ID)
     const result4 = await db.addNewHikeGPX(gpx_path, hike_ID);
-    console.log("res4 - ", result4);
 
     if (req.body.image_base_64 != undefined) {
       const imagePath = await saveHikeImage(
@@ -449,7 +410,6 @@ app.get("/api/getReferencePointByHike/:hike_ID", async (req, res) => {
     });
 });
 
-//THIS IS THE SAME AS THE PREVIOUS FUNCTION BUT DOESNT FILTER FOR USER ID
 app.get("/api/getAllReferencePointByHike/:hike_ID", async (req, res) => {
   await db
     .getReferencePointByHike(req.params.hike_ID)
@@ -465,7 +425,6 @@ app.get("/api/getAllReferencePointByHike/:hike_ID", async (req, res) => {
     });
 });
 
-//THIS IS THE SAME AS THE PREVIOUS FUNCTION BUT DOESNT FILTER FOR USER ID
 app.get("/api/getGenericHutsPointByHike/:hike_ID", async (req, res) => {
   await db
     .getGenericHutsPointByHike(req.params.hike_ID)
@@ -489,9 +448,6 @@ app.post("/api/addSchedule", async (req, res) => {
     }
 
     const result1 = await db.addSchedule(req.body, req.user.ID);
-
-    //res.status(201).json(result1);
-
     const result2 = await db.getReferencePointByHike(req.body.hike_ID);
     let references = [];
     result2.map((res) => {
@@ -506,7 +462,7 @@ app.post("/api/addSchedule", async (req, res) => {
 
     res.status(201).json(result2);
   } catch (err) {
-    console.error(err);
+    console.log(err);
     res.status(503).json(err);
   }
 });
@@ -525,7 +481,7 @@ app.put("/api/updateSchedule", async (req, res) => {
     await db.cleanRefReached(Number(schedule.hike_ID), Number(req.user.ID))
     res.status(200).json(result);
   } catch (err) {
-    console.error(err);
+    console.log(err);
     res.status(503).json(err);
   }
 });
@@ -541,7 +497,7 @@ app.put("/api/updateRefReached", async (req, res) => {
 
     res.status(200).json("Reference point " + req.body.ref_ID + " reached!");
   } catch (err) {
-    console.error(err);
+    console.log(err);
     res.status(503).json(err);
   }
 });
@@ -566,13 +522,11 @@ app.post("/api/addUser", async (req, res) => {
   try {
     const result1 = await db.addUser(req.body);
 
-    console.log("RESULT", result1);
     const token_mail_verification = jwt.sign({ id: result1 }, "ourSecretKey", {
       expiresIn: "1d",
     });
 
     const message = `http://localhost:3001/api/user/verify/${token_mail_verification}`;
-    //to insert: req.body.user.mail
     await sendEmail(req.body.mail, "Verify Email", message);
     res.status(201).json(result1);
   } catch (err) {
@@ -581,7 +535,7 @@ app.post("/api/addUser", async (req, res) => {
   }
 });
 
-//addHut
+
 app.post(
   "/api/addHut",
   isLoggedIn,
@@ -599,13 +553,11 @@ app.post(
     check("website").isString(),
   ],
   async (req, res) => {
-    const errors = validationResult(req).formatWith(errorFormatter); // format error message
+    const errors = validationResult(req).formatWith(errorFormatter); 
     if (!errors.isEmpty()) {
-      return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+      return res.status(422).json({ error: errors.array().join(", ") });
     }
-
     try {
-      // check if a user is a local guide or a hut worker
       if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
         const result1 = await db.addHut(req.body, req.user.ID);
 
@@ -618,15 +570,14 @@ app.post(
   }
 );
 
-//addParking
+
 app.post("/api/addParking", isLoggedIn, [], async (req, res) => {
-  const errors = validationResult(req).formatWith(errorFormatter); // format error message
+  const errors = validationResult(req).formatWith(errorFormatter); 
   if (!errors.isEmpty()) {
-    return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+    return res.status(422).json({ error: errors.array().join(", ") });
   }
 
   try {
-    // check if a user is a local guide or a hut worker
     if (req.user.role === "LocalGuide" || req.user.role === "HutWorker") {
       const result1 = await db.addParking(req.body, req.user.ID);
 
@@ -638,15 +589,12 @@ app.post("/api/addParking", isLoggedIn, [], async (req, res) => {
   }
 });
 
-//add reference point
 app.post("/api/addReferencePoint", isLoggedIn, [], async (req, res) => {
-  const errors = validationResult(req).formatWith(errorFormatter); // format error message
+  const errors = validationResult(req).formatWith(errorFormatter); 
   if (!errors.isEmpty()) {
-    return res.status(422).json({ error: errors.array().join(", ") }); // error message is a single string with all error joined together
+    return res.status(422).json({ error: errors.array().join(", ") });
   }
-
   try {
-    // check if a user is a local guide
     if (req.user.role === "LocalGuide") {
       const result1 = await db.addReferencePoint(req.body, req.user.ID);
 
@@ -659,7 +607,6 @@ app.post("/api/addReferencePoint", isLoggedIn, [], async (req, res) => {
 });
 
 
-//set a boolean value (verified) to 1
 app.put("/api/:id/setVerified", async (req, res) => {
   try {
     const result1 = await db.setVerified(req.params.id);
@@ -713,7 +660,6 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
       huts.map((h) => {
         let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, h.latitude, h.longitude);
         if (distance < 5) {
-          console.log("HUTS - DISTANCE: ", distance);
           final_huts.push({
             ID: h.ID,
             name: h.name,
@@ -740,7 +686,6 @@ app.get("/api/locationToLinkHutOrParking", async (req, res) => {
       parks.map((p) => {
         let distance = getDistanceFromLatLonInKm(loc.latitude, loc.longitude, p.latitude, p.longitude);
         if (distance < 5) {
-          console.log("PARKING LOTS - DISTANCE: ", distance);
           final_parks.push({
             ID: p.ID,
             name: p.name,
@@ -838,7 +783,6 @@ app.get("/api/pointToLinkHut", async (req, res) => {
       huts.map((h) => {
         let distance = getDistanceFromLatLonInKm(Number(req.query.latitude), Number(req.query.longitude), h.latitude, h.longitude);
         if (distance < 5) {
-          console.log("HUTS - DISTANCE: ", distance);
           final_huts.push({
             ID: h.ID,
             name: h.name,
@@ -908,8 +852,6 @@ const generateRandomString = function (n) {
   return str;
 };
 
-//APIs for regions, provinces, municipalities and borders
-
 app.get("/api/regions/", async (req, res) => {
   await db
     .getRegions()
@@ -970,7 +912,6 @@ app.get("/api/border/:ID", async (req, res) => {
     });
 });
 
-// Activate the server
 app.listen(port, () => {
   console.log(`server listening at http://localhost:${port}`);
 });

@@ -1,6 +1,5 @@
 "use strict"
 
-/* UNIT TEST FILE FOR HIKE APIS */
 const { expect, assert } = require('chai');
 const Database = require('../database');
 
@@ -11,15 +10,7 @@ describe.only('hikeController Tests', () => {
     describe('getAllHikes method test', () => {
         test('successful use of getAllHikes', async () => {
 
-            /* to test the real DB, you need to add filters and to make sure that the number of result is the same on the assert equal */
             let filters = {
-                //difficulty: "T",
-                //start_len : 5,
-                //end_len : 15,
-                //start_asc : 500,
-                //end_asc : 2000,
-                //start_time : "00:00",
-                //end_time : "30:00"
             };
 
             await hikeController.deleteLocationByHikeID(51);
@@ -175,7 +166,6 @@ describe.only('hikeController Tests', () => {
 
             const result = await hikeController.getUserByID(11);
 
-            /*password and salt cannot be tested, since they are crypted and they will never match the ones in the JSON */
             assert.equal(result.name, reqbody.name);
             assert.equal(result.surname, reqbody.surname);
             assert.equal(result.mail, reqbody.mail);
@@ -399,19 +389,7 @@ describe.only('hikeController Tests', () => {
 
     describe('getHutsWithFilters method test', () => {
         test('successful use of getHutsWithFilters', async () => {
-
-            /* to test the real DB, you need to add filters and to make sure that the number of result is the same on the assert equal */
             let filters = {
-                //min_opening_time: "06:00",
-                //max_opening_time: "10:00",
-                //min_closing_time: "19:00",
-                //max_closing_time: "23:00",
-                //min_bed_num: 3,
-                //max_bed_num: 55,
-                //min_altitude: 10,
-                //max_altitude: 5000,
-                //city: "Lecce",
-                //province: "Lecce"
             };
 
             const result = await hikeController.getHutsWithFilters(filters);
@@ -789,8 +767,6 @@ describe.only('hikeController Tests', () => {
             await hikeController.addRefReached(reqbody.hike_ID, reqbody.user_ID, reqbody.ref_ID);
             
             const result = await hikeController.getRefReached(reqbody.hike_ID, reqbody.user_ID, reqbody.ref_ID);
-
-            //console.log("addRefReached result: ", result);
             
             assert.equal(result[0].hike_ID, reqbody.hike_ID);
             assert.equal(result[0].user_ID, reqbody.user_ID);
@@ -825,8 +801,6 @@ describe.only('hikeController Tests', () => {
             await hikeController.updateRefReached(reqbody.hike_ID, reqbody.user_ID, reqbody.ref_ID);
             
             const result = await hikeController.getRefReached(reqbody.hike_ID, reqbody.user_ID, reqbody.ref_ID);
-
-            //console.log("\n\nupdateRefReached result: ", result);
 
             assert.equal(result[0].hike_ID, reqbody.hike_ID);
             assert.equal(result[0].user_ID, reqbody.user_ID);

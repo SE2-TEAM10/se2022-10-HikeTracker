@@ -244,7 +244,6 @@ class Database {
     });
   };
 
-  /*testing code START*/
   getHikeByID = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hike WHERE ID = ?";
@@ -631,8 +630,6 @@ class Database {
       });
     });
   };
-
-  /*testing code END*/
 
   addNewHike = (hike, gpx_string, user_ID) => {
     return new Promise((resolve, reject) => {
@@ -1093,7 +1090,6 @@ class Database {
     });
   };
 
-  /*HT-8 - GET LOCATION GIVEN HIKE_ID AND TYPE OF POINT*/
   getLocationToLink = (hike_ID, start_end) => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM location WHERE hike_ID = ? AND start_end = ?";
@@ -1104,7 +1100,6 @@ class Database {
     });
   };
 
-  /*HT-8 - GET ALL HUTS*/
   getAllHuts = () => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM hut";
@@ -1154,7 +1149,6 @@ class Database {
     });
   };
 
-  /*HT-8 - GET ALL PARKING LOTS*/
   getAllParkings = () => {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM parking_lot";
