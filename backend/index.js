@@ -434,29 +434,9 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
   }
 });
 
-app.post(
-  "/api/gpx",
-  isLoggedIn,
-  [],
-  async (req, res) => {
-    try {
-      let thisuser = await db.getUserByID(req.user.ID);
-      if (thisuser.role !== "LocalGuide") {
-        return res.status(422).json({ error: `the logged in user is not a local guide!` }).end();
-      }
-      const result5 = await db.addGpx(req.body.gpx);
-
-      res.status(201).json(result5);
-    } catch (err) {
-      console.error(err);
-      res.status(503).json(err);
-    }
-  }
-);
-
 app.get("/api/getReferencePointByHike/:hike_ID", async (req, res) => {
   await db
-    .getReferencePointOfScheduledHike(req.params.hike_ID,req.user.ID)
+    .getReferencePointOfScheduledHike(req.params.hike_ID, req.user.ID)
     .then((lists) => {
       res.json(lists);
     })
@@ -526,7 +506,7 @@ app.put("/api/updateSchedule", async (req, res) => {
     let duration = calculateDuration(schedule.start_time, req.body.end_time);
 
     const result = await db.updateSchedule(Number(req.body.ID), req.body.end_time, duration);
-    await db.cleanRefReached(Number(schedule.hike_ID),Number(req.user.ID))
+    await db.cleanRefReached(Number(schedule.hike_ID), Number(req.user.ID))
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
@@ -542,7 +522,7 @@ app.put("/api/updateRefReached", async (req, res) => {
     }
 
     const result = await db.updateRefReached(Number(req.body.hike_ID), req.user.ID, Number(req.body.ref_ID));
-    
+
     res.status(200).json("Reference point " + req.body.ref_ID + " reached!");
   } catch (err) {
     console.error(err);
@@ -551,20 +531,20 @@ app.put("/api/updateRefReached", async (req, res) => {
 });
 
 app.get("/api/getOnGoingHike",
-isLoggedIn, async (req, res) => {
-  await db
-    .getOnGoingHikeByUserID(req.user.ID)
-    .then((lists) => {
-      res.json(lists);
-    })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(500)
-        .json({ error: `Database error while retrieving hike` })
-        .end();
-    });
-});
+  isLoggedIn, async (req, res) => {
+    await db
+      .getOnGoingHikeByUserID(req.user.ID)
+      .then((lists) => {
+        res.json(lists);
+      })
+      .catch((err) => {
+        console.log(err);
+        res
+          .status(500)
+          .json({ error: `Database error while retrieving hike` })
+          .end();
+      });
+  });
 
 app.post("/api/addUser", async (req, res) => {
   try {
@@ -785,10 +765,9 @@ app.get("/api/linkHut/:hike_ID", isLoggedIn, async (req, res) => {
 app.post("/api/linkHut", isLoggedIn, [],
   async (req, res) => {
     try {
-      /*ref_type = HT-8: "start"/"end"; HT-9: "generic point"; */
       await db.deleteLinkedHut(req.body.hike_ID, req.body.ref_type);
       await db.deleteLinkedParking(req.body.hike_ID, req.body.ref_type);
-      const result = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, req.body.hut_ID, req.body.ref_type);
+      const result = await db.addHikeUserHut(req.body.hike_ID, req.user.ID, req.body.hut_ID);
       res.status(201).json(result);
     } catch (err) {
       console.error(err);

@@ -14,15 +14,12 @@ function checkPassword(password) {
     count += 1;
   }
 
-  //UpperCase
   if (/[A-Z]/.test(password)) {
     count += 1;
   }
-  //Lowercase
   if (/[a-z]/.test(password)) {
     count += 1;
   }
-  //Numbers
   if (/\d/.test(password)) {
     count += 1;
   }
@@ -38,9 +35,6 @@ class Database {
   }
 
   getHikeWithFilters = (filters) => {
-    //console.log(filters);
-    //console.log(Object.keys(filters).length);
-
     return new Promise((resolve, reject) => {
       let query =
         "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID";
@@ -83,13 +77,9 @@ class Database {
           query2 = query2.concat(" AND ");
         }
         query2 = query2.slice(0, query2.length - 4);
-        //console.log(query2);
       } else {
         query2 = query2.concat(query);
-        //console.log(query2);
       }
-
-      //console.log("final query: ", query2);
       this.db.all(query2, [], async (err, rows) => {
         if (err) {
           reject(err);
@@ -449,10 +439,10 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (typeof user_ID !== "number") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "SELECT * FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE hike_schedule.user_ID=? AND status = 'completed'";
@@ -560,10 +550,10 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (typeof user_ID !== "number") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       let query = "UPDATE user SET verified = 0 WHERE ID=?";
 
@@ -655,13 +645,12 @@ class Database {
           typeof gpx_string !== "string" ||
           typeof user_ID !== "number"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       let gpx = new GpxParser();
-      console.log("GPX STRING - ", gpx_string);
       gpx.parse(gpx_string);
       let length = parseInt(gpx.tracks[0].distance.total / 1000);
       let ascent = parseInt(gpx.tracks[0].elevation.max);
@@ -696,10 +685,10 @@ class Database {
           typeof position !== "string" ||
           typeof hike_ID !== "number"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       let gpx = new GpxParser();
       gpx.parse(gpx_string);
@@ -719,7 +708,7 @@ class Database {
         longitude = lon_end;
         position = "end";
       } else {
-        return reject(422); //UNPROCESSABLE
+        return reject(422);
       }
       const sql =
         "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID, start_end) VALUES(?,?,?,?,?,?,?)";
@@ -746,10 +735,10 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (typeof gpx_path !== "string" || typeof hike_ID !== "number") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql = "INSERT INTO hike_gpx(gpx,hike_ID) VALUES(?,?)";
       this.db.run(sql, [gpx_path, hike_ID], function (err) {
@@ -763,10 +752,10 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (typeof imagePath !== "string" || typeof hike_ID !== "number") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql = "INSERT INTO hike_image(path, hike_ID, type) VALUES(?,?,?)";
       this.db.run(sql, [imagePath, hike_ID, type], function (err) {
@@ -784,10 +773,10 @@ class Database {
           typeof schedule.hike_ID !== "number" ||
           typeof user_ID !== "number"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going','on going',?,?)";
@@ -810,10 +799,10 @@ class Database {
           typeof end_time !== "string" ||
           typeof duration !== "string"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "UPDATE hike_schedule SET end_time = ?, duration = ?, status = 'completed' WHERE ID =?";
@@ -828,10 +817,10 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (typeof hike_ID !== "number" || typeof user_ID !== "number") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql = "DELETE from ref_reached WHERE hike_ID = ? AND user_ID = ?";
       this.db.run(sql, [hike_ID, user_ID], function (err) {
@@ -851,10 +840,10 @@ class Database {
           typeof user.role !== "string" ||
           typeof user.password !== "string"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
 
       let countCheck = checkPassword(user.password);
@@ -885,7 +874,6 @@ class Database {
             function (err) {
               if (err) reject(err);
               else {
-                //console.log(this.lastID);
                 resolve(this.lastID);
               }
             }
@@ -897,23 +885,27 @@ class Database {
 
   addHut = (hut, user_ID) => {
     return new Promise((resolve, reject) => {
-      if (
-        typeof hut.name !== "string" ||
-        typeof hut.description !== "string" ||
-        typeof hut.opening_time !== "string" ||
-        typeof hut.closing_time !== "string" ||
-        typeof hut.bed_num !== "number" ||
-        typeof hut.altitude !== "number" ||
-        typeof hut.latitude !== "number" ||
-        typeof hut.longitude !== "number" ||
-        typeof hut.city !== "string" ||
-        typeof hut.province !== "string" ||
-        typeof hut.phone !== "string" ||
-        typeof hut.mail !== "string" ||
-        typeof hut.website !== "string" ||
-        typeof user_ID !== "number"
-      ) {
-        return reject(422); // 422 - UNPROCESSABLE
+      try {
+        if (
+          typeof hut.name !== "string" ||
+          typeof hut.description !== "string" ||
+          typeof hut.opening_time !== "string" ||
+          typeof hut.closing_time !== "string" ||
+          typeof hut.bed_num !== "number" ||
+          typeof hut.altitude !== "number" ||
+          typeof hut.latitude !== "number" ||
+          typeof hut.longitude !== "number" ||
+          typeof hut.city !== "string" ||
+          typeof hut.province !== "string" ||
+          typeof hut.phone !== "string" ||
+          typeof hut.mail !== "string" ||
+          typeof hut.website !== "string" ||
+          typeof user_ID !== "number"
+        ) {
+          return reject(422);
+        }
+      } catch (e) {
+        return reject(503);
       }
       const sql =
         "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website, user_ID) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -947,18 +939,21 @@ class Database {
 
   addParking = (parking, user_ID) => {
     return new Promise((resolve, reject) => {
-      if (
-        typeof parking.name !== "string" ||
-        typeof parking.capacity !== "number" ||
-        typeof parking.latitude !== "number" ||
-        typeof parking.longitude !== "number" ||
-        typeof parking.city !== "string" ||
-        typeof parking.province !== "string" ||
-        typeof user_ID !== "number"
-      ) {
-        return reject(422); // 422 - UNPROCESSABLE
+      try {
+        if (
+          typeof parking.name !== "string" ||
+          typeof parking.capacity !== "number" ||
+          typeof parking.latitude !== "number" ||
+          typeof parking.longitude !== "number" ||
+          typeof parking.city !== "string" ||
+          typeof parking.province !== "string" ||
+          typeof user_ID !== "number"
+        ) {
+          return reject(422);
+        }
+      } catch (e) {
+        return reject(503);
       }
-
       const sql =
         "INSERT INTO parking_lot(name,capacity,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
@@ -984,18 +979,21 @@ class Database {
 
   addReferencePoint = (referencePoint, user_ID) => {
     return new Promise((resolve, reject) => {
-      if (
-        typeof referencePoint.name !== "string" ||
-        typeof referencePoint.type !== "string" ||
-        typeof referencePoint.latitude !== "number" ||
-        typeof referencePoint.longitude !== "number" ||
-        typeof referencePoint.city !== "string" ||
-        typeof referencePoint.province !== "string" ||
-        typeof user_ID !== "number"
-      ) {
-        return reject(422); // 422 - UNPROCESSABLE
+      try {
+        if (
+          typeof referencePoint.name !== "string" ||
+          typeof referencePoint.type !== "string" ||
+          typeof referencePoint.latitude !== "number" ||
+          typeof referencePoint.longitude !== "number" ||
+          typeof referencePoint.city !== "string" ||
+          typeof referencePoint.province !== "string" ||
+          typeof user_ID !== "number"
+        ) {
+          return reject(422);
+        }
+      } catch (e) {
+        return reject(503);
       }
-
       const sql =
         "INSERT INTO reference_point(name,type,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
@@ -1049,33 +1047,25 @@ class Database {
             } else if (key == "max_closing_time") {
               query2 = query2.concat("closing_time", "<", "'" + value + "'");
             } else {
-              query2 = query2.concat(key, "=", "'" + value + "'"); //city, province
+              query2 = query2.concat(key, "=", "'" + value + "'");
             }
           } else if (typeof value === "number" || value instanceof Number) {
             if (key == "min_altitude") {
-              //min_altitude
-              query2 = query2.concat("altitude", " > ", value); //altitude
+              query2 = query2.concat("altitude", " > ", value);
             } else if (key == "max_altitude") {
-              //max_altitude
-              query2 = query2.concat("altitude", " < ", value); //altitude
+              query2 = query2.concat("altitude", " < ", value);
             } else if (key == "min_bed_num") {
-              //min_bed_num
-              query2 = query2.concat("bed_num", " > ", value); //bed_num
+              query2 = query2.concat("bed_num", " > ", value);
             } else if (key == "max_bed_num") {
-              //max_bed_num
-              query2 = query2.concat("bed_num", " < ", value); //bed_num
+              query2 = query2.concat("bed_num", " < ", value);
             }
           }
           query2 = query2.concat(" AND ");
         }
         query2 = query2.slice(0, query2.length - 4);
-        //console.log(query2);
       } else {
         query2 = query2.concat(query);
-        //console.log(query2);
       }
-
-      //console.log("final query: ", query2);
       this.db.all(query2, [], (err, rows) => {
         if (err) {
           reject(err);
@@ -1162,15 +1152,14 @@ class Database {
     });
   };
 
-  /*HT-8 - GET HUTS LINKED TO THE HIKE*/
   getHutsLinkedToHike = (hike_ID) => {
     return new Promise((resolve, reject) => {
       try {
         if (typeof hike_ID !== "number") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "Select hut.*, hike_user_hut.ref_type from hike_user_hut JOIN hut ON hike_user_hut.hut_ID = hut.ID WHERE hike_user_hut.hike_ID = ?";
@@ -1183,15 +1172,14 @@ class Database {
     });
   };
 
-  /*HT-8 - DELETE LINKED HUTS*/
   deleteLinkedHut = (hike_ID, ref_type) => {
     return new Promise((resolve, reject) => {
       try {
         if (typeof hike_ID !== "number" || typeof ref_type !== "string") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
 
       const sql =
@@ -1205,7 +1193,6 @@ class Database {
     });
   };
 
-  /*HT-8 - ADD HUT LINKED TO THE HIKE*/
   addHikeUserHut = (hike_ID, user_ID, hut_ID, ref_type) => {
     return new Promise((resolve, reject) => {
       try {
@@ -1215,10 +1202,10 @@ class Database {
           typeof hut_ID !== "number" ||
           typeof ref_type !== "string"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "INSERT INTO hike_user_hut(hike_ID, user_ID, hut_ID, ref_type) VALUES(?,?,?,?)";
@@ -1239,10 +1226,10 @@ class Database {
           typeof user_ID !== "number" ||
           typeof ref_ID !== "number"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "INSERT INTO ref_reached(hike_ID, user_ID, ref_ID, state) VALUES(?,?,?,0)";
@@ -1263,10 +1250,10 @@ class Database {
           typeof user_ID !== "number" ||
           typeof ref_ID !== "number"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "UPDATE ref_reached SET state = 1 WHERE hike_ID = ? AND user_ID = ? AND ref_ID = ?";
@@ -1279,15 +1266,14 @@ class Database {
     });
   };
 
-  /*HT-8 - GET PARKINGS LINKED TO THE HIKE*/
   getParkingsLinkedToHike = (hike_ID, user_ID) => {
     return new Promise((resolve, reject) => {
       try {
         if (typeof hike_ID !== "number") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "Select parking_lot.*, hike_user_parking.ref_type from hike_user_parking JOIN parking_lot ON hike_user_parking.parking_ID = parking_lot.ID WHERE hike_user_parking.hike_ID = ?";
@@ -1300,15 +1286,14 @@ class Database {
     });
   };
 
-  /*HT-8 - DELETE LINKED PARKING OR HUTS*/
   deleteLinkedParking = (hike_ID, ref_type) => {
     return new Promise((resolve, reject) => {
       try {
         if (typeof hike_ID !== "number" || typeof ref_type !== "string") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
 
       const sql =
@@ -1322,7 +1307,6 @@ class Database {
     });
   };
 
-  /*HT-8 - ADD PARKING LOT LINKED TO THE HIKE*/
   addHikeUserParking = (hike_ID, user_ID, parking_ID, ref_type) => {
     return new Promise((resolve, reject) => {
       try {
@@ -1332,10 +1316,10 @@ class Database {
           typeof parking_ID !== "number" ||
           typeof ref_type !== "string"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
 
       const sql =
@@ -1353,20 +1337,18 @@ class Database {
     });
   };
 
-  /*HT-33 ADD REFERENCE POINT LINKED TO THE HIKE*/
-  addHikeUserRef = (hike_ID, user_ID, ref_ID, ref_type) => {
+  addHikeUserRef = (hike_ID, user_ID, ref_ID) => {
     return new Promise((resolve, reject) => {
       try {
         if (
           typeof hike_ID !== "number" ||
           typeof user_ID !== "number" ||
-          typeof ref_ID !== "number" //||
-          //typeof ref_type !== 'string'
+          typeof ref_ID !== "number"
         ) {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       const sql =
         "INSERT INTO hike_user_ref(hike_ID, user_ID, ref_ID, ref_type) VALUES(?,?,?,?)";
@@ -1379,41 +1361,14 @@ class Database {
     });
   };
 
-  addGpx = (gpx1) => {
-    return new Promise((resolve, reject) => {
-      let gpx = new GpxParser();
-      gpx.parse(gpx1);
-
-      let length = parseInt((gpx.tracks[0].distance.total * 2) / 1000);
-      //console.log("LENGTH ", length);
-
-      let max_el = gpx.tracks[0].elevation.max;
-      let min_el = gpx.tracks[0].elevation.min;
-      let ascent = parseInt(max_el - min_el);
-      //console.log("ASCENT ", ascent);
-
-      let lat = gpx.tracks[0].points[0].lat;
-      let lon = gpx.tracks[0].points[0].lon;
-
-      let len = gpx.tracks[0].points.length - 1;
-      let lat_end = gpx.tracks[0].points[len].lat;
-      let lon_end = gpx.tracks[0].points[len].lon;
-
-      //console.log("LATITUDINE START", lat);
-      //console.log("LONGITUDINE START", lon);
-      //console.log("LATITUDINE END", lat_end);
-      //console.log("LONGITUDINE END", lon_end);
-    });
-  };
-
   setVerified = (user_ID) => {
     return new Promise((resolve, reject) => {
       try {
         if (typeof user_ID !== "number") {
-          return reject(422); // 422 - UNPROCESSABLE
+          return reject(422);
         }
       } catch (e) {
-        return reject(503); // 503 - UNAVAILABLE
+        return reject(503);
       }
       let query = "UPDATE user SET verified = 1 WHERE ID=?";
 
