@@ -203,14 +203,14 @@ app.get("/api/hike", async (req, res) => {
 
 app.get(
   "/api/hikesdetails/:hike_ID",
-  isLoggedIn, async function (req, res) {
+  /*isLoggedIn,*/ async function (req, res) {
     let thisuser
     if (req.user != undefined) {
       thisuser = await db.getUserByID(req.user.ID);
-    }
+    }/*
     if (thisuser.role !== "Hiker") {
       return res.status(422).json({ error: `the logged in user is not a hiker` }).end();
-    }
+    }*/
     await db
       .getHikesDetailsByHikeID(req.params.hike_ID)
       .then((lists) => {
