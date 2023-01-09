@@ -762,6 +762,16 @@ class Database {
     });
   };
 
+  deleteRefReached = (hike_ID, user_ID, ref_ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = "DELETE FROM ref_reached WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
+      this.db.run(sql, [hike_ID, user_ID, ref_ID], function (err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+  };
+
   /*testing code END*/
 
   addNewHike = (hike, gpx_string, user_ID) => {
