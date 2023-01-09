@@ -217,10 +217,10 @@ class Database {
             }
           });
 
-          var promises = array.map(async (h) => {
+          let promises = array.map(async (h) => {
             return this.getCoverImageByHikeID(h.ID);
           });
-          var results = await Promise.all(promises);
+          let results = await Promise.all(promises);
 
           array.forEach((element, index) => {
             array[index] = {
