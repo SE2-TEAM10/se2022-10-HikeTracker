@@ -34,86 +34,44 @@ class Database {
     });
   }
 
-  getHikeHutWithFilters = (filters,test) => {
+  getHikeWithFilters = (filters) => {
     return new Promise((resolve, reject) => {
-      let query;
-      if(test === 0){
-        query = "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID";
-      }else{
-        query = "SELECT * FROM hut";
-      }
+      let query =
+          "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID";
       let query2 = "";
       if (Object.entries(filters).length != 0) {
         query2 = query.concat(" WHERE ");
         for (let entry of Object.entries(filters)) {
           let key = entry[0];
           let value = entry[1];
-
-          if(test === 0){
-            if (
-                key == "start_asc" ||
-                key == "end_asc" ||
-                key == "start_len" ||
-                key == "end_len"
-            ) {
-              value = parseInt(value);
+          if (
+              key == "start_asc" ||
+              key == "end_asc" ||
+              key == "start_len" ||
+              key == "end_len"
+          ) {
+            value = parseInt(value);
+          }
+          if (
+              (typeof value === "string" || value instanceof String) &&
+              key.length !== 0
+          ) {
+            if (key == "start_time") {
+              query2 = query2.concat("expected_time", " > ", "'" + value + "'");
+            } else if (key == "end_time") {
+              query2 = query2.concat("expected_time", "<", "'" + value + "'");
+            } else {
+              query2 = query2.concat(key, "=", "'" + value + "'");
             }
-            if (
-                (typeof value === "string" || value instanceof String) &&
-                key.length !== 0
-            ) {
-              if (key == "start_time") {
-                query2 = query2.concat("expected_time", " > ", "'" + value + "'");
-              } else if (key == "end_time") {
-                query2 = query2.concat("expected_time", "<", "'" + value + "'");
-              } else {
-                query2 = query2.concat(key, "=", "'" + value + "'");
-              }
-            } else if (typeof value === "number" || value instanceof Number) {
-              if (key == "start_asc") {
-                query2 = query2.concat("ascent", " > ", value);
-              } else if (key == "end_asc") {
-                query2 = query2.concat("ascent", " < ", value);
-              } else if (key == "start_len") {
-                query2 = query2.concat("length", " > ", value);
-              } else if (key == "end_len") {
-                query2 = query2.concat("length", " < ", value);
-              }
-            }
-          }else{
-            if (
-                key == "min_altitude" ||
-                key == "max_altitude" ||
-                key == "min_bed_num" ||
-                key == "max_bed_num"
-            ) {
-              value = parseInt(value);
-            }
-            if (
-                (typeof value === "string" || value instanceof String) &&
-                key.length !== 0
-            ) {
-              if (key == "min_opening_time") {
-                query2 = query2.concat("opening_time", " > ", "'" + value + "'");
-              } else if (key == "max_opening_time") {
-                query2 = query2.concat("opening_time", "<", "'" + value + "'");
-              } else if (key == "min_closing_time") {
-                query2 = query2.concat("closing_time", " > ", "'" + value + "'");
-              } else if (key == "max_closing_time") {
-                query2 = query2.concat("closing_time", "<", "'" + value + "'");
-              } else {
-                query2 = query2.concat(key, "=", "'" + value + "'");
-              }
-            } else if (typeof value === "number" || value instanceof Number) {
-              if (key == "min_altitude") {
-                query2 = query2.concat("altitude", " > ", value);
-              } else if (key == "max_altitude") {
-                query2 = query2.concat("altitude", " < ", value);
-              } else if (key == "min_bed_num") {
-                query2 = query2.concat("bed_num", " > ", value);
-              } else if (key == "max_bed_num") {
-                query2 = query2.concat("bed_num", " < ", value);
-              }
+          } else if (typeof value === "number" || value instanceof Number) {
+            if (key == "start_asc") {
+              query2 = query2.concat("ascent", " > ", value);
+            } else if (key == "end_asc") {
+              query2 = query2.concat("ascent", " < ", value);
+            } else if (key == "start_len") {
+              query2 = query2.concat("length", " > ", value);
+            } else if (key == "end_len") {
+              query2 = query2.concat("length", " < ", value);
             }
           }
           query2 = query2.concat(" AND ");
@@ -127,94 +85,72 @@ class Database {
           reject(err);
           return;
         }
-        if(test === 0){
-          const list = rows.map((e) => ({
-            ID: e.ID,
-            name: e.name,
-            length: e.length,
-            expected_time: e.expected_time,
-            ascent: e.ascent,
-            difficulty: e.difficulty,
-            start_point: e.start_point,
-            end_point: e.end_point,
-            description: e.description,
-            location_name: e.location_name,
-            latitude: e.latitude,
-            longitude: e.longitude,
-            city: e.city,
-            province: e.province,
-            hike_ID: e.hike_ID,
-            user_ID: e.user_ID,
-          }));
-
-          let array = [];
-          list.forEach((i) => {
-            if (array.find((a) => a.ID === i.ID) === undefined) {
-              let temp = list.filter((elem) => elem.ID === i.ID);
-              if (temp.length === 1) {
-                array.push(temp[0]);
-              } else {
-                let location = [];
-                temp.map((t) => {
-                  location.push({
-                    name: t.location_name,
-                    latitude: t.latitude,
-                    longitude: t.longitude,
-                    city: t.city,
-                    province: t.province,
-                  });
-                  return t;
+        const list = rows.map((e) => ({
+          ID: e.ID,
+          name: e.name,
+          length: e.length,
+          expected_time: e.expected_time,
+          ascent: e.ascent,
+          difficulty: e.difficulty,
+          start_point: e.start_point,
+          end_point: e.end_point,
+          description: e.description,
+          location_name: e.location_name,
+          latitude: e.latitude,
+          longitude: e.longitude,
+          city: e.city,
+          province: e.province,
+          hike_ID: e.hike_ID,
+          user_ID: e.user_ID,
+        }));
+        let array = [];
+        list.forEach((i) => {
+          if (array.find((a) => a.ID === i.ID) === undefined) {
+            let temp = list.filter((elem) => elem.ID === i.ID);
+            if (temp.length === 1) {
+              array.push(temp[0]);
+            } else {
+              let location = [];
+              temp.map((t) => {
+                location.push({
+                  name: t.location_name,
+                  latitude: t.latitude,
+                  longitude: t.longitude,
+                  city: t.city,
+                  province: t.province,
                 });
-                array.push({
-                  ID: temp[0].ID,
-                  userID: temp[0].user_ID,
-                  name: temp[0].name,
-                  length: temp[0].length,
-                  expected_time: temp[0].expected_time,
-                  ascent: temp[0].ascent,
-                  difficulty: temp[0].difficulty,
-                  start_point: temp[0].start_point,
-                  end_point: temp[0].end_point,
-                  description: temp[0].description,
-                  location: location,
-                });
-              }
+                return t;
+              });
+              array.push({
+                ID: temp[0].ID,
+                userID: temp[0].user_ID,
+                name: temp[0].name,
+                length: temp[0].length,
+                expected_time: temp[0].expected_time,
+                ascent: temp[0].ascent,
+                difficulty: temp[0].difficulty,
+                start_point: temp[0].start_point,
+                end_point: temp[0].end_point,
+                description: temp[0].description,
+                location: location,
+              });
             }
-          });
+          }
+        });
 
-          const promises = array.map(async (h) => {
-            return this.getCoverImageByHikeID(h.ID);
-          });
-          const results = await Promise.all(promises);
+        const promises = array.map(async (h) => {
+          return this.getCoverImageByHikeID(h.ID);
+        });
+        const results = await Promise.all(promises);
 
-          array.forEach((element, index) => {
-            array[index] = {
-              ...element,
-              coverUrl: results[index],
-            };
-          });
+        array.forEach((element, index) => {
+          array[index] = {
+            ...element,
+            coverUrl: results[index],
+          };
+        });
 
-          return resolve(array);
-
-        }else{
-          const list = rows.map((e) => ({
-            ID: e.ID,
-            name: e.name,
-            description: e.description,
-            opening_time: e.opening_time,
-            closing_time: e.closing_time,
-            bed_num: e.bed_num,
-            altitude: e.altitude,
-            latitude: e.latitude,
-            longitude: e.longitude,
-            city: e.city,
-            province: e.province,
-            phone: e.phone,
-            mail: e.mail,
-            website: e.website,
-          }));
-          return resolve(list);
-        }
+        return resolve(array);
       });
     });
   };
@@ -222,7 +158,7 @@ class Database {
   getHikesDetailsByHikeID = (hike_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID INNER JOIN hike_gpx ON hike.ID = hike_gpx.hike_ID WHERE hike.ID = ?";
+          "SELECT * FROM hike INNER JOIN location ON hike.ID = location.hike_ID INNER JOIN hike_gpx ON hike.ID = hike_gpx.hike_ID WHERE hike.ID = ?";
       this.db.all(sql, [hike_ID], async (err, rows) => {
         if (err || rows.length === 0) reject(err);
         else {
@@ -421,7 +357,7 @@ class Database {
   getLinkHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT * FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+          "SELECT * FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
       this.db.all(sql, [hike_ID, user_ID, hut_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -432,14 +368,14 @@ class Database {
   getLinkHikeUserParkingLot = (hike_ID, user_ID, parking_lot_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT * FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
+          "SELECT * FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
       this.db.all(
-        sql,
-        [hike_ID, user_ID, parking_lot_ID],
-        function (err, rows) {
-          if (err) reject(err);
-          else resolve(rows);
-        }
+          sql,
+          [hike_ID, user_ID, parking_lot_ID],
+          function (err, rows) {
+            if (err) reject(err);
+            else resolve(rows);
+          }
       );
     });
   };
@@ -447,7 +383,7 @@ class Database {
   getHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT * FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+          "SELECT * FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
       this.db.all(sql, [hike_ID, user_ID, hut_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -458,7 +394,7 @@ class Database {
   getHikeUserParking = (hike_ID, user_ID, parking_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT * FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
+          "SELECT * FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
       this.db.all(sql, [hike_ID, user_ID, parking_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -469,7 +405,7 @@ class Database {
   getHikeUserRef = (hike_ID, user_ID, ref_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT * FROM hike_user_ref WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
+          "SELECT * FROM hike_user_ref WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
       this.db.all(sql, [hike_ID, user_ID, ref_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -490,7 +426,7 @@ class Database {
   getOnGoingHikeByUserID = (user_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT hike_schedule.ID as hike_schedule_id, hike.ID as hike_ID, hike.name FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE hike_schedule.user_ID=? AND hike_schedule.status = 'on going'";
+          "SELECT hike_schedule.ID as hike_schedule_id, hike.ID as hike_ID, hike.name FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE hike_schedule.user_ID=? AND hike_schedule.status = 'on going'";
       this.db.get(sql, [user_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -508,7 +444,7 @@ class Database {
         return reject(503);
       }
       const sql =
-        "SELECT * FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE hike_schedule.user_ID=? AND status = 'completed'";
+          "SELECT * FROM hike_schedule INNER JOIN hike ON hike_schedule.hike_ID = hike.ID WHERE hike_schedule.user_ID=? AND status = 'completed'";
       this.db.all(sql, [user_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -519,7 +455,7 @@ class Database {
   getRefReached = (hike_ID, user_ID, ref_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT * FROM ref_reached WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
+          "SELECT * FROM ref_reached WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
       this.db.all(sql, [hike_ID, user_ID, ref_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -580,7 +516,7 @@ class Database {
   deleteLinkHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "DELETE FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+          "DELETE FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
       this.db.run(sql, [hike_ID, user_ID, hut_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
@@ -601,7 +537,7 @@ class Database {
   deleteLinkHikeUserParking = (hike_ID, user_ID, parking_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "DELETE FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
+          "DELETE FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
       this.db.run(sql, [hike_ID, user_ID, parking_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
@@ -635,7 +571,7 @@ class Database {
   deleteHikeUserHut = (hike_ID, user_ID, hut_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "DELETE FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
+          "DELETE FROM hike_user_hut WHERE hike_ID=? AND user_ID=? AND hut_ID=?";
       this.db.run(sql, [hike_ID, user_ID, hut_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
@@ -646,7 +582,7 @@ class Database {
   deleteHikeUserParking = (hike_ID, user_ID, parking_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "DELETE FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
+          "DELETE FROM hike_user_parking WHERE hike_ID=? AND user_ID=? AND parking_ID=?";
       this.db.run(sql, [hike_ID, user_ID, parking_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
@@ -657,7 +593,7 @@ class Database {
   deleteHikeUserReferencePoint = (hike_ID, user_ID, ref_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "DELETE FROM hike_user_ref WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
+          "DELETE FROM hike_user_ref WHERE hike_ID=? AND user_ID=? AND ref_ID=?";
       this.db.run(sql, [hike_ID, user_ID, ref_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
@@ -699,12 +635,12 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hike.name !== "string" ||
-          typeof hike.expected_time !== "string" ||
-          typeof hike.difficulty !== "string" ||
-          typeof hike.description !== "string" ||
-          typeof gpx_string !== "string" ||
-          typeof user_ID !== "number"
+            typeof hike.name !== "string" ||
+            typeof hike.expected_time !== "string" ||
+            typeof hike.difficulty !== "string" ||
+            typeof hike.description !== "string" ||
+            typeof gpx_string !== "string" ||
+            typeof user_ID !== "number"
         ) {
           return reject(422);
         }
@@ -716,22 +652,22 @@ class Database {
       let length = parseInt(gpx.tracks[0].distance.total / 1000);
       let ascent = parseInt(gpx.tracks[0].elevation.max);
       const sql =
-        "INSERT INTO hike(name,length,expected_time,ascent,difficulty,description, user_ID) VALUES(?,?,?,?,?,?,?)";
+          "INSERT INTO hike(name,length,expected_time,ascent,difficulty,description, user_ID) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
-        sql,
-        [
-          hike.name,
-          length,
-          hike.expected_time,
-          ascent,
-          hike.difficulty,
-          hike.description,
-          user_ID,
-        ],
-        function (err) {
-          if (err) reject(err);
-          else resolve(this.lastID);
-        }
+          sql,
+          [
+            hike.name,
+            length,
+            hike.expected_time,
+            ascent,
+            hike.difficulty,
+            hike.description,
+            user_ID,
+          ],
+          function (err) {
+            if (err) reject(err);
+            else resolve(this.lastID);
+          }
       );
     });
   };
@@ -740,11 +676,11 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof loc.location_name !== "string" ||
-          typeof loc.city !== "string" ||
-          typeof loc.province !== "string" ||
-          typeof position !== "string" ||
-          typeof hike_ID !== "number"
+            typeof loc.location_name !== "string" ||
+            typeof loc.city !== "string" ||
+            typeof loc.province !== "string" ||
+            typeof position !== "string" ||
+            typeof hike_ID !== "number"
         ) {
           return reject(422);
         }
@@ -772,22 +708,22 @@ class Database {
         return reject(422);
       }
       const sql =
-        "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID, start_end) VALUES(?,?,?,?,?,?,?)";
+          "INSERT INTO location(location_name, latitude, longitude, city, province, hike_ID, start_end) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
-        sql,
-        [
-          loc.location_name,
-          latitude,
-          longitude,
-          loc.city,
-          loc.province,
-          hike_ID,
-          position,
-        ],
-        function (err) {
-          if (err) reject(err);
-          else resolve(true);
-        }
+          sql,
+          [
+            loc.location_name,
+            latitude,
+            longitude,
+            loc.city,
+            loc.province,
+            hike_ID,
+            position,
+          ],
+          function (err) {
+            if (err) reject(err);
+            else resolve(true);
+          }
       );
     });
   };
@@ -830,9 +766,9 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof schedule.start_time !== "string" ||
-          typeof schedule.hike_ID !== "number" ||
-          typeof user_ID !== "number"
+            typeof schedule.start_time !== "string" ||
+            typeof schedule.hike_ID !== "number" ||
+            typeof user_ID !== "number"
         ) {
           return reject(422);
         }
@@ -840,14 +776,14 @@ class Database {
         return reject(503);
       }
       const sql =
-        "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going','on going',?,?)";
+          "INSERT INTO hike_schedule(start_time,end_time,status,duration,hike_ID, user_ID) VALUES(?,'on going','on going','on going',?,?)";
       this.db.run(
-        sql,
-        [schedule.start_time, schedule.hike_ID, user_ID],
-        function (err) {
-          if (err) reject(err);
-          else resolve(this.lastID);
-        }
+          sql,
+          [schedule.start_time, schedule.hike_ID, user_ID],
+          function (err) {
+            if (err) reject(err);
+            else resolve(this.lastID);
+          }
       );
     });
   };
@@ -856,9 +792,9 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof schedule_ID !== "number" ||
-          typeof end_time !== "string" ||
-          typeof duration !== "string"
+            typeof schedule_ID !== "number" ||
+            typeof end_time !== "string" ||
+            typeof duration !== "string"
         ) {
           return reject(422);
         }
@@ -866,7 +802,7 @@ class Database {
         return reject(503);
       }
       const sql =
-        "UPDATE hike_schedule SET end_time = ?, duration = ?, status = 'completed' WHERE ID =?";
+          "UPDATE hike_schedule SET end_time = ?, duration = ?, status = 'completed' WHERE ID =?";
       this.db.run(sql, [end_time, duration, schedule_ID], function (err) {
         if (err) reject(err);
         else resolve(true);
@@ -895,11 +831,11 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof user.name !== "string" ||
-          typeof user.surname !== "string" ||
-          typeof user.mail !== "string" ||
-          typeof user.role !== "string" ||
-          typeof user.password !== "string"
+            typeof user.name !== "string" ||
+            typeof user.surname !== "string" ||
+            typeof user.mail !== "string" ||
+            typeof user.role !== "string" ||
+            typeof user.password !== "string"
         ) {
           return reject(422);
         }
@@ -915,31 +851,31 @@ class Database {
       let database = this.db;
       let salt = crypto.randomBytes(16);
       crypto.scrypt(
-        user.password,
-        salt.toString("hex"),
-        32,
-        function (err, hashedPassword) {
-          const sql =
-            "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
-          database.run(
-            sql,
-            [
-              user.name,
-              user.surname,
-              user.mail,
-              hashedPassword.toString("hex"),
-              salt.toString("hex"),
-              user.role,
-              0,
-            ],
-            function (err) {
-              if (err) reject(err);
-              else {
-                resolve(this.lastID);
-              }
-            }
-          );
-        }
+          user.password,
+          salt.toString("hex"),
+          32,
+          function (err, hashedPassword) {
+            const sql =
+                "INSERT INTO user(name,surname,mail,password,salt,role,verified) VALUES(?,?,?,?,?,?,?)";
+            database.run(
+                sql,
+                [
+                  user.name,
+                  user.surname,
+                  user.mail,
+                  hashedPassword.toString("hex"),
+                  salt.toString("hex"),
+                  user.role,
+                  0,
+                ],
+                function (err) {
+                  if (err) reject(err);
+                  else {
+                    resolve(this.lastID);
+                  }
+                }
+            );
+          }
       );
     });
   };
@@ -948,20 +884,20 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hut.name !== "string" ||
-          typeof hut.description !== "string" ||
-          typeof hut.opening_time !== "string" ||
-          typeof hut.closing_time !== "string" ||
-          typeof hut.bed_num !== "number" ||
-          typeof hut.altitude !== "number" ||
-          typeof hut.latitude !== "number" ||
-          typeof hut.longitude !== "number" ||
-          typeof hut.city !== "string" ||
-          typeof hut.province !== "string" ||
-          typeof hut.phone !== "string" ||
-          typeof hut.mail !== "string" ||
-          typeof hut.website !== "string" ||
-          typeof user_ID !== "number"
+            typeof hut.name !== "string" ||
+            typeof hut.description !== "string" ||
+            typeof hut.opening_time !== "string" ||
+            typeof hut.closing_time !== "string" ||
+            typeof hut.bed_num !== "number" ||
+            typeof hut.altitude !== "number" ||
+            typeof hut.latitude !== "number" ||
+            typeof hut.longitude !== "number" ||
+            typeof hut.city !== "string" ||
+            typeof hut.province !== "string" ||
+            typeof hut.phone !== "string" ||
+            typeof hut.mail !== "string" ||
+            typeof hut.website !== "string" ||
+            typeof user_ID !== "number"
         ) {
           return reject(422);
         }
@@ -969,31 +905,31 @@ class Database {
         return reject(503);
       }
       const sql =
-        "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website, user_ID) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+          "INSERT INTO hut(name,description,opening_time,closing_time,bed_num,altitude,latitude,longitude,city,province,phone,mail,website, user_ID) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       this.db.run(
-        sql,
-        [
-          hut.name,
-          hut.description,
-          hut.opening_time,
-          hut.closing_time,
-          hut.bed_num,
-          hut.altitude,
-          hut.latitude,
-          hut.longitude,
-          hut.city,
-          hut.province,
-          hut.phone,
-          hut.mail,
-          hut.website,
-          user_ID,
-        ],
-        function (err) {
-          if (err) reject(err);
-          else {
-            resolve(this.lastID);
+          sql,
+          [
+            hut.name,
+            hut.description,
+            hut.opening_time,
+            hut.closing_time,
+            hut.bed_num,
+            hut.altitude,
+            hut.latitude,
+            hut.longitude,
+            hut.city,
+            hut.province,
+            hut.phone,
+            hut.mail,
+            hut.website,
+            user_ID,
+          ],
+          function (err) {
+            if (err) reject(err);
+            else {
+              resolve(this.lastID);
+            }
           }
-        }
       );
     });
   };
@@ -1002,13 +938,13 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof parking.name !== "string" ||
-          typeof parking.capacity !== "number" ||
-          typeof parking.latitude !== "number" ||
-          typeof parking.longitude !== "number" ||
-          typeof parking.city !== "string" ||
-          typeof parking.province !== "string" ||
-          typeof user_ID !== "number"
+            typeof parking.name !== "string" ||
+            typeof parking.capacity !== "number" ||
+            typeof parking.latitude !== "number" ||
+            typeof parking.longitude !== "number" ||
+            typeof parking.city !== "string" ||
+            typeof parking.province !== "string" ||
+            typeof user_ID !== "number"
         ) {
           return reject(422);
         }
@@ -1016,24 +952,24 @@ class Database {
         return reject(503);
       }
       const sql =
-        "INSERT INTO parking_lot(name,capacity,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
+          "INSERT INTO parking_lot(name,capacity,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
-        sql,
-        [
-          parking.name,
-          parking.capacity,
-          parking.latitude,
-          parking.longitude,
-          parking.city,
-          parking.province,
-          user_ID,
-        ],
-        function (err) {
-          if (err) reject(err);
-          else {
-            resolve(this.lastID);
+          sql,
+          [
+            parking.name,
+            parking.capacity,
+            parking.latitude,
+            parking.longitude,
+            parking.city,
+            parking.province,
+            user_ID,
+          ],
+          function (err) {
+            if (err) reject(err);
+            else {
+              resolve(this.lastID);
+            }
           }
-        }
       );
     });
   };
@@ -1042,13 +978,13 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof referencePoint.name !== "string" ||
-          typeof referencePoint.type !== "string" ||
-          typeof referencePoint.latitude !== "number" ||
-          typeof referencePoint.longitude !== "number" ||
-          typeof referencePoint.city !== "string" ||
-          typeof referencePoint.province !== "string" ||
-          typeof user_ID !== "number"
+            typeof referencePoint.name !== "string" ||
+            typeof referencePoint.type !== "string" ||
+            typeof referencePoint.latitude !== "number" ||
+            typeof referencePoint.longitude !== "number" ||
+            typeof referencePoint.city !== "string" ||
+            typeof referencePoint.province !== "string" ||
+            typeof user_ID !== "number"
         ) {
           return reject(422);
         }
@@ -1056,25 +992,101 @@ class Database {
         return reject(503);
       }
       const sql =
-        "INSERT INTO reference_point(name,type,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
+          "INSERT INTO reference_point(name,type,latitude,longitude,city,province, user_ID) VALUES(?,?,?,?,?,?,?)";
       this.db.run(
-        sql,
-        [
-          referencePoint.name,
-          referencePoint.type,
-          referencePoint.latitude,
-          referencePoint.longitude,
-          referencePoint.city,
-          referencePoint.province,
-          user_ID,
-        ],
-        function (err) {
-          if (err) reject(err);
-          else {
-            resolve(this.lastID);
+          sql,
+          [
+            referencePoint.name,
+            referencePoint.type,
+            referencePoint.latitude,
+            referencePoint.longitude,
+            referencePoint.city,
+            referencePoint.province,
+            user_ID,
+          ],
+          function (err) {
+            if (err) reject(err);
+            else {
+              resolve(this.lastID);
+            }
           }
-        }
       );
+    });
+  };
+
+  getHutsWithFilters = (filters) => {
+    return new Promise((resolve, reject) => {
+      let query = "SELECT * FROM hut";
+      let query2 = "";
+      if (Object.entries(filters).length != 0) {
+        query2 = query.concat(" WHERE ");
+        for (let entry of Object.entries(filters)) {
+          let key = entry[0];
+          let value = entry[1];
+          if (
+              key == "min_altitude" ||
+              key == "max_altitude" ||
+              key == "min_bed_num" ||
+              key == "max_bed_num"
+          ) {
+            value = parseInt(value);
+          }
+          if (
+              (typeof value === "string" || value instanceof String) &&
+              key.length !== 0
+          ) {
+            if (key == "min_opening_time") {
+              query2 = query2.concat("opening_time", " > ", "'" + value + "'");
+            } else if (key == "max_opening_time") {
+              query2 = query2.concat("opening_time", "<", "'" + value + "'");
+            } else if (key == "min_closing_time") {
+              query2 = query2.concat("closing_time", " > ", "'" + value + "'");
+            } else if (key == "max_closing_time") {
+              query2 = query2.concat("closing_time", "<", "'" + value + "'");
+            } else {
+              query2 = query2.concat(key, "=", "'" + value + "'");
+            }
+          } else if (typeof value === "number" || value instanceof Number) {
+            if (key == "min_altitude") {
+              query2 = query2.concat("altitude", " > ", value);
+            } else if (key == "max_altitude") {
+              query2 = query2.concat("altitude", " < ", value);
+            } else if (key == "min_bed_num") {
+              query2 = query2.concat("bed_num", " > ", value);
+            } else if (key == "max_bed_num") {
+              query2 = query2.concat("bed_num", " < ", value);
+            }
+          }
+          query2 = query2.concat(" AND ");
+        }
+        query2 = query2.slice(0, query2.length - 4);
+      } else {
+        query2 = query2.concat(query);
+      }
+      this.db.all(query2, [], (err, rows) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        const list = rows.map((e) => ({
+          ID: e.ID,
+          name: e.name,
+          description: e.description,
+          opening_time: e.opening_time,
+          closing_time: e.closing_time,
+          bed_num: e.bed_num,
+          altitude: e.altitude,
+          latitude: e.latitude,
+          longitude: e.longitude,
+          city: e.city,
+          province: e.province,
+          phone: e.phone,
+          mail: e.mail,
+          website: e.website,
+        }));
+
+        return resolve(list);
+      });
     });
   };
 
@@ -1101,9 +1113,9 @@ class Database {
   getReferencePointByHike = (hike_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT *\n" +
-        "FROM hike_user_ref INNER JOIN hike ON hike_user_ref.hike_ID = hike.ID INNER JOIN reference_point ON hike_user_ref.ref_ID = reference_point.ID\n" +
-        "WHERE hike_ID = ?";
+          "SELECT *\n" +
+          "FROM hike_user_ref INNER JOIN hike ON hike_user_ref.hike_ID = hike.ID INNER JOIN reference_point ON hike_user_ref.ref_ID = reference_point.ID\n" +
+          "WHERE hike_ID = ?";
       this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -1114,9 +1126,9 @@ class Database {
   getGenericHutsPointByHike = (hike_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT *\n" +
-        "FROM hike_user_hut INNER JOIN hike ON hike_user_hut.hike_ID = hike.ID INNER JOIN hut ON hike_user_hut.hut_ID = hut.ID\n" +
-        "WHERE hike_ID = ?";
+          "SELECT *\n" +
+          "FROM hike_user_hut INNER JOIN hike ON hike_user_hut.hike_ID = hike.ID INNER JOIN hut ON hike_user_hut.hut_ID = hut.ID\n" +
+          "WHERE hike_ID = ?";
       this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -1127,9 +1139,9 @@ class Database {
   getReferencePointOfScheduledHike = (hike_ID, user_ID) => {
     return new Promise((resolve, reject) => {
       const sql =
-        "SELECT *\n" +
-        "FROM ref_reached INNER JOIN reference_point ON ref_reached.ref_ID = reference_point.ID\n" +
-        "WHERE hike_ID = ? AND ref_reached.user_ID = ?";
+          "SELECT *\n" +
+          "FROM ref_reached INNER JOIN reference_point ON ref_reached.ref_ID = reference_point.ID\n" +
+          "WHERE hike_ID = ? AND ref_reached.user_ID = ?";
       this.db.all(sql, [hike_ID, user_ID], function (err, rows) {
         if (err) reject(err);
         else resolve(rows);
@@ -1157,7 +1169,7 @@ class Database {
         return reject(503);
       }
       const sql =
-        "Select hut.*, hike_user_hut.ref_type from hike_user_hut JOIN hut ON hike_user_hut.hut_ID = hut.ID WHERE hike_user_hut.hike_ID = ?";
+          "Select hut.*, hike_user_hut.ref_type from hike_user_hut JOIN hut ON hike_user_hut.hut_ID = hut.ID WHERE hike_user_hut.hike_ID = ?";
       this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else {
@@ -1178,7 +1190,7 @@ class Database {
       }
 
       const sql =
-        "DELETE FROM hike_user_hut where hike_ID = ? AND ref_type = ?";
+          "DELETE FROM hike_user_hut where hike_ID = ? AND ref_type = ?";
       this.db.run(sql, [hike_ID, ref_type], function (err) {
         if (err) reject(err);
         else {
@@ -1192,10 +1204,10 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hike_ID !== "number" ||
-          typeof user_ID !== "number" ||
-          typeof hut_ID !== "number" ||
-          typeof ref_type !== "string"
+            typeof hike_ID !== "number" ||
+            typeof user_ID !== "number" ||
+            typeof hut_ID !== "number" ||
+            typeof ref_type !== "string"
         ) {
           return reject(422);
         }
@@ -1203,7 +1215,7 @@ class Database {
         return reject(503);
       }
       const sql =
-        "INSERT INTO hike_user_hut(hike_ID, user_ID, hut_ID, ref_type) VALUES(?,?,?,?)";
+          "INSERT INTO hike_user_hut(hike_ID, user_ID, hut_ID, ref_type) VALUES(?,?,?,?)";
       this.db.run(sql, [hike_ID, user_ID, hut_ID, ref_type], function (err) {
         if (err) reject(err);
         else {
@@ -1217,9 +1229,9 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hike_ID !== "number" ||
-          typeof user_ID !== "number" ||
-          typeof ref_ID !== "number"
+            typeof hike_ID !== "number" ||
+            typeof user_ID !== "number" ||
+            typeof ref_ID !== "number"
         ) {
           return reject(422);
         }
@@ -1227,7 +1239,7 @@ class Database {
         return reject(503);
       }
       const sql =
-        "INSERT INTO ref_reached(hike_ID, user_ID, ref_ID, state) VALUES(?,?,?,0)";
+          "INSERT INTO ref_reached(hike_ID, user_ID, ref_ID, state) VALUES(?,?,?,0)";
       this.db.run(sql, [hike_ID, user_ID, ref_ID], function (err) {
         if (err) reject(err);
         else {
@@ -1241,9 +1253,9 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hike_ID !== "number" ||
-          typeof user_ID !== "number" ||
-          typeof ref_ID !== "number"
+            typeof hike_ID !== "number" ||
+            typeof user_ID !== "number" ||
+            typeof ref_ID !== "number"
         ) {
           return reject(422);
         }
@@ -1251,7 +1263,7 @@ class Database {
         return reject(503);
       }
       const sql =
-        "UPDATE ref_reached SET state = 1 WHERE hike_ID = ? AND user_ID = ? AND ref_ID = ?";
+          "UPDATE ref_reached SET state = 1 WHERE hike_ID = ? AND user_ID = ? AND ref_ID = ?";
       this.db.run(sql, [hike_ID, user_ID, ref_ID], function (err) {
         if (err) reject(err);
         else {
@@ -1271,7 +1283,7 @@ class Database {
         return reject(503);
       }
       const sql =
-        "Select parking_lot.*, hike_user_parking.ref_type from hike_user_parking JOIN parking_lot ON hike_user_parking.parking_ID = parking_lot.ID WHERE hike_user_parking.hike_ID = ?";
+          "Select parking_lot.*, hike_user_parking.ref_type from hike_user_parking JOIN parking_lot ON hike_user_parking.parking_ID = parking_lot.ID WHERE hike_user_parking.hike_ID = ?";
       this.db.all(sql, [hike_ID], function (err, rows) {
         if (err) reject(err);
         else {
@@ -1292,7 +1304,7 @@ class Database {
       }
 
       const sql =
-        "DELETE FROM hike_user_parking where hike_ID = ? AND ref_type = ?";
+          "DELETE FROM hike_user_parking where hike_ID = ? AND ref_type = ?";
       this.db.run(sql, [hike_ID, ref_type], function (err) {
         if (err) reject(err);
         else {
@@ -1306,10 +1318,10 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hike_ID !== "number" ||
-          typeof user_ID !== "number" ||
-          typeof parking_ID !== "number" ||
-          typeof ref_type !== "string"
+            typeof hike_ID !== "number" ||
+            typeof user_ID !== "number" ||
+            typeof parking_ID !== "number" ||
+            typeof ref_type !== "string"
         ) {
           return reject(422);
         }
@@ -1318,16 +1330,16 @@ class Database {
       }
 
       const sql =
-        "INSERT INTO hike_user_parking(hike_ID, user_ID, parking_ID, ref_type) VALUES(?,?,?,?)";
+          "INSERT INTO hike_user_parking(hike_ID, user_ID, parking_ID, ref_type) VALUES(?,?,?,?)";
       this.db.run(
-        sql,
-        [hike_ID, user_ID, parking_ID, ref_type],
-        function (err) {
-          if (err) reject(err);
-          else {
-            resolve(true);
+          sql,
+          [hike_ID, user_ID, parking_ID, ref_type],
+          function (err) {
+            if (err) reject(err);
+            else {
+              resolve(true);
+            }
           }
-        }
       );
     });
   };
@@ -1336,9 +1348,9 @@ class Database {
     return new Promise((resolve, reject) => {
       try {
         if (
-          typeof hike_ID !== "number" ||
-          typeof user_ID !== "number" ||
-          typeof ref_ID !== "number"
+            typeof hike_ID !== "number" ||
+            typeof user_ID !== "number" ||
+            typeof ref_ID !== "number"
         ) {
           return reject(422);
         }
@@ -1346,7 +1358,7 @@ class Database {
         return reject(503);
       }
       const sql =
-        "INSERT INTO hike_user_ref(hike_ID, user_ID, ref_ID, ref_type) VALUES(?,?,?,?)";
+          "INSERT INTO hike_user_ref(hike_ID, user_ID, ref_ID, ref_type) VALUES(?,?,?,?)";
       this.db.run(sql, [hike_ID, user_ID, ref_ID, "point"], function (err) {
         if (err) reject(err);
         else {
@@ -1399,10 +1411,10 @@ class Database {
           crypto.scrypt(password, row.salt, 32, function (err, hashedPassword) {
             if (err) reject(err);
             if (
-              !crypto.timingSafeEqual(
-                Buffer.from(row.password, "hex"),
-                hashedPassword
-              )
+                !crypto.timingSafeEqual(
+                    Buffer.from(row.password, "hex"),
+                    hashedPassword
+                )
             )
               resolve(false);
             else resolve(user);
