@@ -19,6 +19,8 @@ const { request } = require("express");
 const fs = require("fs");
 const sharp = require("sharp");
 
+let test = 0;
+
 passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
     const user = await db.login(username, password);
@@ -181,8 +183,9 @@ app.get("/api/sessions/current", (req, res) => {
 });
 
 app.get("/api/hike", async (req, res) => {
+  test = 0;
   await db
-    .getHikeWithFilters(req.query)
+    .getHikeHutWithFilters(req.query,test)
     .then((lists) => {
       lists.map((row) => {
         if (row.location !== null && !Array.isArray(row.location))
@@ -276,8 +279,9 @@ app.get("/api/hut", async (req, res) => {
 });
 
 app.get("/api/hutWithFilters", async (req, res) => {
+  test = 1;
   await db
-    .getHutsWithFilters(req.query)
+    .getHikeHutWithFilters(req.query,test)
     .then((lists) => {
       res.json(lists);
     })
