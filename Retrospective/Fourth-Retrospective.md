@@ -17,7 +17,7 @@ sections:
 - Total points committed vs done 
   - Commmited 47 vs Done 47
 - Nr of hours planned vs spent (as a team)
-  - Planned  vs Spent 
+  - Planned 60 vs Spent XX
 
 **Remember**  a story is done ONLY if it fits the Definition of Done:
  
@@ -45,12 +45,12 @@ sections:
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
 - Hours per task average, standard deviation (estimate and actual)
-  - Estimated Average: 
-  - Estimated Stardard deviation: 
-  - Actual: 
+  - Estimated Average: 60 / 42 = 1h 26m
+  - Estimated Stardard deviation: 4.266 = 4h 16m
+  - Actual: XX / 42 =
   - Actual Stardard deviation: 
 - Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1
-  - 
+  - (60 / ) - 1 = 
   
 ## QUALITY MEASURES 
 
