@@ -122,6 +122,33 @@ This command binds the port 5000 configured in the container to the TCP port 808
 
 - ```/api/user/verify/:token```
 
+- ```/api/hut```
+
+- ```/api/hutWithFilters```
+
+- ```/api/completedHike```
+
+- ```/api/parkingFromHike/:hike_ID```
+
+- ```/api/getOnGoingHike```
+
+- ```/api/locationToLinkHutOrParking```
+
+- ```/api/linkHut/:hike_ID```
+
+- ```/api/linkParking/:hike_ID```
+
+- ```/api/user/verify/:token```
+
+- ```/api/pointToLinkHut```
+
+- ```/api/regions```
+
+- ```/api/provinces/:region_ID```
+
+- ```/api/municipalities/:province_ID```
+
+- ```/api/border/:ID```
 
 
 POST <a name="post">
@@ -130,14 +157,38 @@ POST <a name="post">
 
 - ```/api/hike```
 
+- ```/api/getReferencePointByHike/:hike_ID```
+
+- ```/api/getAllReferencePointByHike/:hike_ID```
+
+- ```/api/getGenericHutsPointByHike/:hike_ID```
+
+- ```/api/addSchedule```
+
 - ```/api/gpx```
 
 - ```/api/addUser```
+
+- ```/api/addHut```
+
+- ```/api/addParking```
+
+- ```/api/addReferencePoint```
+
+- ```/api/linkHut```
+
+- ```/api/linkParking```
+
+- ```/api/linkReferencePoint```
 
 
 PUT <a name="put">
 
 - ```/api/id/:setVerified```
+
+- ```/api/updateSchedule```
+
+- ```/api/updateRefReached```
 
 
 DELETE <a name="delete">
