@@ -204,7 +204,7 @@ app.get("/api/hike", async (req, res) => {
 app.get(
   "/api/hikesdetails/:hike_ID",
   /*isLoggedIn,*/ async function (req, res) {
-    let thisuser
+    let thisuser;
     if (req.user != undefined) {
       thisuser = await db.getUserByID(req.user.ID);
     }/*
@@ -364,20 +364,20 @@ app.post("/api/hike", isLoggedIn, [], async (req, res) => {
       req.body.gpx,
       req.user.ID
     );
-    const result2 = await db.addNewLocation(
+    await db.addNewLocation(
       req.body.startp,
       "start",
       hike_ID,
       req.body.gpx
     );
-    const result3 = await db.addNewLocation(
+    await db.addNewLocation(
       req.body.endp,
       "end",
       hike_ID,
       req.body.gpx
     );
     let gpx_path = await saveHikeGpx(req.body.gpx, hike_ID)
-    const result4 = await db.addNewHikeGPX(gpx_path, hike_ID);
+    await db.addNewHikeGPX(gpx_path, hike_ID);
 
     if (req.body.image_base_64 != undefined) {
       const imagePath = await saveHikeImage(
@@ -447,7 +447,7 @@ app.post("/api/addSchedule", async (req, res) => {
       return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
     }
 
-    const result1 = await db.addSchedule(req.body, req.user.ID);
+    await db.addSchedule(req.body, req.user.ID);
     const result2 = await db.getReferencePointByHike(req.body.hike_ID);
     let references = [];
     result2.map((res) => {
@@ -493,7 +493,7 @@ app.put("/api/updateRefReached", async (req, res) => {
       return res.status(422).json({ error: `the logged in user is not a hiker!` }).end();
     }
 
-    const result = await db.updateRefReached(Number(req.body.hike_ID), req.user.ID, Number(req.body.ref_ID));
+    await db.updateRefReached(Number(req.body.hike_ID), req.user.ID, Number(req.body.ref_ID));
 
     res.status(200).json("Reference point " + req.body.ref_ID + " reached!");
   } catch (err) {
