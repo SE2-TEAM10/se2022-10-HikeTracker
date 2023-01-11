@@ -15,7 +15,7 @@ sections:
 - Number of stories committed vs done 
   - Commited 7 vs Done 7
 - Total points committed vs done 
-  - Commmited  vs Done 
+  - Commmited 47 vs Done 47
 - Nr of hours planned vs spent (as a team)
   - Planned  vs Spent 
 
